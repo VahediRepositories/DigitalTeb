@@ -1,0 +1,40 @@
+{% extends 'doctorhub/layouts/rtl/light/green/master.html' %}
+
+{% load staticfiles %}
+
+{% block additional_css %}
+
+{% endblock %}
+
+{% block page_title %}
+
+{% endblock %}
+
+{% block breadcrumb %}
+
+    <li class="breadcrumb-item active normal-p">
+        {{ page.category.farsi_name }}
+    </li>
+    <li class="breadcrumb-item normal-p">
+        <a href="{{ page.get_parent.get_url }}">
+    مقاله ها
+        </a>
+    </li>
+    <li class="breadcrumb-item normal-p">
+        <a href="{{ page.get_home_page.get_url }}">
+            خانه
+        </a>
+    </li>
+
+{% endblock %}
+
+{% block main_content %}
+
+   {% include 'home/articles/articles_category_page/page.html' %}
+
+{% endblock %}
+
+{% block additional_js %}
+
+{% endblock %}
+

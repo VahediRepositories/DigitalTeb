@@ -1,0 +1,406 @@
+{% load wagtailimages_tags %}
+{% load wagtailcore_tags %}
+{% load staticfiles %}
+{% load text_processing %}
+
+<div class="row row-flex">
+    <div class="col-md-1"></div>
+    <div class="col-md-3">
+        <div class="card text-center" style="height: 100%;">
+            {% image page.image fill-1000x1000 as image %}
+            <img src="{{ image.url }}"
+                 class="card-img-top img-responsive"
+                 alt="{{ image.alt }}">
+            <div class="card-body">
+                <h2 class="normal-h2 card-text" style="float: bottom;">
+                    {{ page.title }}
+                </h2>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card"
+             style="height: 100%;">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="normal-p"
+                             style="padding: 10%;">
+                            {{ page.article_summary|richtext }}
+                            {% if page.sections %}
+                                <br>
+                                <br>
+                                <b>
+                                    در اين مقاله ميخوانيد:
+                                </b>
+                                <br>
+                                <br>
+                                <ul>
+                                    {% for section in page.sections %}
+                                        <li>
+                                            <a href="#{{ section.value.title.source|html_to_str|replace_white_space_with_underscore }}">
+                                                {{ section.value.title.source|html_to_str }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
+{% if page.article_introduction %}
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-9">
+            <div class="card" style="height: 100%;">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 normal-p">
+                            {{ page.article_introduction|richtext }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+{% endif %}
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-9">
+        <div class="card" style="height: 100%;">
+            <div class="card-body">
+                {% for section in page.sections %}
+                    <section style="padding: 5%;">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h2 class="normal-h2 text-success"
+                                    id="{{ section.value.title.source|html_to_str|replace_white_space_with_underscore }}">
+                                    <b>
+                                        {{ section.value.title.source|html_to_str }}
+                                    </b>
+                                </h2>
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-12">
+                                {% for item in section.value.content %}
+                                    <div class="row" style="padding-top: 5%; padding-bottom: 5%; padding-left: 2%; padding-right: 2%;">
+                                        {% if item.block_type == 'text' %}
+                                            <div class="col-md-12 normal-p">
+                                                {{ item.value|richtext }}
+                                            </div>
+                                        {% elif item.block_type == 'list' %}
+                                            <div class="col-md-12 normal-p">
+                                                {{ item.value.paragraph|richtext }}
+                                                <ul>
+                                                    {% for item in item.value.items %}
+                                                        <li>
+                                                            {{ item }}
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        {% elif item.block_type == 'image_and_text_row' %}
+                                            <div class="col-md-6 normal-p">
+                                                {{ item.value.paragraph|richtext }}
+                                            </div>
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-5" style="padding-right: 5%; padding-left: 5%;">
+                                                {% image item.value.image fill-1000x1000 as image %}
+                                                <img src="{{ image.url }}"
+                                                     class="img-thumbnail img-responsive"
+                                                     alt="{{ image.alt }}">
+                                            </div>
+                                        {% elif item.block_type == 'image' %}
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-md-3"></div>
+                                                    <div class="col-md-6">
+                                                        {% image item.value.horizontal_image fill-2000x1000 as image %}
+                                                        <img src="{{ image.url }}"
+                                                             alt="{{ image.alt }}"
+                                                             class="img-thumbnail img-responsive">
+                                                    </div>
+                                                    <div class="col-md-3"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-1"></div>
+                                                    <div class="col-md-10 normal-p text-center">
+                                                        {{ item.value.paragraph|richtext }}
+                                                    </div>
+                                                    <div class="col-md-1"></div>
+                                                </div>
+                                            </div>
+                                        {% elif item.block_type == 'video' %}
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-md-3"></div>
+                                                    <div class="col-md-6">
+                                                        <video width="100%"
+                                                               height="100%"
+                                                                {% if item.value.video.thumbnail %}
+                                                               poster="{{ item.value.video.thumbnail.url }}"
+                                                                {% endif %}
+                                                               controls>
+                                                            <source src="{{ item.value.video.file.url }}"
+                                                                    type="video/mp4">
+                                                            Your browser does not support the video tag.
+                                                        </video>
+                                                    </div>
+                                                    <div class="col-md-3"></div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="col-md-1"></div>
+                                                    <div class="col-md-10 normal-p text-center">
+                                                        {{ item.value.paragraph|richtext }}
+                                                    </div>
+                                                    <div class="col-md-1"></div>
+                                                </div>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                        {% comment %}
+                    {% if paragraph.block_type == 'video_paragraph' %}
+
+                    {% endif %}{% endcomment %}
+
+                    </section>
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
+{% if page.article_conclusion %}
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-9">
+            <div class="card" style="height: 100%;">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 normal-p">
+                            {{ page.article_conclusion|richtext }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+{% endif %}
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-9 bg-success">
+        <div class="card m-b-0">
+            <!-- .chat-row -->
+            <div class="chat-main-box" style="height: 100%;">
+                {% comment %} <!-- .chat-left-panel -->
+                    <div class="chat-left-aside">
+                        <div class="open-panel"><i class="ti-angle-right"></i></div>
+                        <div class="chat-left-inner">
+                            <div class="form-material">
+                                <input class="form-control p-2" type="text" placeholder="Search Contact">
+                            </div>
+                            <ul class="chatonline style-none ">
+                                <li>
+                                    <a href="javascript:void(0)"><img src="../assets/images/users/1.jpg" alt="user-img"
+                                                                      class="img-circle"> <span>Varun Dhavan <small
+                                            class="text-success">online</small></span></a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)" class="active"><img src="../assets/images/users/2.jpg"
+                                                                                     alt="user-img" class="img-circle">
+                                        <span>Genelia Deshmukh <small class="text-warning">Away</small></span></a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)"><img src="../assets/images/users/3.jpg" alt="user-img"
+                                                                      class="img-circle"> <span>Ritesh Deshmukh <small
+                                            class="text-danger">Busy</small></span></a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)"><img src="../assets/images/users/4.jpg" alt="user-img"
+                                                                      class="img-circle"> <span>Arijit Sinh <small
+                                            class="text-muted">Offline</small></span></a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)"><img src="../assets/images/users/5.jpg" alt="user-img"
+                                                                      class="img-circle"> <span>Govinda Star <small
+                                            class="text-success">online</small></span></a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)"><img src="../assets/images/users/6.jpg" alt="user-img"
+                                                                      class="img-circle"> <span>John Abraham<small
+                                            class="text-success">online</small></span></a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)"><img src="../assets/images/users/7.jpg" alt="user-img"
+                                                                      class="img-circle"> <span>Hritik Roshan<small
+                                            class="text-success">online</small></span></a>
+                                </li>
+                                <li>
+                                    <a href="javascript:void(0)"><img src="../assets/images/users/8.jpg" alt="user-img"
+                                                                      class="img-circle"> <span>Pwandeep rajan <small
+                                            class="text-success">online</small></span></a>
+                                </li>
+                                <li class="p-20"></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- .chat-left-panel -->
+                    <!-- .chat-right-panel -->{% endcomment %}
+                {#                    <div class="chat-right-aside">#}
+                <div class="chat-main-header">
+                    <div class="p-3 b-b">
+                        <h4 class="box-title normal-h4">
+                            نظرات كاربران
+                        </h4>
+                    </div>
+                </div>
+                <div class="chat-rbox" style="height: 600px;">
+                    <ul class="chat-list p-3">
+                        <!--chat Row -->
+                        <li>
+                            <div class="chat-img">
+                                <img src="{% static 'doctorhub/assets/images/users/1.jpg' %}"
+                                     alt="user"/>
+                            </div>
+                            <div class="chat-content">
+                                <h5>James Anderson</h5>
+                                <div class="box bg-light-info">Lorem Ipsum is simply dummy text of the printing
+                                    & type setting industry.
+                                </div>
+                                <div class="chat-time">10:56 am</div>
+                            </div>
+                        </li>
+                        <!--chat Row -->
+                        <li>
+                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/2.jpg' %}"
+                                                       alt="user"/></div>
+                            <div class="chat-content">
+                                <h5>Bianca Doe</h5>
+                                <div class="box bg-light-info">It’s Great opportunity to work.</div>
+                                <div class="chat-time">10:57 am</div>
+                            </div>
+                        </li>
+                        <!--chat Row -->
+                        <li>
+                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/3.jpg' %}"
+                                                       alt="user"/></div>
+                            <div class="chat-content">
+                                <h5>Angelina Rhodes</h5>
+                                <div class="box bg-light-info">Well we have good budget for the project</div>
+                                <div class="chat-time">11:00 am</div>
+                            </div>
+                        </li>
+                        <!--chat Row -->
+                        <li>
+                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/3.jpg' %}"
+                                                       alt="user"/></div>
+                            <div class="chat-content">
+                                <h5>Angelina Rhodes</h5>
+                                <div class="box bg-light-info">Well we have good budget for the project</div>
+                                <div class="chat-time">11:00 am</div>
+                            </div>
+                        </li>
+                        <!--chat Row -->
+                        <li>
+                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/3.jpg' %}"
+                                                       alt="user"/></div>
+                            <div class="chat-content">
+                                <h5>Angelina Rhodes</h5>
+                                <div class="box bg-light-info">Well we have good budget for the project</div>
+                                <div class="chat-time">11:00 am</div>
+                            </div>
+                        </li>
+                        <!--chat Row -->
+                        <li>
+                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/3.jpg' %}"
+                                                       alt="user"/></div>
+                            <div class="chat-content">
+                                <h5>Angelina Rhodes</h5>
+                                <div class="box bg-light-info">Well we have good budget for the project</div>
+                                <div class="chat-time">11:00 am</div>
+                            </div>
+                        </li>
+                        <!--chat Row -->
+                        <li>
+                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/3.jpg' %}"
+                                                       alt="user"/></div>
+                            <div class="chat-content">
+                                <h5>Angelina Rhodes</h5>
+                                <div class="box bg-light-info">Well we have good budget for the project</div>
+                                <div class="chat-time">11:00 am</div>
+                            </div>
+                        </li>
+                        <!--chat Row -->
+                        <li>
+                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/3.jpg' %}"
+                                                       alt="user"/></div>
+                            <div class="chat-content">
+                                <h5>Angelina Rhodes</h5>
+                                <div class="box bg-light-info">Well we have good budget for the project</div>
+                                <div class="chat-time">11:00 am</div>
+                            </div>
+                        </li>
+                        <!--chat Row -->
+                        <li>
+                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/3.jpg' %}"
+                                                       alt="user"/></div>
+                            <div class="chat-content">
+                                <h5>Angelina Rhodes</h5>
+                                <div class="box bg-light-info">Well we have good budget for the project</div>
+                                <div class="chat-time">11:00 am</div>
+                            </div>
+                        </li>
+                        <!--chat Row -->
+                        <li>
+                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/3.jpg' %}"
+                                                       alt="user"/></div>
+                            <div class="chat-content">
+                                <h5>Angelina Rhodes</h5>
+                                <div class="box bg-light-info">Well we have good budget for the project</div>
+                                <div class="chat-time">11:00 am</div>
+                            </div>
+                        </li>
+                        <!--chat Row -->
+                    </ul>
+                </div>
+                <div class="card-body border-top">
+                    <div class="row">
+                        <div class="col-8">
+                                    <textarea placeholder="Type your message here"
+                                              class="form-control border-0"></textarea>
+                        </div>
+                        <div class="col-4 text-right">
+                            <button type="button" class="btn btn-success btn-circle btn-lg"><i
+                                    class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+                {#                    </div>#}
+                <!-- .chat-right-panel -->
+            </div>
+            <!-- /.chat-row -->
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>

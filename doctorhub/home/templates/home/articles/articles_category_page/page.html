@@ -1,0 +1,76 @@
+{% load wagtailimages_tags %}
+{% load wagtailcore_tags %}
+{% load text_processing %}
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            {% image page.category.horizontal_image fill-1000x250-c100 as category_img %}
+            <img class="card-img-top img-responsive" src="{{ category_img.url }}"
+                 alt="{{ category_img.alt }}">
+            <div class="card-body text-center">
+                <h4 class="card-text normal-h4"
+                    style="padding-left: 15%; padding-right: 15%; padding-top: 5%; padding-bottom: 5%;">
+                    {{ page.category.farsi_description }}
+                </h4>
+                <br>
+                <br>
+                <div class="row">
+                    <div class="col-lg-2">
+
+                    </div>
+                    <div class="col-lg-8">
+                        {% for article_row in page.get_row_articles %}
+                            <div class="row">
+                                <div class="col-12 m-t-30">
+                                    <div class="card-deck">
+                                        {% for article_page in article_row %}
+                                            <div class="card bg-inverse">
+                                                <a href="{{ article_page.get_url }}" style="padding: 3%;">
+                                                    {% image article_page.specific.image fill-1000x550-c100 as article_img %}
+                                                    <img class="card-img-top img-responsive" src="{{ article_img.url }}"
+                                                         alt="{{ article_img.alt }}">
+                                                </a>
+
+                                                <div class="card-body text-center">
+                                                    <h4 class="card-title normal-h4" style="height: 60px; overflow-y: hidden;">
+                                                        {{ article_page.title|truncatechars:70 }}
+                                                    </h4>
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <div style="height: 300px; padding: 10% 5% 5% 5%; overflow-y: hidden;">
+                                                                <p class="normal-p">
+                                                                    {{ article_page.specific.article_summary|html_to_str|truncatechars:250 }}
+                                                                </p>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <a href="{{ article_page.get_url }}"
+                                                               class="btn btn-lg btn-outline-success normal-h4">
+                                                                خواندن مقاله
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-lg-2">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

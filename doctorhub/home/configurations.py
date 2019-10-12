@@ -1,0 +1,3 @@
+RICHTEXT_FEATURES = [
+    'link'
+]

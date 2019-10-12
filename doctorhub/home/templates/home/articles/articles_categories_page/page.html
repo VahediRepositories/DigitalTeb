@@ -1,0 +1,56 @@
+{% load wagtailimages_tags %}
+
+<div class="row">
+    <div class="col-lg-2">
+
+    </div>
+    <div class="col-lg-8">
+        {% for category_row in page.get_row_categories %}
+            <div class="row">
+                <div class="col-12 m-t-30">
+                    <div class="card-deck">
+                        {% for category_page in category_row %}
+                            <div class="card">
+                                {% with category=category_page.specific.category %}
+                                    <a href="{{ category_page.get_url }}">
+                                        {% image category.horizontal_image fill-1000x550-c100 as category_img %}
+                                        <img class="card-img-top img-responsive" src="{{ category_img.url }}"
+                                             alt="{{ category_img.alt }}">
+                                    </a>
+
+                                    <div class="card-body text-center">
+                                        <h4 class="card-title normal-h4">
+                                            {{ category.farsi_name }}
+                                        </h4>
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <div style="height: 300px; padding: 10% 5% 5% 5%; overflow-y: hidden;">
+                                                    <p class="normal-p">
+                                                        {{ category.farsi_description|truncatechars:250 }}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-12">
+                                                <a href="{{ category_page.get_url }}"
+                                                   class="btn btn-lg btn-outline-success normal-h4">
+                                                    مشاهده ى مقالات
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                {% endwith %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <div class="col-lg-2">
+
+    </div>
+</div>
