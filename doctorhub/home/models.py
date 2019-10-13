@@ -307,7 +307,7 @@ class ArticlePage(MetadataPageMixin, Page):
         super().clean()
         if not self.id:
             self.set_uuid4()
-            self.slug = 'type1-' + self.uuid4
+            self.slug = 'article-' + self.uuid4
         self.title = text_processing.html_to_str(self.article_title)
         self.search_image = self.image
 
