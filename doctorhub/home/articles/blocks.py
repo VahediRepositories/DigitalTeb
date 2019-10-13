@@ -5,13 +5,6 @@ from .. import configurations
 from ..videos.blocks import MediaChooserBlock
 
 
-class ParagraphBlock(blocks.StructBlock):
-    paragraph = blocks.RichTextBlock(
-        features=configurations.RICHTEXT_FEATURES,
-        help_text='It has to start with a farsi word'
-    )
-
-
 class ImageParagraphBlock(blocks.StructBlock):
     image = ImageChooserBlock(help_text='high quality image')
     paragraph = blocks.RichTextBlock(
@@ -29,33 +22,6 @@ class VideoParagraphBlock(blocks.StructBlock):
         required=False,
         help_text='It has to start with a farsi word'
     )
-
-
-class LinkableParagraphBlock(blocks.StructBlock):
-    title = blocks.RichTextBlock(
-        features=[],
-        help_text='It has to start with a farsi word'
-    )
-    paragraph = blocks.RichTextBlock(
-        features=configurations.RICHTEXT_FEATURES,
-        help_text='It has to start with a farsi word'
-    )
-
-
-class LinkableImageParagraphBlock(blocks.StructBlock):
-    title = blocks.RichTextBlock(
-        features=[],
-        help_text='It has to start with a farsi word'
-    )
-    image = ImageChooserBlock(help_text='high quality image')
-    paragraph = blocks.RichTextBlock(
-        features=configurations.RICHTEXT_FEATURES,
-        help_text='It has to start with a farsi word'
-    )
-
-
-class HorizontalImageBlock(blocks.StructBlock):
-    horizontal_image = ImageChooserBlock(help_text='high quality horizontal image')
 
 
 class HorizontalImageParagraphBlock(blocks.StructBlock):

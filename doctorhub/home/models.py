@@ -7,7 +7,6 @@ from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalManyToManyField, ParentalKey
 from taggit.models import TaggedItemBase
 from wagtail.admin.edit_handlers import MultiFieldPanel, StreamFieldPanel, RichTextFieldPanel
-from wagtail.api import APIField
 from wagtail.core.fields import StreamField, RichTextField
 from wagtail.core.models import Page
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
