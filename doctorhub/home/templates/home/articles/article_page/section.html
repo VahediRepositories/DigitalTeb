@@ -1,0 +1,112 @@
+{% load wagtailimages_tags %}
+{% load wagtailcore_tags %}
+{% load text_processing %}
+
+<section style="padding-top: 5%; padding-right: 5%; padding-left: 5%; padding-bottom: 0%;">
+    {% if section.value.title %}
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="normal-h2 text-success"
+                    id="{{ section.value.title.source|html_to_str|replace_white_space_with_underscore }}">
+                    <b>
+                        {{ section.value.title.source|html_to_str }}
+                    </b>
+                </h2>
+            </div>
+        </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-md-12">
+            {% for item in section.value.content %}
+                <div class="row" style="padding-top: 5%; padding-left: 2%; padding-right: 2%;">
+                    {% if item.block_type == 'text' %}
+                        <div class="col-md-12 normal-p">
+                            {{ item.value|richtext }}
+                        </div>
+                    {% elif item.block_type == 'UL' %}
+                        <div class="col-md-12 normal-p">
+                            {{ item.value.paragraph|richtext }}
+                            <ul>
+                                {% for item in item.value.items %}
+                                    <li>
+                                        {{ item }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% elif item.block_type == 'OL' %}
+                        <div class="col-md-12 normal-p">
+                            {{ item.value.paragraph|richtext }}
+                            <ol>
+                                {% for item in item.value.items %}
+                                    <li>
+                                        {{ item }}
+                                    </li>
+                                {% endfor %}
+                            </ol>
+                        </div>
+                    {% elif item.block_type == 'image_and_text_row' %}
+                        <div class="col-md-6 normal-p">
+                            {{ item.value.paragraph|richtext }}
+                        </div>
+                        <div class="col-md-1"></div>
+                        <div class="col-md-5" style="padding-right: 5%; padding-left: 5%;">
+                            {% image item.value.image fill-1000x1000 as image %}
+                            <img src="{{ image.url }}"
+                                 class="img-thumbnail img-responsive"
+                                 alt="{{ image.alt }}">
+                        </div>
+                    {% elif item.block_type == 'image' %}
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-3"></div>
+                                <div class="col-md-6">
+                                    {% image item.value.image original as image %}
+                                    <img src="{{ image.url }}"
+                                         alt="{{ image.alt }}"
+                                         style="width: 100%; height: 100%;"
+                                         class="img-thumbnail img-responsive">
+                                </div>
+                                <div class="col-md-3"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-10 normal-p text-center">
+                                    {{ item.value.paragraph|richtext }}
+                                </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                        </div>
+                    {% elif item.block_type == 'video' %}
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-3"></div>
+                                <div class="col-md-6">
+                                    <video width="100%"
+                                           height="100%"
+                                            {% if item.value.video.thumbnail %}
+                                           poster="{{ item.value.video.thumbnail.url }}"
+                                            {% endif %}
+                                           controls>
+                                        <source src="{{ item.value.video.file.url }}"
+                                                type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                                <div class="col-md-3"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-1"></div>
+                                <div class="col-md-10 normal-p text-center">
+                                    {{ item.value.paragraph|richtext }}
+                                </div>
+                                <div class="col-md-1"></div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>

@@ -3,23 +3,32 @@
 {% load staticfiles %}
 {% load text_processing %}
 
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-9 text-center">
+        <h2>
+            <h2 class="normal-h2">
+                {{ page.title }}
+            </h2>
+        </h2>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-9">
+        {% image page.image fill-4000x2000 as image %}
+        <img src="{{ image.url }}"
+             style="width: 100%; height: 100%;"
+             alt="{{ image.alt }}">
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
 <div class="row row-flex">
     <div class="col-md-1"></div>
-    <div class="col-md-3">
-        <div class="card text-center" style="height: 100%;">
-            {% image page.image fill-1000x1000 as image %}
-            <img src="{{ image.url }}"
-                 class="card-img-top img-responsive"
-                 alt="{{ image.alt }}">
-            <div class="card-body">
-                <h2 class="normal-h2 card-text" style="float: bottom;">
-                    {{ page.title }}
-                </h2>
-            </div>
-
-        </div>
-    </div>
-    <div class="col-md-6">
+    <div class="col-md-9">
         <div class="card"
              style="height: 100%;">
             <div class="card-body">

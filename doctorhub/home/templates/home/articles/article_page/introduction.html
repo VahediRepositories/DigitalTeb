@@ -1,0 +1,19 @@
+{% load wagtailcore_tags %}
+
+{% if page.article_introduction %}
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-9">
+            <div class="card" style="height: 100%;">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 normal-p">
+                            {{ page.article_introduction|richtext }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2"></div>
+    </div>
+{% endif %}
