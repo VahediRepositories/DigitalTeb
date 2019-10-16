@@ -24,8 +24,8 @@ class VideoParagraphBlock(blocks.StructBlock):
     )
 
 
-class HorizontalImageParagraphBlock(blocks.StructBlock):
-    horizontal_image = ImageChooserBlock(help_text='high quality horizontal image')
+class ImageCaptionBlock(blocks.StructBlock):
+    image = ImageChooserBlock(help_text='high quality image')
     paragraph = blocks.RichTextBlock(
         features=configurations.RICHTEXT_FEATURES,
         required=False,
@@ -62,7 +62,7 @@ class SectionBlock(blocks.StructBlock):
             )),
             ('list', ListBlock(icon='list-ul')),
             ('image_and_text_row', ImageParagraphBlock(icon='horizontalrule')),
-            ('image', HorizontalImageParagraphBlock(icon='image')),
+            ('image', ImageCaptionBlock(icon='image')),
             ('video', VideoParagraphBlock(icon='media')),
         ], icon='cogs',
     )
