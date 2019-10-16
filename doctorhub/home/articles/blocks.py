@@ -50,6 +50,7 @@ class ListBlock(blocks.StructBlock):
 class SectionBlock(blocks.StructBlock):
     title = blocks.RichTextBlock(
         features=[],
+        required=False,
         help_text='It has to start with a farsi word'
     )
     content = blocks.StreamBlock(

@@ -38,11 +38,13 @@
                                 <br>
                                 <ul>
                                     {% for section in page.sections %}
-                                        <li>
-                                            <a href="#{{ section.value.title.source|html_to_str|replace_white_space_with_underscore }}">
-                                                {{ section.value.title.source|html_to_str }}
-                                            </a>
-                                        </li>
+                                        {% if section.value.title %}
+                                            <li>
+                                                <a href="#{{ section.value.title.source|html_to_str|replace_white_space_with_underscore }}">
+                                                    {{ section.value.title.source|html_to_str }}
+                                                </a>
+                                            </li>
+                                        {% endif %}
                                     {% endfor %}
                                 </ul>
                             {% endif %}
@@ -79,23 +81,23 @@
         <div class="card" style="height: 100%;">
             <div class="card-body">
                 {% for section in page.sections %}
-                    <section style="padding: 5%;">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <h2 class="normal-h2 text-success"
-                                    id="{{ section.value.title.source|html_to_str|replace_white_space_with_underscore }}">
-                                    <b>
-                                        {{ section.value.title.source|html_to_str }}
-                                    </b>
-                                </h2>
+                    <section style="padding-top: 5%; padding-right: 5%; padding-left: 5%; padding-bottom: 0%;">
+                        {% if section.value.title %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h2 class="normal-h2 text-success"
+                                        id="{{ section.value.title.source|html_to_str|replace_white_space_with_underscore }}">
+                                        <b>
+                                            {{ section.value.title.source|html_to_str }}
+                                        </b>
+                                    </h2>
+                                </div>
                             </div>
-                        </div>
-                        <br>
-                        <br>
+                        {% endif %}
                         <div class="row">
                             <div class="col-md-12">
                                 {% for item in section.value.content %}
-                                    <div class="row" style="padding-top: 5%; padding-bottom: 5%; padding-left: 2%; padding-right: 2%;">
+                                    <div class="row" style="padding-top: 5%; padding-left: 2%; padding-right: 2%;">
                                         {% if item.block_type == 'text' %}
                                             <div class="col-md-12 normal-p">
                                                 {{ item.value|richtext }}
@@ -127,9 +129,10 @@
                                                 <div class="row">
                                                     <div class="col-md-3"></div>
                                                     <div class="col-md-6">
-                                                        {% image item.value.horizontal_image fill-2000x1000 as image %}
+                                                        {% image item.value.horizontal_image original as image %}
                                                         <img src="{{ image.url }}"
                                                              alt="{{ image.alt }}"
+                                                             style="width: 100%; height: 100%;"
                                                              class="img-thumbnail img-responsive">
                                                     </div>
                                                     <div class="col-md-3"></div>
