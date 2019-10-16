@@ -12,7 +12,6 @@ from wagtail.core.models import Page
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtailmetadata.models import MetadataPageMixin
 
-from .articles.webmd.models import *
 from .articles.blocks import *
 from .articles.models import *
 from .articles.serializers import *
@@ -250,7 +249,6 @@ class WebMDBlogPostEnglishTag(TaggedItemBase):
 
 class WebMDBlogPost(DigitalTebPageMixin, MetadataPageMixin, Page):
     categories = ParentalManyToManyField(ArticleCategory, blank=False)
-    topics = ParentalManyToManyField(Topic, blank=False)
     farsi_tags = ClusterTaggableManager(
         through=WebMDBlogPostFarsiTag, blank=True, related_name='webmd_farsi_tags'
     )
@@ -309,11 +307,6 @@ class WebMDBlogPost(DigitalTebPageMixin, MetadataPageMixin, Page):
             [
                 FieldPanel('english_tags'),
             ], heading='English Tags', classname='collapsible collapsed'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('topics', widget=forms.CheckboxSelectMultiple),
-            ], heading='Topics', classname="collapsible collapsed"
         ),
     ]
     promote_panels = []
