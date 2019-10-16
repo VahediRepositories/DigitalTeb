@@ -108,10 +108,19 @@ class ArticleTag(TaggedItemBase):
     )
 
 
+class ArticleEnglishTag(TaggedItemBase):
+    content_object = ParentalKey(
+        'ArticlePage', related_name='article_english_tags', on_delete=models.CASCADE
+    )
+
+
 class ArticlePage(MetadataPageMixin, Page):
     categories = ParentalManyToManyField(ArticleCategory, blank=False)
     tags = ClusterTaggableManager(
-        through=ArticleTag, blank=True
+        through=ArticleTag, blank=True, related_name='farsi_tags'
+    )
+    english_tags = ClusterTaggableManager(
+        through=ArticleEnglishTag, blank=True, related_name='english_tags'
     )
     image = models.ForeignKey(
         'wagtailimages.Image',
@@ -146,15 +155,26 @@ class ArticlePage(MetadataPageMixin, Page):
                 RichTextFieldPanel('article_title'),
                 ImageChooserPanel('image'),
                 FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
-                FieldPanel('tags'),
-            ], heading='Details', classname="collapsible collapsed"),
+            ], heading='Details', classname="collapsible collapsed"
+        ),
         MultiFieldPanel(
             [
                 RichTextFieldPanel('article_summary'),
                 RichTextFieldPanel('article_introduction'),
                 StreamFieldPanel('sections'),
                 RichTextFieldPanel('article_conclusion'),
-            ], heading='Content', classname="collapsible collapsed"),
+            ], heading='Content', classname="collapsible collapsed"
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('tags'),
+            ], heading='Tags', classname='collapsible collapsed'
+        ),
+        MultiFieldPanel(
+            [
+                FieldPanel('english_tags'),
+            ], heading='English Tags', classname='collapsible collapsed'
+        ),
     ]
     promote_panels = []
     settings_panels = []
