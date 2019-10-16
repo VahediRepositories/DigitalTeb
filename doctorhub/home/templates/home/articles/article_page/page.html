@@ -102,7 +102,7 @@
                                             <div class="col-md-12 normal-p">
                                                 {{ item.value|richtext }}
                                             </div>
-                                        {% elif item.block_type == 'list' %}
+                                        {% elif item.block_type == 'UL' %}
                                             <div class="col-md-12 normal-p">
                                                 {{ item.value.paragraph|richtext }}
                                                 <ul>
@@ -112,6 +112,17 @@
                                                         </li>
                                                     {% endfor %}
                                                 </ul>
+                                            </div>
+                                        {% elif item.block_type == 'OL' %}
+                                            <div class="col-md-12 normal-p">
+                                                {{ item.value.paragraph|richtext }}
+                                                <ol>
+                                                    {% for item in item.value.items %}
+                                                        <li>
+                                                            {{ item }}
+                                                        </li>
+                                                    {% endfor %}
+                                                </ol>
                                             </div>
                                         {% elif item.block_type == 'image_and_text_row' %}
                                             <div class="col-md-6 normal-p">

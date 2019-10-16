@@ -60,7 +60,8 @@ class SectionBlock(blocks.StructBlock):
                 icon='doc-full',
                 help_text='It has to start with a farsi word'
             )),
-            ('list', ListBlock(icon='list-ul')),
+            ('UL', ListBlock(icon='list-ul')),
+            ('OL', ListBlock(icon='list-ol')),
             ('image_and_text_row', ImageParagraphBlock(icon='horizontalrule')),
             ('image', ImageCaptionBlock(icon='image')),
             ('video', VideoParagraphBlock(icon='media')),
