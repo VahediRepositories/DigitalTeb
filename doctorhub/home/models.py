@@ -228,6 +228,10 @@ class ArticlePage(DigitalTebPageMixin, MetadataPageMixin, Page):
             uuid4 = uuid.uuid4()
         self.uuid4 = str(uuid4)
 
+    @property
+    def farsi_tags(self):
+        return self.tags
+
     parent_page_types = ['home.ArticlesCategoryPage']
     subpage_types = []
 
