@@ -94,9 +94,10 @@ class ArticlesCategoryPage(
 
     def clean(self):
         super().clean()
-        self.title = self.category.farsi_name
-        self.slug = slugify(self.category.english_name)
-        self.search_image = self.category.horizontal_image
+        if self.category:
+            self.title = self.category.farsi_name
+            self.slug = slugify(self.category.english_name)
+            self.search_image = self.category.horizontal_image
 
     parent_page_types = [
         'home.ArticlesCategoriesPage',
