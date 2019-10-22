@@ -87,7 +87,7 @@ class ArticlesCategoryPage(
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         children = self.get_children().live().public()
-        paginator = Paginator(children, 2)
+        paginator = Paginator(children, 5)
         page = request.GET.get('page')
         try:
             posts = paginator.page(page)
