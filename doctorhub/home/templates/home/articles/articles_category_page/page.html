@@ -20,7 +20,7 @@
 
                     </div>
                     <div class="col-lg-8">
-                        {% for article_row in page.get_row_articles %}
+                        {% for article_row in row_articles %}
                             <div class="row">
                                 <div class="col-12 m-t-30">
                                     <div class="card-deck">
@@ -68,6 +68,43 @@
 
                     </div>
                 </div>
+                {% if posts.paginator.num_pages > 1 %}
+                    <div class="row">
+                        <div class="col-lg-2">
+
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="btn-toolbar">
+                                <div class="btn-group">
+                                    {% if posts.has_previous %}
+                                        <a href="?page={{ posts.previous_page_number }}" class="btn btn-secondary">
+                                            <span>&laquo;</span>
+                                        </a>
+                                    {% endif %}
+                                    {% for page_num in posts.paginator.page_range %}
+                                        {% if page_num == posts.number %}
+                                            <a class="btn btn-secondary disabled">
+                                                {{ page_num }}
+                                            </a>
+                                        {% else %}
+                                            <a href="?page={{ page_num }}" class="btn btn-secondary">
+                                                {{ page_num }}
+                                            </a>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if posts.has_next %}
+                                        <a href="?page={{ posts.next_page_number }}" class="btn btn-secondary">
+                                            <span>&raquo;</span>
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+
+                        </div>
+                    </div>
+                {% endif %}
             </div>
         </div>
     </div>
