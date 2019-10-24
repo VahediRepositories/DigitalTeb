@@ -37,7 +37,7 @@
                         <div class="normal-p"
                              style="padding: 10%;">
                             {{ page.article_summary|richtext }}
-                            {% if page.sections %}
+                            {% if page.has_sections_with_title %}
                                 <br>
                                 <br>
                                 <b>

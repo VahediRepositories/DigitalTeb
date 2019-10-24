@@ -55,7 +55,7 @@ class ArticlesCategoriesPage(
         self.slug = 'articles'
 
     def get_row_categories(self):
-        children = self.get_children().live()
+        children = self.get_children().live().public()
         return list_processing.list_to_sublists_of_size_n(children, 2)
 
     content_panels = []
@@ -214,6 +214,11 @@ class ArticlePage(DigitalTebPageMixin, MetadataPageMixin, Page):
     #     APIField('paragraphs', serializer=ParagraphsField()),
     # ]
 
+    def has_sections_with_title(self):
+        for section in self.sections:
+            if section.value['title']:
+                return True
+
     def clean(self):
         super().clean()
         if not self.id:
@@ -333,6 +338,11 @@ class WebMDBlogPost(DigitalTebPageMixin, MetadataPageMixin, Page):
     ]
     promote_panels = []
     settings_panels = []
+
+    def has_sections_with_title(self):
+        for section in self.sections:
+            if section.value['title']:
+                return True
 
     def clean(self):
         super().clean()
