@@ -14,22 +14,7 @@
 
 {% block breadcrumb %}
 
-    <li class="breadcrumb-item normal-p">
-        <a href="{{ page.get_parent.get_url }}">
-            {{ page.get_parent.specific.category.farsi_name }}
-        </a>
-    </li>
-
-    <li class="breadcrumb-item normal-p">
-        <a href="{{ page.get_parent.get_parent.get_url }}">
-    مقاله ها
-        </a>
-    </li>
-    <li class="breadcrumb-item normal-p">
-        <a href="{{ page.get_home_page.get_url }}">
-            خانه
-        </a>
-    </li>
+    {% include 'home/articles/article_page/breadcrump.html' %}
 
 {% endblock %}
 
