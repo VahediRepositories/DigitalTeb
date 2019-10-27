@@ -13,7 +13,7 @@ class ImageParagraphBlock(blocks.StructBlock):
     )
 
 
-class VideoParagraphBlock(blocks.StructBlock):
+class VideoCaptionBlock(blocks.StructBlock):
     video = MediaChooserBlock(
         required=True, help_text='Choose an mp4 video'
     )
@@ -64,6 +64,6 @@ class SectionBlock(blocks.StructBlock):
             ('OL', ListBlock(icon='list-ol')),
             ('image_and_text_row', ImageParagraphBlock(icon='horizontalrule')),
             ('image', ImageCaptionBlock(icon='image')),
-            ('video', VideoParagraphBlock(icon='media')),
+            ('video', VideoCaptionBlock(icon='media')),
         ], icon='cogs',
     )

@@ -29,7 +29,7 @@
 <div class="row row-flex">
     <div class="col-md-1"></div>
     <div class="col-md-9">
-        <div class="card"
+        {% comment %}<div class="card"
              style="height: 100%;">
             <div class="card-body">
                 <div class="row">
@@ -61,7 +61,8 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>{% endcomment %}
+        {% include 'home/articles/article_page/summary.html' %}
     </div>
     <div class="col-md-2"></div>
 </div>

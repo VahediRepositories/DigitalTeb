@@ -173,10 +173,13 @@ class Article(DigitalTebPageMixin, MetadataPageMixin, Page):
             uuid4 = uuid.uuid4()
         self.uuid4 = str(uuid4)
 
-    def has_sections_with_title(self):
+    @property
+    def sections_with_title(self):
+        sections = []
         for section in self.sections:
             if section.value['title']:
-                return True
+                sections.append(section)
+        return sections
 
     def clean(self):
         super().clean()

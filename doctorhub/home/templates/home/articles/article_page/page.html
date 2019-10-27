@@ -20,39 +20,7 @@
         </div>
     </div>
     <div class="col-md-6">
-        <div class="card"
-             style="height: 100%;">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="normal-p"
-                             style="padding: 10%;">
-                            {{ page.article_summary|richtext }}
-                            {% if page.has_sections_with_title %}
-                                <br>
-                                <br>
-                                <b>
-                                    در اين مقاله ميخوانيد:
-                                </b>
-                                <br>
-                                <br>
-                                <ul>
-                                    {% for section in page.sections %}
-                                        {% if section.value.title %}
-                                            <li>
-                                                <a href="#{{ section.value.title.source|html_to_str|replace_white_space_with_underscore }}">
-                                                    {{ section.value.title.source|html_to_str }}
-                                                </a>
-                                            </li>
-                                        {% endif %}
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% include 'home/articles/article_page/summary.html' %}
     </div>
     <div class="col-md-2"></div>
 </div>
