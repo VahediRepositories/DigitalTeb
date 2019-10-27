@@ -192,11 +192,11 @@ class Article(DigitalTebPageMixin, MetadataPageMixin, Page):
 
     def serve(self, request, *args, **kwargs):
         self.search_description = self.title
-        if self.sections:
+        if self.sections_with_title:
             self.search_description += ' شامل ' + text_processing.str_list_to_comma_separated(
                 [
                     text_processing.html_to_str(section.value['title'].source)
-                    for section in self.sections
+                    for section in self.sections_with_title
                 ]
             )
         self.seo_title = 'وبلاگ - {} - {}'.format(
