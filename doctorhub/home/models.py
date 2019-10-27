@@ -167,12 +167,6 @@ class Article(DigitalTebPageMixin, MetadataPageMixin, Page):
 
     uuid4 = models.TextField(default='')
 
-    def set_uuid4(self):
-        uuid4 = uuid.uuid4()
-        while Article.objects.filter(uuid4=uuid4).exists():
-            uuid4 = uuid.uuid4()
-        self.uuid4 = str(uuid4)
-
     @property
     def sections_with_title(self):
         sections = []
@@ -207,9 +201,9 @@ class Article(DigitalTebPageMixin, MetadataPageMixin, Page):
 
     class Meta:
         abstract = True
-        # ordering = [
-        #     '-first_published_at'
-        # ]
+        ordering = [
+            '-first_published_at'
+        ]
 
 
 class ArticlePage(Article):
@@ -267,6 +261,12 @@ class ArticlePage(Article):
     #     APIField('article_conclusion'),
     #     APIField('paragraphs', serializer=ParagraphsField()),
     # ]
+
+    def set_uuid4(self):
+        uuid4 = uuid.uuid4()
+        while ArticlePage.objects.filter(uuid4=uuid4).exists():
+            uuid4 = uuid.uuid4()
+        self.uuid4 = str(uuid4)
 
     @property
     def farsi_tags(self):
@@ -334,3 +334,9 @@ class WebMDBlogPost(Article):
 
     parent_page_types = ['home.ArticlesCategoryPage']
     subpage_types = []
+
+    def set_uuid4(self):
+        uuid4 = uuid.uuid4()
+        while WebMDBlogPost.objects.filter(uuid4=uuid4).exists():
+            uuid4 = uuid.uuid4()
+        self.uuid4 = str(uuid4)
