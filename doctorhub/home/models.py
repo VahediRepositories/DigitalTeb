@@ -162,7 +162,7 @@ class Article(DigitalTebPageMixin, MetadataPageMixin, Page):
     sections = StreamField(
         [
             ('section', SectionBlock()),
-        ], blank=True
+        ], blank=False
     )
 
     uuid4 = models.TextField(default='')
