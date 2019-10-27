@@ -26,6 +26,10 @@ class DigitalTebPageMixin:
     def get_home_page():
         return HomePage.objects.first()
 
+    @staticmethod
+    def get_blogs_page():
+        return ArticlesCategoriesPage.objects.first()
+
 
 class HomePage(DigitalTebPageMixin, Page):
     subpage_types = [
@@ -33,7 +37,8 @@ class HomePage(DigitalTebPageMixin, Page):
     ]
 
     def serve(self, request, *args, **kwargs):
-        return HttpResponseRedirect('/articles/')
+        blogs_page = self.get_blogs_page()
+        return HttpResponseRedirect('/{}/'.format(blogs_page.slug))
 
 
 class ArticlesCategoriesPage(
