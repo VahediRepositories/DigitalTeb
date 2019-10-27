@@ -1,19 +1,5 @@
-{% load wagtailcore_tags %}
+{% with paragraph=page.article_conclusion %}
 
-{% if page.article_conclusion %}
-    <div class="row">
-        <div class="col-md-1"></div>
-        <div class="col-md-9">
-            <div class="card" style="height: 100%;">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-12 normal-p">
-                            {{ page.article_conclusion|richtext }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2"></div>
-    </div>
-{% endif %}
+    {% include 'home/articles/article_page/text_row.html' %}
+
+{% endwith %}
