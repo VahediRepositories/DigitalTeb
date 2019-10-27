@@ -43,16 +43,16 @@ class ArticlesCategoriesPage(
     subpage_types = ['home.ArticlesCategoryPage']
 
     def serve(self, request, *args, **kwargs):
-        children = self.get_children().live()
+        children = self.get_children().live().public()
         categories = [page.specific.category.farsi_name for page in children]
         self.search_description = 'مقالات ' + text_processing.str_list_to_comma_separated(categories)
-        self.seo_title = 'مقالات'
+        self.seo_title = 'وبلاگ'
         return super().serve(request, *args, **kwargs)
 
     def clean(self):
         super().clean()
-        self.title = 'مقالات'
-        self.slug = 'articles'
+        self.title = 'وبلاگ'
+        self.slug = 'blogs'
 
     def get_row_categories(self):
         children = self.get_children().live().public()
@@ -103,7 +103,7 @@ class ArticlesCategoryPage(
         self.search_description = 'مقالات حوزه ى {}'.format(
             self.category.farsi_name
         )
-        self.seo_title = 'مقالات - {}'.format(
+        self.seo_title = 'وبلاگ - {}'.format(
             self.category.farsi_name
         )
         return super().serve(request, *args, **kwargs)
@@ -113,7 +113,7 @@ class ArticlesCategoryPage(
         if self.category:
             self.title = self.category.farsi_name
             self.slug = slugify(self.category.english_name)
-            self.search_image = self.category.horizontal_image
+            # self.search_image = self.category.horizontal_image
 
     parent_page_types = [
         'home.ArticlesCategoriesPage',
@@ -137,19 +137,7 @@ class ArticleEnglishTag(TaggedItemBase):
     )
 
 
-class ArticlePage(DigitalTebPageMixin, MetadataPageMixin, Page):
-    categories = ParentalManyToManyField(ArticleCategory, blank=False)
-    tags = ClusterTaggableManager(
-        through=ArticleTag, blank=True, related_name='farsi_tags'
-    )
-    english_tags = ClusterTaggableManager(
-        through=ArticleEnglishTag, blank=True, related_name='english_tags'
-    )
-    image = models.ForeignKey(
-        'wagtailimages.Image',
-        help_text='high quality image',
-        null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
-    )
+class Article(DigitalTebPageMixin, MetadataPageMixin, Page):
     article_title = RichTextField(
         features=[], blank=False, null=True,
         help_text='It has to start with a farsi word'
@@ -170,6 +158,64 @@ class ArticlePage(DigitalTebPageMixin, MetadataPageMixin, Page):
         [
             ('section', SectionBlock()),
         ], blank=True
+    )
+
+    uuid4 = models.TextField(default='')
+
+    def set_uuid4(self):
+        uuid4 = uuid.uuid4()
+        while Article.objects.filter(uuid4=uuid4).exists():
+            uuid4 = uuid.uuid4()
+        self.uuid4 = str(uuid4)
+
+    def has_sections_with_title(self):
+        for section in self.sections:
+            if section.value['title']:
+                return True
+
+    def clean(self):
+        super().clean()
+        if not self.id:
+            self.set_uuid4()
+            self.slug = 'article-' + self.uuid4
+        if self.article_title:
+            self.title = text_processing.html_to_str(self.article_title)
+        # self.search_image = self.image
+
+    def serve(self, request, *args, **kwargs):
+        self.search_description = self.title
+        if self.sections:
+            self.search_description += ' شامل ' + text_processing.str_list_to_comma_separated(
+                [
+                    text_processing.html_to_str(section.value['title'].source)
+                    for section in self.sections
+                ]
+            )
+        self.seo_title = 'وبلاگ - {} - {}'.format(
+            self.get_parent().specific.category.farsi_name,
+            self.title
+        )
+        return super().serve(request, *args, **kwargs)
+
+    class Meta:
+        abstract = True
+        ordering = [
+            '-first_published_at'
+        ]
+
+
+class ArticlePage(Article):
+    categories = ParentalManyToManyField(ArticleCategory, blank=False)
+    tags = ClusterTaggableManager(
+        through=ArticleTag, blank=True, related_name='farsi_tags'
+    )
+    english_tags = ClusterTaggableManager(
+        through=ArticleEnglishTag, blank=True, related_name='english_tags'
+    )
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        help_text='high quality image',
+        null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
     )
 
     content_panels = [
@@ -214,52 +260,12 @@ class ArticlePage(DigitalTebPageMixin, MetadataPageMixin, Page):
     #     APIField('paragraphs', serializer=ParagraphsField()),
     # ]
 
-    def has_sections_with_title(self):
-        for section in self.sections:
-            if section.value['title']:
-                return True
-
-    def clean(self):
-        super().clean()
-        if not self.id:
-            self.set_uuid4()
-            self.slug = 'article-' + self.uuid4
-        if self.article_title:
-            self.title = text_processing.html_to_str(self.article_title)
-        self.search_image = self.image
-
-    def serve(self, request, *args, **kwargs):
-        self.search_description = self.title + ' شامل ' + text_processing.str_list_to_comma_separated(
-            [
-                text_processing.html_to_str(section.value['title'].source)
-                for section in self.sections
-            ]
-        )
-        self.seo_title = 'مقالات - {} - {}'.format(
-            self.get_parent().specific.category.farsi_name,
-            self.title
-        )
-        return super().serve(request, *args, **kwargs)
-
-    uuid4 = models.TextField(default='')
-
-    def set_uuid4(self):
-        uuid4 = uuid.uuid4()
-        while ArticlePage.objects.filter(uuid4=uuid4).exists():
-            uuid4 = uuid.uuid4()
-        self.uuid4 = str(uuid4)
-
     @property
     def farsi_tags(self):
         return self.tags
 
     parent_page_types = ['home.ArticlesCategoryPage']
     subpage_types = []
-
-    class Meta:
-        ordering = [
-            '-first_published_at'
-        ]
 
 
 class WebMDBlogPostFarsiTag(TaggedItemBase):
@@ -274,7 +280,7 @@ class WebMDBlogPostEnglishTag(TaggedItemBase):
     )
 
 
-class WebMDBlogPost(DigitalTebPageMixin, MetadataPageMixin, Page):
+class WebMDBlogPost(Article):
     categories = ParentalManyToManyField(ArticleCategory, blank=False)
     farsi_tags = ClusterTaggableManager(
         through=WebMDBlogPostFarsiTag, blank=True, related_name='webmd_farsi_tags'
@@ -286,27 +292,6 @@ class WebMDBlogPost(DigitalTebPageMixin, MetadataPageMixin, Page):
         'wagtailimages.Image',
         help_text='high quality horizontal image',
         null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
-    )
-    article_title = RichTextField(
-        features=[], blank=False, null=True,
-        help_text='It has to start with a farsi word'
-    )
-    article_summary = RichTextField(
-        features=configurations.RICHTEXT_FEATURES, blank=False, null=True,
-        help_text='It has to start with a farsi word'
-    )
-    article_introduction = RichTextField(
-        features=configurations.RICHTEXT_FEATURES, blank=True, null=True,
-        help_text='It has to start with a farsi word'
-    )
-    article_conclusion = RichTextField(
-        features=configurations.RICHTEXT_FEATURES, blank=True, null=True,
-        help_text='It has to start with a farsi word'
-    )
-    sections = StreamField(
-        [
-            ('section', SectionBlock()),
-        ], blank=True
     )
 
     content_panels = [
@@ -339,45 +324,5 @@ class WebMDBlogPost(DigitalTebPageMixin, MetadataPageMixin, Page):
     promote_panels = []
     settings_panels = []
 
-    def has_sections_with_title(self):
-        for section in self.sections:
-            if section.value['title']:
-                return True
-
-    def clean(self):
-        super().clean()
-        if not self.id:
-            self.set_uuid4()
-            self.slug = 'webmd-article-' + self.uuid4
-        if self.article_title:
-            self.title = text_processing.html_to_str(self.article_title)
-        self.search_image = self.image
-
-    def serve(self, request, *args, **kwargs):
-        self.search_description = self.title + ' شامل ' + text_processing.str_list_to_comma_separated(
-            [
-                text_processing.html_to_str(section.value['title'].source)
-                for section in self.sections
-            ]
-        )
-        self.seo_title = 'مقالات - {} - {}'.format(
-            self.get_parent().specific.category.farsi_name,
-            self.title
-        )
-        return super().serve(request, *args, **kwargs)
-
-    uuid4 = models.TextField(default='')
-
-    def set_uuid4(self):
-        uuid4 = uuid.uuid4()
-        while ArticlePage.objects.filter(uuid4=uuid4).exists():
-            uuid4 = uuid.uuid4()
-        self.uuid4 = str(uuid4)
-
     parent_page_types = ['home.ArticlesCategoryPage']
     subpage_types = []
-
-    class Meta:
-        ordering = [
-            '-first_published_at'
-        ]
