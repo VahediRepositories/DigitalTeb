@@ -245,7 +245,7 @@ class ArticlePage(Article):
         MultiFieldPanel(
             [
                 FieldPanel('tags'),
-            ], heading='Tags', classname='collapsible collapsed'
+            ], heading='Farsi Tags', classname='collapsible collapsed'
         ),
         MultiFieldPanel(
             [
