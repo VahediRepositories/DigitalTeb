@@ -1,24 +1,28 @@
-<div class="row">
-    <div class="col-md-1"></div>
-    <div class="col-md-9">
-        <div class="card" style="padding: 5%;">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12 text-center">
-                        {% for tag in page.farsi_tags.all %}
-                            <a class="btn waves-effect waves-light btn-secondary normal-h4" style="margin-bottom: 1%;">
-                                {{ tag }}
-                            </a>
-                        {% endfor %}
-                        {% for tag in page.english_tags.all %}
-                            <a class="btn waves-effect waves-light btn-secondary normal-h4" style="margin-bottom: 1%;">
-                                {{ tag }}
-                            </a>
-                        {% endfor %}
+{% if page.farsi_tags.all or page.english_tags.all %}
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-9">
+            <div class="card" style="padding: 5%;">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            {% for tag in page.farsi_tags.all %}
+                                <a class="btn waves-effect waves-light btn-secondary normal-h4"
+                                   style="margin-bottom: 1%;">
+                                    {{ tag }}
+                                </a>
+                            {% endfor %}
+                            {% for tag in page.english_tags.all %}
+                                <a class="btn waves-effect waves-light btn-secondary normal-h4"
+                                   style="margin-bottom: 1%;">
+                                    {{ tag }}
+                                </a>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        <div class="col-md-2"></div>
     </div>
-    <div class="col-md-2"></div>
-</div>
+{% endif %}
