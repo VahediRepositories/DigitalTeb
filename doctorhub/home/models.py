@@ -215,7 +215,7 @@ class Article(DigitalTebPageMixin, MetadataPageMixin, Page):
 class ArticlePage(Article):
     categories = ParentalManyToManyField(ArticleCategory, blank=False)
     tags = ClusterTaggableManager(
-        through=ArticleTag, blank=True, related_name='farsi_tags'
+        through=ArticleTag, blank=False, related_name='farsi_tags'
     )
     english_tags = ClusterTaggableManager(
         through=ArticleEnglishTag, blank=True, related_name='english_tags'
@@ -291,7 +291,7 @@ class WebMDBlogPostEnglishTag(TaggedItemBase):
 class WebMDBlogPost(Article):
     categories = ParentalManyToManyField(ArticleCategory, blank=False)
     farsi_tags = ClusterTaggableManager(
-        through=WebMDBlogPostFarsiTag, blank=True, related_name='webmd_farsi_tags'
+        through=WebMDBlogPostFarsiTag, blank=False, related_name='webmd_farsi_tags'
     )
     english_tags = ClusterTaggableManager(
         through=WebMDBlogPostEnglishTag, blank=True, related_name='webmd_english_tags'
