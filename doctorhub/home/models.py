@@ -207,9 +207,9 @@ class Article(DigitalTebPageMixin, MetadataPageMixin, Page):
 
     class Meta:
         abstract = True
-        ordering = [
-            '-first_published_at'
-        ]
+        # ordering = [
+        #     '-first_published_at'
+        # ]
 
 
 class ArticlePage(Article):
