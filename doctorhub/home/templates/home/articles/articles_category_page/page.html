@@ -10,7 +10,7 @@
                  alt="{{ category_img.alt }}">
             <div class="card-body text-center">
                 <h4 class="card-text normal-h4"
-                    style="padding-left: 15%; padding-right: 15%; padding-top: 5%; padding-bottom: 5%;">
+                    style="padding: 5% 15%;">
                     {{ page.category.farsi_description }}
                 </h4>
                 <br>
@@ -21,47 +21,22 @@
                     </div>
                     <div class="col-lg-10">
                         {% for article_row in row_articles %}
-                            <div class="row">
-                                <div class="col-12 m-t-30">
-                                    <div class="card-deck">
-                                        {% for article_page in article_row %}
-                                            <div class="card bg-inverse">
-                                                <a href="{{ article_page.get_url }}" style="padding: 2% 2% 0px;">
-                                                    {% image article_page.specific.image fill-1000x550-c100 as article_img %}
-                                                    <img class="card-img-top img-responsive" src="{{ article_img.url }}"
-                                                         alt="{{ article_img.alt }}">
-                                                </a>
-
-                                                <div class="card-body text-center">
-                                                    <h4 class="card-title normal-h4" style="height: 60px; overflow-y: hidden;">
-                                                        {{ article_page.title|truncatechars:70 }}
-                                                    </h4>
-                                                    <div class="row">
-                                                        <div class="col-lg-12">
-                                                            <div style="height: 300px; padding: 3%; overflow-y: hidden;">
-                                                                <p class="normal-p">
-                                                                    {{ article_page.specific.article_summary|html_to_str|truncatechars:250 }}
-                                                                </p>
-                                                            </div>
-
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="row">
-                                                        <div class="col-lg-12">
-                                                            <a href="{{ article_page.get_url }}"
-                                                               class="btn btn-lg btn-outline-success normal-h4">
-                                                                خواندن مقاله
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        {% endfor %}
+                            {% with length=article_row|length %}
+                                {% if length == 1 %}
+                                    {% with article_page=article_row.0 %}
+                                        <div class="row not-visible-small">
+                                            {% include 'home/articles/articles_category_page/vertical_article.html' %}
+                                        </div>
+                                        <div class="row not-visible-big">
+                                            {% include 'home/articles/articles_category_page/horizontal_article.html' %}
+                                        </div>
+                                    {% endwith %}
+                                {% elif length == 2 %}
+                                    <div class="row">
+                                        {% include 'home/articles/articles_category_page/horizontal_article.html' %}
                                     </div>
-                                </div>
-                            </div>
+                                {% endif %}
+                            {% endwith %}
                         {% endfor %}
                     </div>
                     <div class="col-lg-1">

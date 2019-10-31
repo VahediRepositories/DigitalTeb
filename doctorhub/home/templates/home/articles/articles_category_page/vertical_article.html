@@ -1,0 +1,41 @@
+{% load wagtailimages_tags %}
+{% load text_processing %}
+
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-body">
+            <div class="row bg-inverse">
+                <div class="col-md-4 col-xs-12"
+                     style="padding: 2%; margin-bottom: 0px;">
+                    <a href="{{ article_page.get_url }}">
+                        {% image article_page.specific.image fill-1000x1000-c100 as article_img %}
+                        <img src="{{ article_img.url }}"
+                             alt="{{ article_img.alt }}"
+                             class="img-fluid">
+                    </a>
+                    <br>
+                    <br>
+                    <a href="{{ article_page.get_url }}"
+                       style="width: 100%;"
+                       class="btn btn-lg btn-outline-success normal-h4">
+                        خواندن مقاله
+                    </a>
+                </div>
+                <div class="col-md-8 align-items-center">
+                    <div class="text-left">
+                        <br>
+                        <h2 class="normal-h4 box-title">
+                            {{ article_page.title|truncatechars:100 }}
+                        </h2>
+                        <br>
+                        <br>
+                        <p class="normal-p">
+                            {{ article_page.specific.article_summary|html_to_str|truncatechars:350 }}
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
