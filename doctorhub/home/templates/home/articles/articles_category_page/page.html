@@ -25,15 +25,15 @@
                                 {% if length == 1 %}
                                     {% with article_page=article_row.0 %}
                                         <div class="row not-visible-small">
-                                            {% include 'home/articles/articles_category_page/vertical_article.html' %}
+                                            {% include 'home/articles/articles_category_page/horizontal_article.html' %}
                                         </div>
                                         <div class="row not-visible-big">
-                                            {% include 'home/articles/articles_category_page/horizontal_article.html' %}
+                                            {% include 'home/articles/articles_category_page/vertical_article.html' %}
                                         </div>
                                     {% endwith %}
                                 {% elif length == 2 %}
                                     <div class="row">
-                                        {% include 'home/articles/articles_category_page/horizontal_article.html' %}
+                                        {% include 'home/articles/articles_category_page/vertical_article.html' %}
                                     </div>
                                 {% endif %}
                             {% endwith %}
