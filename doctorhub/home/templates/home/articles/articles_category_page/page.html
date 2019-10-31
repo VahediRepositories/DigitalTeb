@@ -16,17 +16,17 @@
                 <br>
                 <br>
                 <div class="row">
-                    <div class="col-lg-2">
+                    <div class="col-lg-1">
 
                     </div>
-                    <div class="col-lg-8">
+                    <div class="col-lg-10">
                         {% for article_row in row_articles %}
                             <div class="row">
                                 <div class="col-12 m-t-30">
                                     <div class="card-deck">
                                         {% for article_page in article_row %}
                                             <div class="card bg-inverse">
-                                                <a href="{{ article_page.get_url }}" style="padding: 3%;">
+                                                <a href="{{ article_page.get_url }}" style="padding: 2% 2% 0px;">
                                                     {% image article_page.specific.image fill-1000x550-c100 as article_img %}
                                                     <img class="card-img-top img-responsive" src="{{ article_img.url }}"
                                                          alt="{{ article_img.alt }}">
@@ -38,7 +38,7 @@
                                                     </h4>
                                                     <div class="row">
                                                         <div class="col-lg-12">
-                                                            <div style="height: 300px; padding: 10% 5% 5% 5%; overflow-y: hidden;">
+                                                            <div style="height: 300px; padding: 3%; overflow-y: hidden;">
                                                                 <p class="normal-p">
                                                                     {{ article_page.specific.article_summary|html_to_str|truncatechars:250 }}
                                                                 </p>
@@ -64,7 +64,7 @@
                             </div>
                         {% endfor %}
                     </div>
-                    <div class="col-lg-2">
+                    <div class="col-lg-1">
 
                     </div>
                 </div>
