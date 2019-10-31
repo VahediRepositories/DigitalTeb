@@ -14,18 +14,26 @@
                 </a>
 
                 <div class="card-body text-center">
-                    <h4 class="card-title normal-h4"
+                    <h2 class="card-title normal-h4 not-visible-big"
                         style="height: 60px; overflow-y: hidden;">
                         {{ article_page.title|truncatechars:70 }}
-                    </h4>
+                    </h2>
+                    <h2 class="card-title normal-h4 not-visible-small"
+                        style="height: 35px; overflow-y: hidden;">
+                        {{ article_page.title|truncatechars:70 }}
+                    </h2>
                     <div class="row">
                         <div class="col-lg-12">
-                            <div style="height: 300px; padding: 3%; overflow-y: hidden;">
+                            <div class="not-visible-big" style="height: 300px; padding: 3%; overflow-y: hidden;">
                                 <p class="normal-p">
                                     {{ article_page.specific.article_summary|html_to_str|truncatechars:250 }}
                                 </p>
                             </div>
-
+                            <div class="not-visible-small" style="height: 170px; padding: 3%; overflow-y: hidden;">
+                                <p class="normal-p">
+                                    {{ article_page.specific.article_summary|html_to_str|truncatechars:250 }}
+                                </p>
+                            </div>
                         </div>
                     </div>
 
