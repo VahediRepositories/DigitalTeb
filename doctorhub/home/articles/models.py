@@ -10,7 +10,6 @@ class ArticleCategory(Category):
         help_text='high quality square image',
         null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
     )
-    farsi_description = models.TextField(default='')
 
     @property
     def icon(self):
