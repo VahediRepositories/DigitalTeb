@@ -15,7 +15,7 @@
                                     <div class="card bg-transparent">
                                         {% with category=category_page.specific.category %}
                                             <a href="{{ category_page.get_url }}" class="text-center">
-                                                {% image category.horizontal_image fill-1000x1000-c100 as category_img %}
+                                                {% image category.icon fill-1000x1000-c100 as category_img %}
                                                 <img class="card-img-top img-circle"
                                                      src="{{ category_img.url }}"
                                                      style="width: 100px; height: 100px;"
