@@ -8,7 +8,7 @@ class Category(models.Model):
     english_name = models.TextField()
     horizontal_image = models.ForeignKey(
         'wagtailimages.Image',
-        help_text='horizontal image',
+        help_text='high quality horizontal image',
         null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
     )
 

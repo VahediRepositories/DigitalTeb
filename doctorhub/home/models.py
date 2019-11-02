@@ -86,7 +86,7 @@ class ArticlesCategoryPage(
     @staticmethod
     def get_row_articles(posts):
         return list(
-            reversed(list_processing.list_to_sublists_of_size_n(posts, 2))
+            reversed(list_processing.list_to_sublists_of_size_n(posts, 8))
         )
 
     def get_context(self, request, *args, **kwargs):
