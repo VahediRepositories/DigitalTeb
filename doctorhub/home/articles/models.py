@@ -20,7 +20,6 @@ class ArticleCategory(Category):
 
     panels = Category.panels + [
         ImageChooserPanel('square_image'),
-        FieldPanel('farsi_description'),
     ]
 
     class Meta:
