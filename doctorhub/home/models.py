@@ -59,9 +59,9 @@ class ArticlesCategoriesPage(
         self.title = 'وبلاگ'
         self.slug = 'blogs'
 
-    def get_row_categories(self):
+    def get_row_categories(self, n=8):
         children = self.get_children().live().public()
-        return list_processing.list_to_sublists_of_size_n(children, 2)
+        return list_processing.list_to_sublists_of_size_n(children, n)
 
     content_panels = []
     promote_panels = []
@@ -84,9 +84,9 @@ class ArticlesCategoryPage(
     settings_panels = []
 
     @staticmethod
-    def get_row_articles(posts):
+    def get_row_articles(posts, n=2):
         return list(
-            reversed(list_processing.list_to_sublists_of_size_n(posts, 2))
+            reversed(list_processing.list_to_sublists_of_size_n(posts, n))
         )
 
     def get_context(self, request, *args, **kwargs):
