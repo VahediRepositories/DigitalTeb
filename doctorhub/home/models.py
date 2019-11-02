@@ -59,7 +59,7 @@ class ArticlesCategoriesPage(
         self.title = 'وبلاگ'
         self.slug = 'blogs'
 
-    def get_row_categories(self, n=5):
+    def get_row_categories(self, n=3):
         children = self.get_children().live().public()
         return list_processing.list_to_sublists_of_size_n(children, n)
 
