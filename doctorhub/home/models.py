@@ -111,6 +111,7 @@ class ArticlesCategoryPage(
         self.seo_title = 'وبلاگ - {}'.format(
             self.category.farsi_name
         )
+        self.search_image = self.category.icon
         return super().serve(request, *args, **kwargs)
 
     def clean(self):
