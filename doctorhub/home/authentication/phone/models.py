@@ -15,7 +15,7 @@ CODE_RESEND_TIME_SECONDS = 600
 class Phone(models.Model):
     profile = models.OneToOneField('home.Profile', on_delete=models.CASCADE)
     phone_validator = RegexValidator(
-        regex=r'^((\+98)|(0))?\d{10}$'
+        regex=r'^\d{10}$'
     )
     number = models.CharField(max_length=20, validators=[phone_validator])
     verified = models.BooleanField(default=False)

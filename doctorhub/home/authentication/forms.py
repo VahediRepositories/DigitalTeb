@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
 from .models import GENDER_CHOICES
-from .phone.models import Phone
+from .phone.fields import PhoneField
 
 
 class UserCreationForm(auth_forms.UserCreationForm):
@@ -17,10 +17,9 @@ class UserCreationForm(auth_forms.UserCreationForm):
     gender = forms.ChoiceField(
         label='جنسيت', choices=GENDER_CHOICES
     )
-    phone = forms.CharField(
+    phone = PhoneField(
         label='شماره موبايل',
         max_length=20,
-        validators=[Phone.phone_validator]
     )
     birthdate = forms.DateField(
         label='تاريخ تولد', widget=forms.DateInput(
