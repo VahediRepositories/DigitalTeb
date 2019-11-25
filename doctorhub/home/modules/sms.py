@@ -5,8 +5,7 @@ import requests
 from django.conf import settings
 from requests.exceptions import ConnectionError
 
-from ..users.phone.models import *
-from ..users.phone import configurations
+from ..authentication.phone.models import *
 
 
 def get_token_key():
@@ -27,28 +26,87 @@ def get_token_key():
         token_key = response['TokenKey']
         return token_key
     except ConnectionError as e:
-        print(str(e))
-        print()
         return None
     except KeyError as e:
-        print(str(e))
-        print()
         return None
 
 
-def send_confirmation_sms(phone):
+def send_confirmation_code(phone):
+    send_code(
+        phone, "VerificationCode", "16641", save_confirmation_code
+    )
+
+
+def send_password_change_code(phone):
+    send_code(
+        phone, "PasswordChangeCode", "17723", save_password_change_code
+    )
+
+
+def resend_confirmation_code(user):
+    confirmation_code = get_last_confirmation_code(user)
+    if (not confirmation_code) or confirmation_code.resend_time_passed():
+        send_confirmation_code(user.profile.phone)
+        return True
+    return False
+
+
+def resend_password_change_code(user):
+    password_change_code = get_last_password_change_code(user)
+    if (not password_change_code) or password_change_code.resend_time_passed():
+        send_password_change_code(user.profile.phone)
+        return True
+    return False
+
+
+def verify_phone(user, code):
+    confirmation_codes = ConfirmationCode.objects.filter(code=code)
+    for confirmation_code in confirmation_codes:
+        if confirmation_code.phone.profile.user == user:
+            if not confirmation_code.is_expired():
+                confirmation_code.phone.verify()
+                return True
+    return False
+
+
+def get_remained_confirmation_resend_time(user):
+    confirmation_code = get_last_confirmation_code(user)
+    return get_remained_resend_time(confirmation_code)
+
+
+def get_remained_password_change_resend_time(user):
+    password_change_code = get_last_password_change_code(user)
+    return get_remained_resend_time(password_change_code)
+
+
+def get_remained_resend_time(code):
+    if not code:
+        return CODE_RESEND_TIME_SECONDS
+    else:
+        return code.get_remained_resend_time()
+
+
+def get_last_confirmation_code(user):
+    return ConfirmationCode.objects.filter(phone=user.profile.phone).last()
+
+
+def get_last_password_change_code(user):
+    return PasswordChangeCode.objects.filter(user=user).last()
+
+
+def send_code(phone, parameter_name, template_id, save_to_database):
     confirmation_code = create_confirmation_code()
     confirmation_code = str(confirmation_code)
     url = 'https://RestfulSms.com/api/UltraFastSend'
     data = {
         "ParameterArray": [
             {
-                "Parameter": "VerificationCode",
+                "Parameter": parameter_name,
                 "ParameterValue": confirmation_code,
             }
         ],
         "Mobile": phone.number,
-        "TemplateId": "16641"
+        "TemplateId": template_id,
     }
     data = json.dumps(data)
     token_key = get_token_key()
@@ -63,51 +121,26 @@ def send_confirmation_sms(phone):
                 data=data,
                 headers=headers
             )
-            ConfirmationCode.objects.create(
-                phone=phone, code=confirmation_code
-            )
+            save_to_database(phone, confirmation_code)
             return True
         except ConnectionError as e:
-            print(str(e))
-            print()
             return False
+
+
+def save_confirmation_code(phone, confirmation_code):
+    ConfirmationCode.objects.create(
+        phone=phone, code=confirmation_code
+    )
+
+
+def save_password_change_code(phone, confirmation_code):
+    PasswordChangeCode.objects.create(
+        user=phone.profile.user, code=confirmation_code
+    )
 
 
 def create_confirmation_code():
     return random.randint(
-        10 ** (configurations.CONFIRMATION_CODE_LENGTH - 1),
-        (10 ** configurations.CONFIRMATION_CODE_LENGTH) - 1
+        10 ** (CODE_LENGTH - 1),
+        (10 ** CODE_LENGTH) - 1
     )
-
-
-def verify_phone(user, code):
-    confirmation_codes = ConfirmationCode.objects.filter(code=code)
-    for confirmation_code in confirmation_codes:
-        if confirmation_code.phone.profile.user == user:
-            if not confirmation_code.is_expired():
-                confirmation_code.phone.verify()
-                return True
-    return False
-
-
-def resend_code(user):
-    confirmation_code = get_last_confirmation_code(user)
-    if not confirmation_code:
-        send_confirmation_sms(user.profile.phone)
-        return True
-    elif confirmation_code.resend_time_passed():
-        send_confirmation_sms(user.profile.phone)
-        return True
-    return False
-
-
-def get_remained_resend_time(user):
-    confirmation_code = get_last_confirmation_code(user)
-    if not confirmation_code:
-        return configurations.CONFIRMATION_CODE_RESEND_TIME_SECONDS
-    else:
-        return confirmation_code.get_remained_resend_time()
-
-
-def get_last_confirmation_code(user):
-    return ConfirmationCode.objects.filter(phone=user.profile.phone).last()

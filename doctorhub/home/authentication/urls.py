@@ -1,5 +1,6 @@
 from django.conf.urls import url
 from . import views as auth_views
+from .phone import urls as phone_urls
 
 urlpatterns = [
 
@@ -19,4 +20,4 @@ urlpatterns = [
         name='signup'
     ),
 
-]
+] + phone_urls.urlpatterns

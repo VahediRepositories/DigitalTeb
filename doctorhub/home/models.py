@@ -1,6 +1,6 @@
 import uuid
 
-from django.contrib import messages
+from django import forms
 from django.contrib.auth.models import Group
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponseRedirect
@@ -17,11 +17,9 @@ from wagtailmetadata.models import MetadataPageMixin
 from .articles.blocks import *
 from .articles.models import *
 from .articles.serializers import *
-from .authentication.forms import *
 from .modules import list_processing
 from .modules import text_processing
-from .users.phone.models import *
-from .users.phone.mixins import CheckPhoneVerifiedMixin
+from .authentication.phone.mixins import CheckPhoneVerifiedMixin
 from . import configurations
 
 

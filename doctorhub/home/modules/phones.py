@@ -1,4 +1,4 @@
-from ..users.phone.models import Phone
+from ..authentication.phone.models import Phone
 
 
 def create_phone(profile, phone_number):

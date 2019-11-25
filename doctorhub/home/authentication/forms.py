@@ -4,10 +4,11 @@ from captcha.fields import ReCaptchaField
 from captcha.widgets import ReCaptchaV2Checkbox
 from django import forms
 from django.contrib.auth import forms as auth_forms
+from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-from ..users.phone.models import Phone
-from .models import *
+from .models import GENDER_CHOICES
+from .phone.models import Phone
 
 
 class UserCreationForm(auth_forms.UserCreationForm):

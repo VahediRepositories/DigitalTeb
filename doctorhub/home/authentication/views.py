@@ -1,10 +1,11 @@
+from django.contrib import messages
 from django.contrib.auth import views as auth_views
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect
 from django.views.generic import FormView
 
 from .forms import UserCreationForm
-from .mixins import *
+from .mixins import AuthenticatedForbiddenMixin, LoginRequiredMixin
 from ..models import DigitalTebPageMixin
 from ..modules import authentication, sms
 
@@ -57,7 +58,7 @@ class SignUpView(AuthenticatedForbiddenMixin, FormView):
             message=success_message,
             extra_tags='successful-registration'
         )
-        sms.send_confirmation_sms(profile.phone)
+        sms.send_confirmation_code(profile.phone)
         return super(SignUpView, self).form_valid(form)
 
     def set_user_groups(self, user):

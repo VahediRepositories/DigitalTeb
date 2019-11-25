@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
@@ -5,9 +6,9 @@ from django.urls import reverse
 from django.views.generic import FormView
 from django.views.generic.base import View
 
-from .forms import *
+from ..mixins import LoginRequiredMixin
+from ..phone.forms import ConfirmationCodeForm
 from .mixins import ConfirmedForbiddenMixin
-from ...authentication.mixins import *
 from ...models import DigitalTebPageMixin
 from ...modules import sms
 
@@ -44,7 +45,7 @@ class ResendConfirmationCodeView(LoginRequiredMixin, ConfirmedForbiddenMixin, Vi
 
     def get(self, request, *args, **kwargs):
         self.forbid_confirmed()
-        resent = sms.resend_code(request.user)
+        resent = sms.resend_confirmation_code(request.user)
         if resent:
             messages.success(
                 request,
@@ -56,7 +57,7 @@ class ResendConfirmationCodeView(LoginRequiredMixin, ConfirmedForbiddenMixin, Vi
             messages.warning(
                 request,
                 'براى ارسال مجدد پيامك بايد {} ثانيه صبر كنيد.'.format(
-                    sms.get_remained_resend_time(request.user)
+                    sms.get_remained_confirmation_resend_time(request.user)
                 )
             )
         return HttpResponseRedirect(reverse('confirmation_code'))

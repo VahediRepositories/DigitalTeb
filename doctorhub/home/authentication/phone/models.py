@@ -1,8 +1,14 @@
+from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.db import models
 from wagtail.snippets.models import register_snippet
+
 import datetime
-from . import configurations
+
+
+CODE_LENGTH = 6
+CODE_EXPIRATION_HOURS = 24
+CODE_RESEND_TIME_SECONDS = 600
 
 
 @register_snippet
@@ -22,35 +28,46 @@ class Phone(models.Model):
         return str(self.number)
 
 
-@register_snippet
-class ConfirmationCode(models.Model):
-    phone = models.ForeignKey(Phone, on_delete=models.CASCADE)
-    code = models.CharField(max_length=6)
+class Code(models.Model):
+    code = models.CharField(max_length=CODE_LENGTH)
     date = models.DateTimeField(auto_now_add=True)
 
     def is_expired(self):
         diff = self.get_passed_time()
         hours = diff.seconds / 3600
-        expired = hours > configurations.CONFIRMATION_CODE_EXPIRATION_HOURS
-        print('expired', expired)
-        return expired
+        return hours > CODE_EXPIRATION_HOURS
 
     def resend_time_passed(self):
         diff = self.get_passed_time()
         seconds = diff.seconds
-        return seconds >= configurations.CONFIRMATION_CODE_RESEND_TIME_SECONDS
+        return seconds >= CODE_RESEND_TIME_SECONDS
 
     def get_remained_resend_time(self):
         diff = self.get_passed_time()
-        return configurations.CONFIRMATION_CODE_RESEND_TIME_SECONDS - diff.seconds
+        return CODE_RESEND_TIME_SECONDS - diff.seconds
 
     def get_passed_time(self):
         return datetime.datetime.now() - self.date.replace(tzinfo=None)
 
-    def __str__(self):
-        return self.code
-
     class Meta:
+        abstract = True
         ordering = [
             'date'
         ]
+
+
+@register_snippet
+class ConfirmationCode(Code):
+    phone = models.ForeignKey(Phone, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.code
+
+
+@register_snippet
+class PasswordChangeCode(Code):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.code
+

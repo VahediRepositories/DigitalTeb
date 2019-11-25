@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models import DateField
 from wagtail.snippets.models import register_snippet
 
+
 MALE = 'M'
 FEMALE = 'F'
 NOT_BINARY = 'N'
