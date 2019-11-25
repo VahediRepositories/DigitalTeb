@@ -2,6 +2,7 @@
 
 {% load staticfiles %}
 {% load wagtailimages_tags %}
+{% load pages %}
 
 {% block extra_css %}
 
@@ -13,29 +14,29 @@
 
     <style>
 
-        .x-small-p {
-            font-family: 'Harmattan', "Times New Roman";
+        .x-small-text {
+            font-family: {% comment %}'Harmattan',{% endcomment %} "Times New Roman";
             font-size: small;
         }
 
-        .small-p {
-            font-family: 'Harmattan', "Times New Roman";
+        .small-text {
+            font-family: {% comment %}'Harmattan',{% endcomment %} "Times New Roman";
             font-size: medium;
         }
 
-        .normal-p {
-            font-family: 'Harmattan', "Times New Roman";
-            font-size: large;
-        }
-
-        .normal-h2 {
-            font-family: 'Harmattan', "Times New Roman";
+        .x-large-text {
+            font-family: {% comment %}'Harmattan',{% endcomment %} "Times New Roman";
             font-size: xx-large;
         }
 
-        .normal-h4 {
-            font-family: 'Harmattan', "Times New Roman";
+        .large-text {
+            font-family: {% comment %}'Harmattan',{% endcomment %} "Times New Roman";
             font-size: x-large;
+        }
+
+        * {
+            font-family: {% comment %}'Harmattan',{% endcomment %} "Times New Roman";
+            font-size: large;
         }
 
     </style>
@@ -64,7 +65,7 @@
                 <!-- Logo -->
                 <!-- ============================================================== -->
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="{{ page.get_home_page.get_url }}">
+                    <a class="navbar-brand" href="{% home_page_url %}">
                         <!-- Logo icon --><b>
                         <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
                         <!-- Dark Logo icon -->
@@ -401,7 +402,7 @@
                                 <a class="dropdown-item" href="javascript:void(0)"><i
                                         class="ti-settings m-r-5 m-l-5"></i> Account Setting</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="javascript:void(0)"><i
+                                <a class="dropdown-item" href="{% logout_url %}"><i
                                         class="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
                                 <div class="dropdown-divider"></div>
                                 <div class="p-l-30 p-10"><a href="javascript:void(0)"
@@ -730,11 +731,11 @@
                 <!-- ============================================================== -->
                 <div class="row page-titles">
                     <div class="col-md-5 align-self-center">
-                        <h4 class="text-themecolor normal-h4">
+                        <h1 class="text-themecolor large-text">
                             {% block page_title %}
 
                             {% endblock %}
-                        </h4>
+                        </h1>
                     </div>
                     <div class="col-md-7 align-self-center text-right not-visible-small">
                         <div class="d-flex justify-content-end align-items-center">
@@ -752,6 +753,8 @@
                 <!-- ============================================================== -->
                 <!-- Start Page Content -->
                 <!-- ============================================================== -->
+                {% include 'home/notifications/notifications.html' %}
+
                 {% block main_content %}
 
                 {% endblock %}

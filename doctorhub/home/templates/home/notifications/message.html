@@ -1,0 +1,22 @@
+{% include 'home/notifications/close_button.html' %}
+
+{% if 'success' in message.tags %}
+    <h3 class="text-success">
+        <i class="fa fa-check-circle"></i>
+    </h3>
+{% elif 'info' in message.tags %}
+    <h3 class="text-info">
+        <i class="fa fa-exclamation-circle"></i>
+    </h3>
+{% elif 'warning' in message.tags %}
+    <h3 class="text-warning">
+        <i class="fa fa-exclamation-triangle"></i>
+    </h3>
+{% elif 'error' in message.tags %}
+    <h3 class="text-danger">
+        <i class="fa fa-exclamation-triangle"></i>
+    </h3>
+{% endif %}
+<p>
+    {{ message }}
+</p>

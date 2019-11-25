@@ -6,7 +6,7 @@
     {% if section.value.title %}
         <div class="row">
             <div class="col-md-12">
-                <h2 class="normal-h2 text-success"
+                <h2 class="x-large-text text-success"
                     id="{{ section.value.title.source|html_to_str|replace_white_space_with_underscore }}">
                     <b>
                         {{ section.value.title.source|html_to_str }}
@@ -20,11 +20,11 @@
             {% for item in section.value.content %}
                 <div class="row" style="padding-top: 5%; padding-left: 2%; padding-right: 2%;">
                     {% if item.block_type == 'text' %}
-                        <div class="col-md-12 normal-p">
+                        <div class="col-md-12">
                             {{ item.value|richtext }}
                         </div>
                     {% elif item.block_type == 'UL' %}
-                        <div class="col-md-12 normal-p">
+                        <div class="col-md-12">
                             {{ item.value.paragraph|richtext }}
                             <ul>
                                 {% for item in item.value.items %}
@@ -35,7 +35,7 @@
                             </ul>
                         </div>
                     {% elif item.block_type == 'OL' %}
-                        <div class="col-md-12 normal-p">
+                        <div class="col-md-12">
                             {{ item.value.paragraph|richtext }}
                             <ol>
                                 {% for item in item.value.items %}
@@ -46,7 +46,7 @@
                             </ol>
                         </div>
                     {% elif item.block_type == 'image_and_text_row' %}
-                        <div class="col-md-6 normal-p">
+                        <div class="col-md-6">
                             {{ item.value.paragraph|richtext }}
                         </div>
                         <div class="col-md-1"></div>
@@ -71,7 +71,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-1"></div>
-                                <div class="col-md-10 normal-p text-center">
+                                <div class="col-md-10 text-center">
                                     {{ item.value.paragraph|richtext }}
                                 </div>
                                 <div class="col-md-1"></div>
@@ -97,7 +97,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-1"></div>
-                                <div class="col-md-10 normal-p text-center">
+                                <div class="col-md-10 text-center">
                                     {{ item.value.paragraph|richtext }}
                                 </div>
                                 <div class="col-md-1"></div>

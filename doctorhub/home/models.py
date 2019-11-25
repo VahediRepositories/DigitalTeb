@@ -1,6 +1,7 @@
 import uuid
 
-from django import forms
+from django.contrib import messages
+from django.contrib.auth.models import Group
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponseRedirect
 from django.utils.text import slugify
@@ -16,11 +17,19 @@ from wagtailmetadata.models import MetadataPageMixin
 from .articles.blocks import *
 from .articles.models import *
 from .articles.serializers import *
+from .authentication.forms import *
 from .modules import list_processing
 from .modules import text_processing
+from .users.phone.models import *
+from .users.phone.mixins import CheckPhoneVerifiedMixin
+from . import configurations
 
 
-class DigitalTebPageMixin:
+class DigitalTebPageMixin(CheckPhoneVerifiedMixin):
+
+    def __init__(self, *args, **kwargs):
+        super(DigitalTebPageMixin, self).__init__(*args, **kwargs)
+        self.messages_links = {}
 
     @staticmethod
     def get_home_page():
@@ -33,12 +42,12 @@ class DigitalTebPageMixin:
 
 class HomePage(DigitalTebPageMixin, Page):
     subpage_types = [
-        'home.ArticlesCategoriesPage'
+        'home.ArticlesCategoriesPage',
     ]
 
     def serve(self, request, *args, **kwargs):
         blogs_page = self.get_blogs_page()
-        return HttpResponseRedirect('/{}/'.format(blogs_page.slug))
+        return HttpResponseRedirect(blogs_page.get_url())
 
 
 class ArticlesCategoriesPage(
@@ -48,6 +57,7 @@ class ArticlesCategoriesPage(
     subpage_types = ['home.ArticlesCategoryPage']
 
     def serve(self, request, *args, **kwargs):
+        self.check_phone_verified(request)
         children = self.get_children().live().public()
         categories = [page.specific.category.farsi_name for page in children]
         self.search_description = 'مقالات ' + text_processing.str_list_to_comma_separated(categories)
@@ -105,6 +115,7 @@ class ArticlesCategoryPage(
         return context
 
     def serve(self, request, *args, **kwargs):
+        self.check_phone_verified(request)
         self.search_description = 'مقالات حوزه ى {}'.format(
             self.category.farsi_name
         )
@@ -191,6 +202,7 @@ class Article(DigitalTebPageMixin, MetadataPageMixin, Page):
         ) + self.uuid4
 
     def serve(self, request, *args, **kwargs):
+        self.check_phone_verified(request)
         self.search_description = self.title
         if self.sections_with_title:
             self.search_description += ' شامل ' + text_processing.str_list_to_comma_separated(

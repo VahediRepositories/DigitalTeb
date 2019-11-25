@@ -1,0 +1,43 @@
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+{% load pages %}
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+        <div class="card border-success">
+            <div class="card-header bg-success text-center">
+                <img src="{% static 'doctorhub/assets/images/logo-light-text.png' %}"
+                     alt="DigitalTeb" class="dark-logo"/>
+            </div>
+            <div class="card-body" style="padding-left: 10%; padding-right: 10%;">
+                <form action="{% url 'confirmation_code' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-body">
+                        {{ form|crispy }}
+                        <div class="form-group text-center">
+                            <button class="btn btn-lg btn-success large-text mb-3" type="submit">
+                                فعال سازى
+                            </button>
+                            <br>
+                            <a href="{% url 'resend_confirmation_code' %}"
+                               class="btn btn-lg btn-outline-success large-text" type="submit">
+                                ارسال مجدد كد فعال سازى
+                            </a>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="border-top pt-3">
+                    <small class="text-muted">
+شماره موبايل را اشتباه وارد كرديد؟
+                        <a class="mr-2 text-success" href="">
+                            تغيير اطلاعات كاربرى
+                        </a>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-1"></div>
+</div>

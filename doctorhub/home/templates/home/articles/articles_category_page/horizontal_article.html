@@ -17,19 +17,19 @@
                     <br>
                     <a href="{{ article_page.get_url }}"
                        style="width: 100%;"
-                       class="btn btn-lg btn-outline-success normal-h4">
+                       class="btn btn-lg btn-outline-success large-text">
                         خواندن مقاله
                     </a>
                 </div>
                 <div class="col-md-8 align-items-center">
                     <div class="text-left">
                         <br>
-                        <h2 class="normal-h4 box-title">
+                        <h2 class="large-text box-title">
                             {{ article_page.title|truncatechars:100 }}
                         </h2>
                         <br>
                         <br>
-                        <p class="normal-p">
+                        <p>
                             {{ article_page.specific.article_summary|html_to_str|truncatechars:350 }}
                         </p>
                     </div>

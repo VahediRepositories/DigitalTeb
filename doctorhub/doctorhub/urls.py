@@ -1,11 +1,13 @@
 from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
+from home.authentication import views as auth_views
 from search import views as search_views
 from wagtail.admin import urls as wagtailadmin_urls
+from wagtail.contrib.sitemaps.views import sitemap
 from wagtail.core import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
-from wagtail.contrib.sitemaps.views import sitemap
+
 from .api import api_router
 
 urlpatterns = [
@@ -16,7 +18,8 @@ urlpatterns = [
     url(r'^search/$', search_views.search, name='search'),
     url(r'^api/v2/', api_router.urls),
     url(r'^sitemap\.xml$', sitemap),
-    url(r'', include(wagtail_urls)),
+
+    url(r'', include('home.urls')),
 
 ]
 
