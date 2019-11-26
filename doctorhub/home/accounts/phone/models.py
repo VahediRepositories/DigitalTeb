@@ -17,7 +17,11 @@ class Phone(models.Model):
     phone_validator = RegexValidator(
         regex=r'^\d{10}$'
     )
-    number = models.CharField(max_length=20, validators=[phone_validator])
+    number = models.CharField(
+        max_length=20,
+        validators=[phone_validator],
+        unique=True,
+    )
     verified = models.BooleanField(default=False)
 
     def verify(self):

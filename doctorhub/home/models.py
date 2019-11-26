@@ -19,7 +19,7 @@ from .articles.models import *
 from .articles.serializers import *
 from .modules import list_processing
 from .modules import text_processing
-from .authentication.phone.mixins import CheckPhoneVerifiedMixin
+from .accounts.phone.mixins import CheckPhoneVerifiedMixin
 from . import configurations
 
 

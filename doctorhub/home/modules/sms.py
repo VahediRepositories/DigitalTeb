@@ -5,7 +5,7 @@ import requests
 from django.conf import settings
 from requests.exceptions import ConnectionError
 
-from ..authentication.phone.models import *
+from ..accounts.phone.models import *
 
 
 def get_token_key():

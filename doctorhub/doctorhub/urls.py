@@ -1,11 +1,9 @@
 from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
-from home.authentication import views as auth_views
 from search import views as search_views
 from wagtail.admin import urls as wagtailadmin_urls
 from wagtail.contrib.sitemaps.views import sitemap
-from wagtail.core import urls as wagtail_urls
 from wagtail.documents import urls as wagtaildocs_urls
 
 from .api import api_router

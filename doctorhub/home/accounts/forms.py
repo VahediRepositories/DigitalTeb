@@ -9,6 +9,7 @@ from django.core.exceptions import ValidationError
 
 from .models import GENDER_CHOICES
 from .phone.fields import PhoneField
+from ..modules import phones
 
 
 class UserCreationForm(auth_forms.UserCreationForm):
@@ -50,6 +51,16 @@ class UserCreationForm(auth_forms.UserCreationForm):
             )
         else:
             return birthdate
+
+    def clean_phone(self):
+        phone = self.cleaned_data['phone']
+        if phones.phone_exists(phone):
+            raise ValidationError(
+                'اين شماره قبلا ثبت شده است',
+                code='invalid'
+            )
+        else:
+            return phone
 
     class Meta:
         model = User

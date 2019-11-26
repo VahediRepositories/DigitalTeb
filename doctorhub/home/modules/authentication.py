@@ -1,6 +1,6 @@
 from django.urls import reverse
 
-from ..authentication.models import Profile
+from ..accounts.models import Profile
 from .phones import create_phone
 
 

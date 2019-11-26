@@ -1,4 +1,4 @@
-from ..authentication.phone.models import Phone
+from ..accounts.phone.models import Phone
 
 
 def create_phone(profile, phone_number):
@@ -6,3 +6,9 @@ def create_phone(profile, phone_number):
         profile=profile,
         number=phone_number
     )
+
+
+def phone_exists(phone_number):
+    return Phone.objects.filter(
+        number=phone_number
+    ).exists()
