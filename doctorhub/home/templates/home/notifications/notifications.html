@@ -23,6 +23,13 @@
                             فعال سازى شماره موبايل
                         </a>
                     </div>
+                {% elif 'successful-password-reset' in message.tags %}
+                    <div class="alert alert-success">
+                        {% include 'home/notifications/message.html' %}
+                        <a class="btn btn-outline-success btn-lg" href="{% url 'login' %}">
+                            ورود به حساب كاربرى
+                        </a>
+                    </div>
                 {% else %}
                     {% if 'success' in message.tags %}
                         <div class="alert alert-success">

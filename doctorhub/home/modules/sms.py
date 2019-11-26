@@ -32,13 +32,13 @@ def get_token_key():
 
 
 def send_confirmation_code(phone):
-    send_code(
+    return send_code(
         phone, "VerificationCode", "16641", save_confirmation_code
     )
 
 
 def send_password_change_code(phone):
-    send_code(
+    return send_code(
         phone, "PasswordChangeCode", "17723", save_password_change_code
     )
 
@@ -51,7 +51,8 @@ def resend_confirmation_code(user):
     return False
 
 
-def resend_password_change_code(user):
+def resend_password_change_code(phone):
+    user = Phone.get_user_by_phone_number(phone)
     password_change_code = get_last_password_change_code(user)
     if (not password_change_code) or password_change_code.resend_time_passed():
         send_password_change_code(user.profile.phone)
@@ -74,7 +75,8 @@ def get_remained_confirmation_resend_time(user):
     return get_remained_resend_time(confirmation_code)
 
 
-def get_remained_password_change_resend_time(user):
+def get_remained_password_change_resend_time(phone):
+    user = Phone.get_user_by_phone_number(phone)
     password_change_code = get_last_password_change_code(user)
     return get_remained_resend_time(password_change_code)
 

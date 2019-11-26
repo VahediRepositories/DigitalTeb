@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from .models import GENDER_CHOICES
 from .phone.fields import PhoneField
 from ..modules import phones
+from .phone.models import CODE_LENGTH
 
 
 class UserCreationForm(auth_forms.UserCreationForm):
@@ -70,3 +71,41 @@ class UserCreationForm(auth_forms.UserCreationForm):
             'username', 'password1', 'password2',
             'captcha'
         ]
+
+
+class ForgotAccountForm(forms.Form):
+    phone = PhoneField(
+        label='شماره موبايل',
+        max_length=20,
+        help_text='شماره موبايل خود را وارد كنيد'
+    )
+
+    captcha = ReCaptchaField(
+        label='ثابت كنيد ربات نيستيد',
+        widget=ReCaptchaV2Checkbox(
+            attrs={
+                'data-size': 'compact',
+            },
+            api_params={
+                'hl': 'fa',
+            }
+        )
+    )
+
+    def clean_phone(self):
+        phone_number = self.cleaned_data['phone']
+        if not phones.verified_phone_exists(phone_number):
+            raise ValidationError(
+                'متاسفانه، اين شماره در ديجيتال طب ثبت نشده است.',
+                code='invalid'
+            )
+        else:
+            return phone_number
+
+
+class PasswordChangeCodeForm(forms.Form):
+    password_change_code = forms.CharField(
+        max_length=CODE_LENGTH,
+        label='كد تغيير رمز عبور',
+        help_text=f'كد {CODE_LENGTH} رقمى اى كه برايتان ارسال شده است را وارد كنيد',
+    )

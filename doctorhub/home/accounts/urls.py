@@ -1,23 +1,49 @@
-from django.conf.urls import url
-from . import views as auth_views
+from django.urls import path
+
+from . import views
 from .phone import urls as phone_urls
 
 urlpatterns = [
 
-    url(
-        r'^accounts/login/',
-        auth_views.LoginView.as_view(),
+    path(
+        'accounts/login/',
+        views.LoginView.as_view(),
         name='login'
     ),
-    url(
-        r'^accounts/logout/',
-        auth_views.LogoutView.as_view(),
+    path(
+        'accounts/logout/',
+        views.LogoutView.as_view(),
         name='logout'
     ),
-    url(
-        r'^accounts/signup/',
-        auth_views.SignUpView.as_view(),
+    path(
+        'accounts/signup/',
+        views.SignUpView.as_view(),
         name='signup'
+    ),
+    path(
+        'accounts/forgot/',
+        views.ForgotAccountView.as_view(),
+        name='forgot_account'
+    ),
+    path(
+        'accounts/password-change-code/<phone>',
+        views.PasswordChangeCodeView.as_view(),
+        name='password_change_code'
+    ),
+    path(
+        'accounts/resend-password-change-code/<phone>',
+        views.ResendPasswordChangeCodeView.as_view(),
+        name='resend_password_change_code'
+    ),
+    path(
+        'accounts/reset-password/<phone>/<code>',
+        views.ResetPasswordView.as_view(),
+        name='reset_password'
+    ),
+    path(
+        'accounts/invalid-password-change-code/<phone>/<code>',
+        views.InvalidPasswordChangeCode.as_view(),
+        name='invalid_password_change_code'
     ),
 
 ] + phone_urls.urlpatterns

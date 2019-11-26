@@ -1,14 +1,15 @@
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.db import models
+from django.shortcuts import get_object_or_404
 from wagtail.snippets.models import register_snippet
 
 import datetime
 
 
 CODE_LENGTH = 6
-CODE_EXPIRATION_HOURS = 24
-CODE_RESEND_TIME_SECONDS = 600
+CODE_EXPIRATION_HOURS = 10
+CODE_RESEND_TIME_SECONDS = 300
 
 
 @register_snippet
@@ -30,6 +31,11 @@ class Phone(models.Model):
 
     def __str__(self):
         return str(self.number)
+
+    @staticmethod
+    def get_user_by_phone_number(phone_number):
+        phone = get_object_or_404(Phone, number=phone_number)
+        return phone.profile.user
 
 
 class Code(models.Model):
@@ -71,6 +77,11 @@ class ConfirmationCode(Code):
 @register_snippet
 class PasswordChangeCode(Code):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    used = models.BooleanField(default=False)
+
+    def use(self):
+        self.used = True
+        self.save()
 
     def __str__(self):
         return self.code
