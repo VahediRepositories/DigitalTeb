@@ -247,9 +247,10 @@ class ProfileUpdateView(LoginRequiredMixin, TemplateView):
                 'اطلاعات حساب كاربرى شما، به روز رسانى شد.',
                 'successful-profile-edit'
             )
-        context = {
-            'user_form': user_form,
-            'profile_form': profile_form,
-            'phone_form': phone_form,
-        }
-        return super(TemplateView, self).render_to_response(context)
+        return self.get(request, *args, **kwargs)
+        # context = {
+        #     'user_form': user_form,
+        #     'profile_form': profile_form,
+        #     'phone_form': phone_form,
+        # }
+        # return super(TemplateView, self).render_to_response(context)
