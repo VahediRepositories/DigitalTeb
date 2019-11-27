@@ -1,5 +1,6 @@
 from django import forms
 from .models import *
+from .fields import PhoneField
 
 
 class ConfirmationCodeForm(forms.Form):
@@ -11,9 +12,11 @@ class ConfirmationCodeForm(forms.Form):
 
 
 class PhoneUpdateForm(forms.ModelForm):
+    number = PhoneField(
+        label='شماره موبايل',
+        max_length=20,
+    )
+
     class Meta:
         model = Phone
         fields = ['number']
-        labels = {
-            'number': 'شماره موبايل'
-        }

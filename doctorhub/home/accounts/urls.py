@@ -50,5 +50,10 @@ urlpatterns = [
         views.ProfileUpdateView.as_view(),
         name='edit_account'
     ),
+    path(
+        'accounts/change-password',
+        views.PasswordChangeView.as_view(),
+        name='change_password'
+    ),
 
 ] + phone_urls.urlpatterns

@@ -6,7 +6,6 @@ from wagtail.snippets.models import register_snippet
 
 import datetime
 
-
 CODE_LENGTH = 6
 CODE_EXPIRATION_HOURS = 10
 CODE_RESEND_TIME_SECONDS = 300
@@ -31,6 +30,10 @@ class Phone(models.Model):
 
     def __str__(self):
         return str(self.number)
+
+    def save(self, *args, **kwargs):
+        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', self.number)
+        return super(Phone, self).save(*args, **kwargs)
 
     @staticmethod
     def get_user_by_phone_number(phone_number):
@@ -85,4 +88,3 @@ class PasswordChangeCode(Code):
 
     def __str__(self):
         return self.code
-

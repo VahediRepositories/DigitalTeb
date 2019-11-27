@@ -10,7 +10,6 @@ from .forms import *
 from .mixins import AuthenticatedForbiddenMixin, LoginRequiredMixin
 from .phone.forms import PhoneUpdateForm
 from .phone.models import Phone
-from .phone.mixins import CheckPhoneVerifiedMixin
 from ..models import DigitalTebPageMixin
 from ..modules import authentication, sms
 
@@ -211,7 +210,6 @@ class InvalidPasswordChangeCode(AuthenticatedForbiddenMixin, TemplateView):
 
 
 class ProfileUpdateView(LoginRequiredMixin, TemplateView):
-
     template_name = 'home/users/profile_edit.html'
 
     def get_context_data(self, **kwargs):
@@ -234,11 +232,12 @@ class ProfileUpdateView(LoginRequiredMixin, TemplateView):
         phone_form = PhoneUpdateForm(
             request.POST, instance=request.user.profile.phone
         )
+        phone_number = request.user.profile.phone.number
         if user_form.is_valid() and profile_form.is_valid() and phone_form.is_valid():
             user_form.save()
             profile_form.save()
             phone = phone_form.save()
-            if phone_form.has_changed():
+            if phone_number != phone.number:
                 phone.verified = False
                 phone.save()
                 sms.send_confirmation_code(phone)
@@ -247,10 +246,20 @@ class ProfileUpdateView(LoginRequiredMixin, TemplateView):
                 'اطلاعات حساب كاربرى شما، به روز رسانى شد.',
                 'successful-profile-edit'
             )
-        return self.get(request, *args, **kwargs)
-        # context = {
-        #     'user_form': user_form,
-        #     'profile_form': profile_form,
-        #     'phone_form': phone_form,
-        # }
-        # return super(TemplateView, self).render_to_response(context)
+            return HttpResponseRedirect(
+                DigitalTebPageMixin.get_home_page().get_url()
+            )
+        context = {
+            'user_form': user_form,
+            'profile_form': profile_form,
+            'phone_form': phone_form,
+        }
+        return self.render_to_response(context)
+
+
+class PasswordChangeView(LoginRequiredMixin, SuccessMessageMixin, auth_views.PasswordChangeView):
+    template_name = 'registration/password_change.html'
+    success_message = 'رمز عبور جديد شما با موفقيت ثبت شد.'
+
+    def get_success_url(self):
+        return DigitalTebPageMixin.get_home_page().get_url()

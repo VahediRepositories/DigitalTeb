@@ -111,12 +111,19 @@ class PasswordChangeCodeForm(forms.Form):
 
 
 class UserUpdateForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(UserUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['first_name'].required = True
+        self.fields['last_name'].required = True
+
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name']
 
 
 class ProfileUpdateForm(forms.ModelForm):
+
     class Meta:
         model = Profile
         fields = [
