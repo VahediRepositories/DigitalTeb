@@ -258,7 +258,7 @@ class ProfileUpdateView(LoginRequiredMixin, TemplateView):
 
 
 class PasswordChangeView(LoginRequiredMixin, SuccessMessageMixin, auth_views.PasswordChangeView):
-    template_name = 'registration/password_change.html'
+    template_name = 'home/users/password_change.html'
     success_message = 'رمز عبور جديد شما با موفقيت ثبت شد.'
 
     def get_success_url(self):
