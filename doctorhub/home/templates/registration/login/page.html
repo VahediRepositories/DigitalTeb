@@ -13,6 +13,7 @@
             <div class="card-body" style="padding-left: 10%; padding-right: 10%;">
                 <form action="{% url 'login' %}" method="POST">
                     {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next }}">
                     <div class="form-body">
                         {{ form|crispy }}
                         <div class="form-group text-center">

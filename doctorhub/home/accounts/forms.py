@@ -4,13 +4,12 @@ from captcha.fields import ReCaptchaField
 from captcha.widgets import ReCaptchaV2Checkbox
 from django import forms
 from django.contrib.auth import forms as auth_forms
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-from .models import GENDER_CHOICES
+from .models import *
 from .phone.fields import PhoneField
-from ..modules import phones
 from .phone.models import CODE_LENGTH
+from ..modules import phones
 
 
 class UserCreationForm(auth_forms.UserCreationForm):
@@ -109,3 +108,31 @@ class PasswordChangeCodeForm(forms.Form):
         label='كد تغيير رمز عبور',
         help_text=f'كد {CODE_LENGTH} رقمى اى كه برايتان ارسال شده است را وارد كنيد',
     )
+
+
+class UserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name']
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = [
+            'profile_image',
+            'gender',
+            'birthdate'
+        ]
+        labels = {
+            'profile_image': 'عكس',
+            'gender': 'جنسيت',
+            'birthdate': 'تاريخ تولد'
+        }
+        widgets = {
+            'birthdate': forms.DateInput(
+                attrs={
+                    'class': 'persian-datepicker'
+                }
+            )
+        }

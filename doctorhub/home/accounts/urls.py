@@ -45,5 +45,10 @@ urlpatterns = [
         views.InvalidPasswordChangeCode.as_view(),
         name='invalid_password_change_code'
     ),
+    path(
+        'accounts/edit',
+        views.ProfileUpdateView.as_view(),
+        name='edit_account'
+    ),
 
 ] + phone_urls.urlpatterns

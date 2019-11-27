@@ -1,16 +1,16 @@
 from django.contrib import messages
-from django.contrib.auth import forms as auth_forms
 from django.contrib.auth import views as auth_views
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.exceptions import ValidationError
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import FormView
 from django.views.generic.base import View, TemplateView
 
-from .forms import UserCreationForm, ForgotAccountForm, PasswordChangeCodeForm
+from .forms import *
 from .mixins import AuthenticatedForbiddenMixin, LoginRequiredMixin
+from .phone.forms import PhoneUpdateForm
 from .phone.models import Phone
+from .phone.mixins import CheckPhoneVerifiedMixin
 from ..models import DigitalTebPageMixin
 from ..modules import authentication, sms
 
@@ -208,3 +208,48 @@ class InvalidPasswordChangeCode(AuthenticatedForbiddenMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         self.forbid_authenticated()
         return super(InvalidPasswordChangeCode, self).get(request, *args, **kwargs)
+
+
+class ProfileUpdateView(LoginRequiredMixin, TemplateView):
+
+    template_name = 'home/users/profile_edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileUpdateView, self).get_context_data(**kwargs)
+        context['user_form'] = UserUpdateForm(instance=self.request.user)
+        context['profile_form'] = ProfileUpdateForm(instance=self.request.user.profile)
+        context['phone_form'] = PhoneUpdateForm(instance=self.request.user.profile.phone)
+        return context
+
+    def get(self, request, *args, **kwargs):
+        return super(ProfileUpdateView, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        user_form = UserUpdateForm(
+            request.POST, instance=request.user
+        )
+        profile_form = ProfileUpdateForm(
+            request.POST, request.FILES, instance=request.user.profile
+        )
+        phone_form = PhoneUpdateForm(
+            request.POST, instance=request.user.profile.phone
+        )
+        if user_form.is_valid() and profile_form.is_valid() and phone_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            phone = phone_form.save()
+            if phone_form.has_changed():
+                phone.verified = False
+                phone.save()
+                sms.send_confirmation_code(phone)
+            messages.success(
+                request,
+                'اطلاعات حساب كاربرى شما، به روز رسانى شد.',
+                'successful-profile-edit'
+            )
+        context = {
+            'user_form': user_form,
+            'profile_form': profile_form,
+            'phone_form': phone_form,
+        }
+        return super(TemplateView, self).render_to_response(context)

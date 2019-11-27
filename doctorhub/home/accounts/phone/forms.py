@@ -1,5 +1,5 @@
 from django import forms
-from ..phone.models import CODE_LENGTH
+from .models import *
 
 
 class ConfirmationCodeForm(forms.Form):
@@ -8,3 +8,12 @@ class ConfirmationCodeForm(forms.Form):
         label='كد فعال سازى',
         help_text=f'كد {CODE_LENGTH} رقمى اى كه برايتان ارسال شده است را وارد كنيد',
     )
+
+
+class PhoneUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Phone
+        fields = ['number']
+        labels = {
+            'number': 'شماره موبايل'
+        }

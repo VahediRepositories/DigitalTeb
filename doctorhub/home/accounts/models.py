@@ -23,6 +23,9 @@ class Profile(models.Model):
         help_text='high quality image',
         null=True, blank=True, on_delete=models.SET_NULL, related_name='+'
     )
+    profile_image = models.ImageField(
+        upload_to='profile_pics', null=True, blank=True
+    )
     gender = models.CharField(
         max_length=1,
         choices=GENDER_CHOICES,
