@@ -66,6 +66,7 @@
                                     <label class="cabinet center-block">
                                         <figure>
                                             <img src="" style="width: 200px; height: 200px;"
+                                                 data-status="image"
                                                  class="gambar img-responsive img-thumbnail"
                                                  id="item-img-output"/>
                                         </figure>
@@ -226,28 +227,12 @@
                 size: {width: 200, height: 200}
             }).then(function (resp) {
                 $('#item-img-output').attr('src', resp);
+                $('#item-img-output').attr('data-status', 'base64');
                 $('#cropImagePop').modal('hide');
             });
         });
         // End upload preview image
 
-    </script>
-
-    <script>
-        function post_form() {
-            set_gregorian_date();
-            var fd = set_image();
-            $.ajax({
-                url: "{% url 'edit_account' %}",
-                data: fd,
-                processData: false,
-                contentType: false,
-                type: 'POST',
-                success: function (data) {
-                },
-            });
-            return false;
-        }
     </script>
 
     <script>
@@ -291,18 +276,22 @@
         function onSubmitFunction() {
             set_gregorian_date();
             var token = '{{ csrf_token }}';
-            var img_data = $('#item-img-output').attr('src');
-            $.ajax(
-                {
-                    type: "POST",
-                    headers: { "X-CSRFToken": token },
-                    url: "{% url 'update_profile_image' %}",
-                    data: {
-                        'profile_image': img_data
-                    },
-                    async: false,
-                }
-            )
+            var image_element = $('#item-img-output');
+            var img_data = image_element.attr('src');
+            if (image_element.attr('data-status') === 'base64') {
+                $.ajax(
+                    {
+                        type: "POST",
+                        headers: {"X-CSRFToken": token},
+                        url: "{% url 'update_profile_image' %}",
+                        data: {
+                            'profile_image': img_data
+                        },
+                        async: false,
+                    }
+                )
+            }
+
         }
     </script>
 

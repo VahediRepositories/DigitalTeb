@@ -275,6 +275,8 @@ class ProfilePicUpdate(LoginRequiredMixin, View):
                 {'status': 'success'}
             )
         except Exception as e:
+            import traceback
+            traceback.print_exc()
             return JsonResponse(
                 {'status': 'fail'}
             )
