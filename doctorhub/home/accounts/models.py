@@ -1,8 +1,9 @@
+from PIL import Image
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import DateField
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from wagtail.snippets.models import register_snippet
-
 
 MALE = 'M'
 FEMALE = 'F'
@@ -13,6 +14,11 @@ GENDER_CHOICES = [
     (FEMALE, 'زن'),
     (MALE, 'مرد'),
 ]
+
+AVATARS = 'doctorhub/more/images/avatars/'
+MALE_AVATAR = AVATARS + 'male.png'
+FEMALE_AVATAR = AVATARS + 'female.png'
+NONE_AVATAR = AVATARS + 'none.png'
 
 
 @register_snippet
@@ -32,6 +38,39 @@ class Profile(models.Model):
         default=NOT_BINARY,
     )
     birthdate = DateField(blank=False)
+
+    @property
+    def image_url(self):
+        if self.profile_image:
+            return self.profile_image.url
+        else:
+            if self.gender == MALE:
+                return static(MALE_AVATAR)
+            elif self.gender == FEMALE:
+                return static(FEMALE_AVATAR)
+            else:
+                return static(NONE_AVATAR)
+
+    def save(self, *args, **kwargs):
+        super(Profile, self).save(*args, **kwargs)
+        self.make_square_image()
+        self.compress_image()
+
+    def make_square_image(self):
+        if self.profile_image:
+            img = Image.open(self.profile_image.path)
+            if img.height != img.width:
+                size = min(img.height, img.width)
+                img = img.resize((size, size))
+                img.save(self.profile_image.path)
+
+    def compress_image(self):
+        if self.profile_image:
+            img = Image.open(self.profile_image.path)
+            if img.height > 512 or img.width > 512:
+                output_size = (512, 512)
+                img = img.resize(output_size)
+                img.save(self.profile_image.path)
 
     def __str__(self):
         return self.user.username

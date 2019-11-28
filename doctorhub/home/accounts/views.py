@@ -1,7 +1,10 @@
+import base64
+
 from django.contrib import messages
 from django.contrib.auth import views as auth_views
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpResponseRedirect
+from django.core.files.base import ContentFile
+from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.views.generic import FormView
 from django.views.generic.base import View, TemplateView
@@ -12,6 +15,7 @@ from .phone.forms import PhoneUpdateForm
 from .phone.models import Phone
 from ..models import DigitalTebPageMixin
 from ..modules import authentication, sms
+from ..modules import images
 
 
 class LoginView(SuccessMessageMixin, AuthenticatedForbiddenMixin, auth_views.LoginView):
@@ -41,8 +45,7 @@ class SignUpView(AuthenticatedForbiddenMixin, FormView):
     form_class = UserCreationForm
 
     def get_success_url(self):
-        self.success_url = DigitalTebPageMixin.get_home_page().get_url()
-        return super(SignUpView, self).get_success_url()
+        return reverse('profile')
 
     def get(self, request, *args, **kwargs):
         self.forbid_authenticated()
@@ -219,9 +222,6 @@ class ProfileUpdateView(LoginRequiredMixin, TemplateView):
         context['phone_form'] = PhoneUpdateForm(instance=self.request.user.profile.phone)
         return context
 
-    def get(self, request, *args, **kwargs):
-        return super(ProfileUpdateView, self).get(request, *args, **kwargs)
-
     def post(self, request, *args, **kwargs):
         user_form = UserUpdateForm(
             request.POST, instance=request.user
@@ -247,14 +247,37 @@ class ProfileUpdateView(LoginRequiredMixin, TemplateView):
                 'successful-profile-edit'
             )
             return HttpResponseRedirect(
-                DigitalTebPageMixin.get_home_page().get_url()
+                reverse('profile')
             )
-        context = {
-            'user_form': user_form,
-            'profile_form': profile_form,
-            'phone_form': phone_form,
-        }
-        return self.render_to_response(context)
+        else:
+            context = {
+                'user_form': user_form,
+                'profile_form': profile_form,
+                'phone_form': phone_form,
+            }
+            return self.render_to_response(context)
+
+
+class ProfilePicUpdate(LoginRequiredMixin, View):
+    def post(self, *args, **kwargs):
+        try:
+            image_data = self.request.POST.get('profile_image')
+            file_name = f'{self.request.user.username}.'
+
+            def save_profile_image(file_path, content_file):
+                self.request.user.profile.profile_image.save(
+                    file_path, content_file, save=True
+                )
+
+            images.save_base64_to_file(file_name, image_data, save_profile_image)
+
+            return JsonResponse(
+                {'status': 'success'}
+            )
+        except Exception as e:
+            return JsonResponse(
+                {'status': 'fail'}
+            )
 
 
 class PasswordChangeView(LoginRequiredMixin, SuccessMessageMixin, auth_views.PasswordChangeView):
@@ -262,4 +285,4 @@ class PasswordChangeView(LoginRequiredMixin, SuccessMessageMixin, auth_views.Pas
     success_message = 'رمز عبور جديد شما با موفقيت ثبت شد.'
 
     def get_success_url(self):
-        return DigitalTebPageMixin.get_home_page().get_url()
+        return reverse('profile')

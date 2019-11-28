@@ -97,6 +97,8 @@ def get_last_password_change_code(user):
 
 
 def send_code(phone, parameter_name, template_id, save_to_database):
+    if settings.SILENCED_SMS:
+        return True
     confirmation_code = create_confirmation_code()
     confirmation_code = str(confirmation_code)
     url = 'https://RestfulSms.com/api/UltraFastSend'

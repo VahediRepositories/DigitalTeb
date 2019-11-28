@@ -31,10 +31,6 @@ class Phone(models.Model):
     def __str__(self):
         return str(self.number)
 
-    def save(self, *args, **kwargs):
-        print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@', self.number)
-        return super(Phone, self).save(*args, **kwargs)
-
     @staticmethod
     def get_user_by_phone_number(phone_number):
         phone = get_object_or_404(Phone, number=phone_number)

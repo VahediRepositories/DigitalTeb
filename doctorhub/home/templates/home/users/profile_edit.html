@@ -7,6 +7,12 @@
 
     <link rel="stylesheet" href="{% static 'doctorhub/more/css/persian-datepicker.min.css' %}"/>
 
+{#    <link rel="stylesheet" href="{% static 'doctorhub/more/css/bootstrap.min.css' %}"/>#}
+    <link rel="stylesheet" href="{% static 'doctorhub/more/css/croppie.css' %}" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+
+    <link rel="stylesheet" href="{% static 'doctorhub/more/css/croppie-image-field.css' %}">
+
 {% endblock %}
 
 {% block page_title %}
@@ -42,16 +48,69 @@
                          alt="DigitalTeb" class="dark-logo"/>
                 </div>
                 <div class="card-body bg-dark" style="padding-left: 10%; padding-right: 10%;">
-                    <form action="{% url 'edit_account' %}"
-                          enctype="multipart/form-data"
-                          onsubmit="set_gregorian_date()"
-                          method="POST">
-                        {% csrf_token %}
-                        <div class="form-row">
-                            <div class="col-md-4">
-                                {{ profile_form.profile_image|as_crispy_field }}
+
+                    <div class="form-group">
+                        <label>
+                            تصوير پروفايل
+                        </label>
+                        <br>
+                        <small class="form-text text-muted">
+                            براى تغيير عكس روى آن كليك كنيد
+                        </small>
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-xs-12 form-group">
+                                    <label for="id_profile_image">
+                                        {{ profile_form.profile_image.label }}
+                                    </label>
+                                    <label class="cabinet center-block">
+                                        <figure>
+                                            <img src="" style="width: 200px; height: 200px;"
+                                                 class="gambar img-responsive img-thumbnail"
+                                                 id="item-img-output"/>
+                                        </figure>
+                                        <input id="id_profile_image"
+                                               type="file"
+                                               class="item-img file center-block"
+                                               accept="image/*"
+                                               name="profile_image"/>
+                                    </label>
+
+                                </div>
                             </div>
                         </div>
+                        <div class="modal fade" id="cropImagePop" tabindex="-1" role="dialog"
+                             aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal"
+                                                aria-label="Close"><span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <h4 class="modal-title" id="myModalLabel">
+                                            <?=multiLanguage( "Edit Foto" , "Edit Photo" )?></h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div id="upload-demo" class="center-block"></div>
+                                    </div>
+                                    <div class="modal-footer" dir="ltr">
+                                        <button type="button" class="btn btn-outline-dark" data-dismiss="modal">
+                                            Close
+                                        </button>
+                                        <button type="button" id="cropImageBtn" class="btn btn-success">Crop
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <form id="profile-edit-form"
+                          action="{% url 'edit_account' %}"
+                          enctype="multipart/form-data"
+                          onsubmit="onSubmitFunction()"
+                          method="POST">
+                        {% csrf_token %}
                         <div class="form-row">
                             <div class="form-group col-md-4 mb-0">
                                 {{ user_form.username|as_crispy_field }}
@@ -69,7 +128,7 @@
                                 {{ profile_form.gender|as_crispy_field }}
                             </div>
                             <div class="form-group col-md-4 mb-0">
-                                {{ phone_form.number|as_crispy_field }}
+                            {{ phone_form.number|as_crispy_field }}
                             </div>
                             <div class="form-group col-md-4 mb-0">
                                 {{ profile_form.birthdate|as_crispy_field }}
@@ -80,14 +139,14 @@
                         <br>
                         <div class="form-row">
                             <div class="col-md-2"></div>
-                            <div class="col-md-4">
+                            <div class="col-md-4 mt-3">
                                 <button type="submit"
                                         style="width: 100%; height: 100%;"
                                         class="btn btn-success btn-lg">
                                     ثبت تغييرات
                                 </button>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4 mt-3">
                                 <a style="width: 100%; height: 100%;"
                                    href="{% url 'change_password' %}"
                                    class="btn btn-outline-success btn-lg">
@@ -110,6 +169,86 @@
 
     <script src="{% static 'doctorhub/more/js/persian-date.min.js' %}"></script>
     <script src="{% static 'doctorhub/more/js/persian-datepicker.min.js' %}"></script>
+    <script src="{% static 'doctorhub/more/js/croppie.min.js' %}"></script>
+
+    <script>
+
+        // Start upload preview image
+        $(".gambar").attr("src", "{{ request.user.profile.image_url }}");
+        var $uploadCrop,
+            tempFilename,
+            rawImg,
+            imageId;
+
+        function readFile(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $('.upload-demo').addClass('ready');
+                    $('#cropImagePop').modal('show');
+                    rawImg = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                swal("Sorry - you're browser doesn't support the FileReader API");
+            }
+        }
+
+        $uploadCrop = $('#upload-demo').croppie({
+            showZoomer: false,
+            viewport: {
+                width: 200,
+                height: 200,
+                type: 'circle'
+            },
+            enforceBoundary: false,
+            enableExif: true
+        });
+        $('#cropImagePop').on('shown.bs.modal', function () {
+            // alert('Shown pop');
+            $uploadCrop.croppie('bind', {
+                url: rawImg
+            }).then(function () {
+                console.log('jQuery bind complete');
+            });
+        });
+
+        $('.item-img').on('change', function () {
+            imageId = $(this).data('id');
+            tempFilename = $(this).val();
+            $('#cancelCropBtn').data('id', imageId);
+            readFile(this);
+        });
+        $('#cropImageBtn').on('click', function (ev) {
+            $uploadCrop.croppie('result', {
+                type: 'base64',
+                format: 'jpeg',
+                size: {width: 200, height: 200}
+            }).then(function (resp) {
+                $('#item-img-output').attr('src', resp);
+                $('#cropImagePop').modal('hide');
+            });
+        });
+        // End upload preview image
+
+    </script>
+
+    <script>
+        function post_form() {
+            set_gregorian_date();
+            var fd = set_image();
+            $.ajax({
+                url: "{% url 'edit_account' %}",
+                data: fd,
+                processData: false,
+                contentType: false,
+                type: 'POST',
+                success: function (data) {
+                },
+            });
+            return false;
+        }
+    </script>
 
     <script>
 
@@ -146,6 +285,25 @@
             setPersianDatePicker()
         );
 
+    </script>
+
+    <script>
+        function onSubmitFunction() {
+            set_gregorian_date();
+            var token = '{{ csrf_token }}';
+            var img_data = $('#item-img-output').attr('src');
+            $.ajax(
+                {
+                    type: "POST",
+                    headers: { "X-CSRFToken": token },
+                    url: "{% url 'update_profile_image' %}",
+                    data: {
+                        'profile_image': img_data
+                    },
+                    async: false,
+                }
+            )
+        }
     </script>
 
 {% endblock %}

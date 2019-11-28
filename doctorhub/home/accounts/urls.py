@@ -1,10 +1,18 @@
 from django.urls import path
+from django.views.generic import RedirectView
 
 from . import views
 from .phone import urls as phone_urls
 
 urlpatterns = [
 
+    path(
+        'accounts/profile/',
+        RedirectView.as_view(
+            url='/'
+        ),
+        name='profile'
+    ),
     path(
         'accounts/login/',
         views.LoginView.as_view(),
@@ -46,14 +54,20 @@ urlpatterns = [
         name='invalid_password_change_code'
     ),
     path(
-        'accounts/edit',
+        'accounts/edit/',
         views.ProfileUpdateView.as_view(),
         name='edit_account'
     ),
     path(
-        'accounts/change-password',
+        'accounts/update-profile-image',
+        views.ProfilePicUpdate.as_view(),
+        name='update_profile_image'
+    ),
+    path(
+        'accounts/change-password/',
         views.PasswordChangeView.as_view(),
         name='change_password'
     ),
+
 
 ] + phone_urls.urlpatterns
