@@ -1,9 +1,6 @@
-import base64
-
 from django.contrib import messages
 from django.contrib.auth import views as auth_views
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.files.base import ContentFile
 from django.http import HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.views.generic import FormView
@@ -14,8 +11,7 @@ from .mixins import AuthenticatedForbiddenMixin, LoginRequiredMixin
 from .phone.forms import PhoneUpdateForm
 from .phone.models import Phone
 from ..models import DigitalTebPageMixin
-from ..modules import authentication, sms
-from ..modules import images
+from ..modules import authentication, sms, images
 
 
 class LoginView(SuccessMessageMixin, AuthenticatedForbiddenMixin, auth_views.LoginView):
@@ -227,7 +223,7 @@ class ProfileUpdateView(LoginRequiredMixin, TemplateView):
             request.POST, instance=request.user
         )
         profile_form = ProfileUpdateForm(
-            request.POST, request.FILES, instance=request.user.profile
+            request.POST, instance=request.user.profile
         )
         phone_form = PhoneUpdateForm(
             request.POST, instance=request.user.profile.phone
@@ -241,6 +237,21 @@ class ProfileUpdateView(LoginRequiredMixin, TemplateView):
                 phone.verified = False
                 phone.save()
                 sms.send_confirmation_code(phone)
+            image_data = self.request.POST.get('profile_image')
+            if image_data:
+                try:
+                    file_name = f'{self.request.user.username}.'
+
+                    def save_profile_image(file_path, content_file):
+                        self.request.user.profile.profile_image.save(
+                            file_path, content_file, save=True
+                        )
+
+                    images.save_base64_to_file(file_name, image_data, save_profile_image)
+                except Exception as e:
+                    import traceback
+                    traceback.print_exc()
+
             messages.success(
                 request,
                 'اطلاعات حساب كاربرى شما، به روز رسانى شد.',

@@ -60,9 +60,6 @@
                         <div class="container">
                             <div class="row">
                                 <div class="col-xs-12 form-group">
-                                    <label for="id_profile_image">
-                                        {{ profile_form.profile_image.label }}
-                                    </label>
                                     <label class="cabinet center-block">
                                         <figure>
                                             <img src="" style="width: 200px; height: 200px;"
@@ -70,11 +67,9 @@
                                                  class="gambar img-responsive img-thumbnail"
                                                  id="item-img-output"/>
                                         </figure>
-                                        <input id="id_profile_image"
-                                               type="file"
+                                        <input type="file"
                                                class="item-img file center-block"
-                                               accept="image/*"
-                                               name="profile_image"/>
+                                               accept="image/*"/>
                                     </label>
 
                                 </div>
@@ -112,6 +107,7 @@
                           onsubmit="onSubmitFunction()"
                           method="POST">
                         {% csrf_token %}
+                        <input type="hidden" id="id_profile_image" name="profile_image">
                         <div class="form-row">
                             <div class="form-group col-md-4 mb-0">
                                 {{ user_form.username|as_crispy_field }}
@@ -274,22 +270,12 @@
 
     <script>
         function onSubmitFunction() {
+
             set_gregorian_date();
-            var token = '{{ csrf_token }}';
             var image_element = $('#item-img-output');
             var img_data = image_element.attr('src');
             if (image_element.attr('data-status') === 'base64') {
-                $.ajax(
-                    {
-                        type: "POST",
-                        headers: {"X-CSRFToken": token},
-                        url: "{% url 'update_profile_image' %}",
-                        data: {
-                            'profile_image': img_data
-                        },
-                        async: false,
-                    }
-                )
+                $('#id_profile_image').val(img_data)
             }
 
         }
