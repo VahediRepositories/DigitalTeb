@@ -1,11 +1,10 @@
 import datetime
 
-from captcha.fields import ReCaptchaField
-from captcha.widgets import ReCaptchaV2Checkbox
 from django import forms
 from django.contrib.auth import forms as auth_forms
 from django.core.exceptions import ValidationError
 
+from .fields import reCaptchaField, PasswordChangeCodeField
 from .models import *
 from .phone.fields import PhoneField
 from .phone.models import CODE_LENGTH
@@ -13,34 +12,28 @@ from ..modules import phones
 
 
 class UserCreationForm(auth_forms.UserCreationForm):
-    first_name = forms.CharField(max_length=50, label='نام')
-    last_name = forms.CharField(max_length=50, label='نام خانوادگى')
+
+    def __init__(self, *args, **kwargs):
+        super(UserCreationForm, self).__init__(*args, **kwargs)
+        self.fields['first_name'].required = True
+        self.fields['last_name'].required = True
+
     gender = forms.ChoiceField(
-        label='جنسيت', choices=GENDER_CHOICES
+        # Translators: This appears on registration page where users have to select their sex.
+        label=translation.gettext_lazy('Sex'),
+        choices=GENDER_CHOICES
     )
-    phone = PhoneField(
-        label='شماره موبايل',
-        max_length=20,
-    )
+    phone = PhoneField()
     birthdate = forms.DateField(
-        label='تاريخ تولد', widget=forms.DateInput(
+        label=translation.gettext_lazy('Birthdate'),
+        widget=forms.DateInput(
             attrs={
                 'class': 'persian-datepicker'
             }
         )
     )
 
-    captcha = ReCaptchaField(
-        label='ثابت كنيد ربات نيستيد',
-        widget=ReCaptchaV2Checkbox(
-            attrs={
-                'data-size': 'compact',
-            },
-            api_params={
-                'hl': 'fa',
-            }
-        )
-    )
+    captcha = reCaptchaField
 
     def clean_birthdate(self):
         birthdate = self.cleaned_data['birthdate']
@@ -56,7 +49,7 @@ class UserCreationForm(auth_forms.UserCreationForm):
         phone = self.cleaned_data['phone']
         if phones.phone_exists(phone):
             raise ValidationError(
-                'اين شماره قبلا ثبت شده است',
+                translation.gettext('The phone number is already taken.'),
                 code='invalid'
             )
         else:
@@ -74,28 +67,16 @@ class UserCreationForm(auth_forms.UserCreationForm):
 
 class ForgotAccountForm(forms.Form):
     phone = PhoneField(
-        label='شماره موبايل',
-        max_length=20,
-        help_text='شماره موبايل خود را وارد كنيد'
+        help_text=translation.gettext_lazy('Enter you cell phone number.')
     )
 
-    captcha = ReCaptchaField(
-        label='ثابت كنيد ربات نيستيد',
-        widget=ReCaptchaV2Checkbox(
-            attrs={
-                'data-size': 'compact',
-            },
-            api_params={
-                'hl': 'fa',
-            }
-        )
-    )
+    captcha = reCaptchaField
 
     def clean_phone(self):
         phone_number = self.cleaned_data['phone']
         if not phones.verified_phone_exists(phone_number):
             raise ValidationError(
-                'متاسفانه، اين شماره در ديجيتال طب ثبت نشده است.',
+                translation.gettext('Unfortunately, the phone number is not registered.'),
                 code='invalid'
             )
         else:
@@ -103,11 +84,13 @@ class ForgotAccountForm(forms.Form):
 
 
 class PasswordChangeCodeForm(forms.Form):
-    password_change_code = forms.CharField(
-        max_length=CODE_LENGTH,
-        label='كد تغيير رمز عبور',
-        help_text=f'كد {CODE_LENGTH} رقمى اى كه برايتان ارسال شده است را وارد كنيد',
-    )
+    password_change_code = PasswordChangeCodeField()
+
+    def __init__(self, *args, **kwargs):
+        super(PasswordChangeCodeForm, self).__init__(*args, **kwargs)
+        self.fields['password_change_code'].help_text = self.fields['password_change_code'].help_text % {
+            'num': CODE_LENGTH
+        }
 
 
 class UserUpdateForm(forms.ModelForm):
@@ -123,7 +106,6 @@ class UserUpdateForm(forms.ModelForm):
 
 
 class ProfileUpdateForm(forms.ModelForm):
-
     class Meta:
         model = Profile
         fields = [
@@ -131,9 +113,8 @@ class ProfileUpdateForm(forms.ModelForm):
             'birthdate'
         ]
         labels = {
-            'profile_image': 'عكس',
-            'gender': 'جنسيت',
-            'birthdate': 'تاريخ تولد'
+            'gender': translation.gettext_lazy('Sex'),
+            'birthdate': translation.gettext_lazy('Birthdate')
         }
         widgets = {
             'birthdate': forms.DateInput(

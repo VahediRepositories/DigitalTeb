@@ -2,6 +2,7 @@ import json
 import random
 
 import requests
+import traceback
 from django.conf import settings
 from requests.exceptions import ConnectionError
 
@@ -26,8 +27,10 @@ def get_token_key():
         token_key = response['TokenKey']
         return token_key
     except ConnectionError as e:
+        traceback.print_exc()
         return None
     except KeyError as e:
+        traceback.print_exc()
         return None
 
 
@@ -120,7 +123,7 @@ def send_code(phone, parameter_name, template_id, save_to_database):
                 "x-sms-ir-secure-token": token_key,
                 "Content-Type": "application/json",
             }
-            requests.post(
+            response = requests.post(
                 url=url,
                 data=data,
                 headers=headers
@@ -128,7 +131,9 @@ def send_code(phone, parameter_name, template_id, save_to_database):
             save_to_database(phone, confirmation_code)
             return True
         except ConnectionError as e:
+            traceback.print_exc()
             return False
+    return False
 
 
 def save_confirmation_code(phone, confirmation_code):

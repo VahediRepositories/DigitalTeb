@@ -1,6 +1,7 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 {% load pages %}
+{% load i18n %}
 
 <div class="row">
     <div class="col-md-1"></div>
@@ -8,7 +9,7 @@
         <div class="card border-success">
             <div class="card-header bg-success text-center">
                 <img src="{% static 'doctorhub/assets/images/logo-light-text.png' %}"
-                     alt="DigitalTeb" class="dark-logo"/>
+                     alt="{{ request.site.site_name }}" class="dark-logo"/>
             </div>
             <div class="card-body" style="padding-left: 10%; padding-right: 10%;">
                 <form action="{% url 'confirmation_code' %}" method="POST">
@@ -17,12 +18,12 @@
                         {{ form|crispy }}
                         <div class="form-group text-center">
                             <button class="btn btn-lg btn-success large-text mb-3" type="submit">
-                                فعال سازى
+                                {% trans 'Confirm' %}
                             </button>
                             <br>
                             <a href="{% url 'resend_confirmation_code' %}"
                                class="btn btn-lg btn-outline-success large-text">
-                                ارسال مجدد كد فعال سازى
+                                {% trans 'Resend Confirmation Code' %}
                             </a>
                         </div>
                     </div>
@@ -30,9 +31,9 @@
 
                 <div class="border-top pt-3">
                     <small class="text-muted">
-شماره موبايل را اشتباه وارد كرديد؟
+                        {% trans 'Entered wrong cell phone number?' %}
                         <a class="mr-2 text-success" href="{% url 'edit_account' %}">
-                            تغيير اطلاعات كاربرى
+                            {% trans 'Change Account Information' %}
                         </a>
                     </small>
                 </div>

@@ -1,6 +1,7 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 {% load pages %}
+{% load i18n %}
 
 <div class="row">
     <div class="col-md-1"></div>
@@ -8,7 +9,7 @@
         <div class="card border-success">
             <div class="card-header bg-success text-center">
                 <img src="{% static 'doctorhub/assets/images/logo-light-text.png' %}"
-                     alt="DigitalTeb" class="dark-logo"/>
+                     alt="{{ request.site.site_name }}" class="dark-logo"/>
             </div>
             <div class="card-body" style="padding-left: 10%; padding-right: 10%;">
                 <form action="{% url 'login' %}" method="POST">
@@ -18,7 +19,7 @@
                         {{ form|crispy }}
                         <div class="form-group text-center">
                             <button class="btn btn-lg btn-success large-text" type="submit">
-                                 ورود
+                                {% trans 'Login' %}
                             </button>
                         </div>
                     </div>
@@ -26,18 +27,18 @@
 
                 <div class="border-top pt-3">
                     <small class="text-muted">
-هنوز ثبت نام نكرديد؟
+                        {% trans "Haven't registered yet?" %}
                         <a class="mr-2 text-success" href="{% url 'signup' %}">
-ثبت نام كنيد
+                            {% trans 'Register Now' %}
                         </a>
                     </small>
                 </div>
                 <br>
                 <div class="pb-3">
                     <small class="text-muted">
-                        نام كاربرى يا رمز عبور خود را فراموش كرده ايد؟
+                        {% trans 'Forgot username or password?' %}
                         <a class="mr-2 text-success" href="{% url 'forgot_account' %}">
-                            بازيابى حساب كاربرى
+                            {% trans 'Account Recovery' %}
                         </a>
                     </small>
                 </div>

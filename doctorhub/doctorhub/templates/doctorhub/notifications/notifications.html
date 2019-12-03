@@ -1,43 +1,45 @@
+{% load i18n %}
+
 {% if messages %}
     <div class="row">
         <div class="col-md-12">
             {% for message in messages %}
                 {% if 'successful-registration' in message.tags %}
                     <div class="alert alert-success">
-                        {% include 'home/notifications/message.html' %}
+                        {% include 'doctorhub/notifications/message.html' %}
                         <a class="btn btn-outline-success btn-lg" href="{% url 'login' %}">
-                            ورود به حساب كاربرى
+                            {% trans 'Login' %}
                         </a>
                     </div>
                 {% elif 'successful-logout' in message.tags %}
                     <div class="alert alert-success">
-                        {% include 'home/notifications/message.html' %}
+                        {% include 'doctorhub/notifications/message.html' %}
                         <a class="btn btn-outline-success btn-lg" href="{% url 'login' %}">
-                            ورود به حساب كاربرى
+                            {% trans 'Login' %}
                         </a>
                     </div>
                 {% elif 'phone-not-confirmed-warning' in message.tags %}
                     <div class="alert alert-warning">
-                        {% include 'home/notifications/message.html' %}
+                        {% include 'doctorhub/notifications/message.html' %}
                         <a class="btn btn-outline-warning btn-lg" href="{% url 'confirmation_code' %}">
-                            فعال سازى شماره موبايل
+                            {% trans 'Activate cell phone number' %}
                         </a>
                     </div>
                 {% elif 'successful-password-reset' in message.tags %}
                     <div class="alert alert-success">
-                        {% include 'home/notifications/message.html' %}
+                        {% include 'doctorhub/notifications/message.html' %}
                         <a class="btn btn-outline-success btn-lg" href="{% url 'login' %}">
-                            ورود به حساب كاربرى
+                            {% trans 'Login' %}
                         </a>
                     </div>
                 {% else %}
                     {% if 'success' in message.tags %}
                         <div class="alert alert-success">
-                            {% include 'home/notifications/message.html' %}
+                            {% include 'doctorhub/notifications/message.html' %}
                         </div>
                     {% elif 'warning' in message.tags %}
                         <div class="alert alert-warning">
-                            {% include 'home/notifications/message.html' %}
+                            {% include 'doctorhub/notifications/message.html' %}
                         </div>
                     {% endif %}
                 {% endif %}

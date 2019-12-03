@@ -1,0 +1,118 @@
+{% load staticfiles %}
+
+<script src="{% static 'doctorhub/more/js/persian-date.min.js' %}"></script>
+<script src="{% static 'doctorhub/more/js/persian-datepicker.min.js' %}"></script>
+<script src="{% static 'doctorhub/more/js/croppie.min.js' %}"></script>
+
+<script>
+
+    // Start upload preview image
+    $(".gambar").attr("src", "{{ request.user.profile.image_url }}");
+    var $uploadCrop,
+        tempFilename,
+        rawImg,
+        imageId;
+
+    function readFile(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('.upload-demo').addClass('ready');
+                $('#cropImagePop').modal('show');
+                rawImg = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        } else {
+            swal("Sorry - you're browser doesn't support the FileReader API");
+        }
+    }
+
+    $uploadCrop = $('#upload-demo').croppie({
+        showZoomer: false,
+        viewport: {
+            width: 200,
+            height: 200,
+            type: 'circle'
+        },
+        enforceBoundary: false,
+        enableExif: true
+    });
+    $('#cropImagePop').on('shown.bs.modal', function () {
+        // alert('Shown pop');
+        $uploadCrop.croppie('bind', {
+            url: rawImg
+        }).then(function () {
+            console.log('jQuery bind complete');
+        });
+    });
+
+    $('.item-img').on('change', function () {
+        imageId = $(this).data('id');
+        tempFilename = $(this).val();
+        $('#cancelCropBtn').data('id', imageId);
+        readFile(this);
+    });
+    $('#cropImageBtn').on('click', function (ev) {
+        $uploadCrop.croppie('result', {
+            type: 'base64',
+            format: 'jpeg',
+            size: {width: 200, height: 200}
+        }).then(function (resp) {
+            $('#item-img-output').attr('src', resp);
+            $('#item-img-output').attr('data-status', 'base64');
+            $('#cropImagePop').modal('hide');
+        });
+    });
+    // End upload preview image
+
+</script>
+
+<script>
+
+    function setPersianDatePicker() {
+        $(".persian-datepicker").persianDatepicker(
+            {
+                formatter: function (unixDate) {
+                    var gregorianDate = new Date(unixDate);
+                    var day = gregorianDate.getDate().toString();
+                    var month = (gregorianDate.getMonth() + 1).toString();
+                    var year = gregorianDate.getFullYear().toString();
+                    $('#birthdate-input').val(
+                        year + '-' + month + '-' + day
+                    );
+                    var pdate = new persianDate(unixDate);
+                    day = pdate.date().toString();
+                    month = pdate.month().toString();
+                    year = pdate.year().toString();
+                    return year + '/' + month + '/' + day
+                },
+                autoClose: true,
+                {#initialValue: false,#}
+            }
+        );
+    }
+
+    function set_gregorian_date() {
+        $(".persian-datepicker").val(
+            $('#birthdate-input').val()
+        );
+    }
+
+    $(document).ready(
+        setPersianDatePicker()
+    );
+
+</script>
+
+<script>
+    function onSubmitFunction() {
+
+        set_gregorian_date();
+        var image_element = $('#item-img-output');
+        var img_data = image_element.attr('src');
+        if (image_element.attr('data-status') === 'base64') {
+            $('#id_profile_image').val(img_data)
+        }
+
+    }
+</script>

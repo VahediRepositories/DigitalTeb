@@ -1,6 +1,7 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 {% load pages %}
+{% load i18n %}
 
 <div class="row">
     <div class="col-md-1"></div>
@@ -8,7 +9,7 @@
         <div class="card border-success">
             <div class="card-header bg-success text-center">
                 <img src="{% static 'doctorhub/assets/images/logo-light-text.png' %}"
-                     alt="DigitalTeb" class="dark-logo"/>
+                     alt="{{ request.site.site_name }}" class="dark-logo"/>
             </div>
             <div class="card-body bg-dark" style="padding-left: 10%; padding-right: 10%;">
                 <form action="{% url 'signup' %}"
@@ -59,7 +60,7 @@
                             <button type="submit"
                                     style="width: 100%; height: 100%;"
                                     class="btn btn-success btn-lg">
-                                ثبت نام
+                                {% trans 'Register' %}
                             </button>
                         </div>
                         <div class="col-md-4"></div>
@@ -69,9 +70,9 @@
 
                 <div class="border-top pt-3">
                     <small class="text-muted">
-قبلا ثبت نام كرديد؟
+                        {% trans 'Already registered?' %}
                         <a class="mr-2 text-success" href="{% url 'login' %}">
-                            وارد شويد
+                            {% trans 'Login' %}
                         </a>
                     </small>
                 </div>

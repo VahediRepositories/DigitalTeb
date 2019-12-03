@@ -1,5 +1,6 @@
 from PIL import Image
 from django.contrib.auth.models import User
+from django.utils import translation
 from django.db import models
 from django.db.models import DateField
 from django.contrib.staticfiles.templatetags.staticfiles import static
@@ -10,9 +11,27 @@ FEMALE = 'F'
 NOT_BINARY = 'N'
 
 GENDER_CHOICES = [
-    (NOT_BINARY, 'هيچكدام'),
-    (FEMALE, 'زن'),
-    (MALE, 'مرد'),
+    (
+        NOT_BINARY,
+        # Translators: This appears on registration page where users have to select their sex.
+        translation.pgettext_lazy(
+            'sex type', 'None of them'
+        )
+    ),
+    (
+        FEMALE,
+        # Translators: This appears on registration page where users have to select their sex.
+        translation.pgettext_lazy(
+            'sex type', 'Female'
+        )
+    ),
+    (
+        MALE,
+        # Translators: This appears on registration page where users have to select their sex.
+        translation.pgettext_lazy(
+            'sex type', 'Male'
+        )
+    ),
 ]
 
 AVATARS = 'doctorhub/more/images/avatars/'

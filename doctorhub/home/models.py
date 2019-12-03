@@ -23,7 +23,7 @@ from .accounts.phone.mixins import CheckPhoneVerifiedMixin
 from . import configurations
 
 
-class DigitalTebPageMixin(CheckPhoneVerifiedMixin):
+class DigitalTebPageMixin:
 
     def __init__(self, *args, **kwargs):
         super(DigitalTebPageMixin, self).__init__(*args, **kwargs)
@@ -38,7 +38,7 @@ class DigitalTebPageMixin(CheckPhoneVerifiedMixin):
         return ArticlesCategoriesPage.objects.first()
 
 
-class HomePage(DigitalTebPageMixin, Page):
+class HomePage(DigitalTebPageMixin, CheckPhoneVerifiedMixin, Page):
     subpage_types = [
         'home.ArticlesCategoriesPage',
     ]
@@ -49,7 +49,8 @@ class HomePage(DigitalTebPageMixin, Page):
 
 
 class ArticlesCategoriesPage(
-    DigitalTebPageMixin, MetadataPageMixin, Page
+    DigitalTebPageMixin,
+    MetadataPageMixin, CheckPhoneVerifiedMixin, Page
 ):
     parent_page_types = ['home.HomePage']
     subpage_types = ['home.ArticlesCategoryPage']
@@ -77,7 +78,8 @@ class ArticlesCategoriesPage(
 
 
 class ArticlesCategoryPage(
-    DigitalTebPageMixin, MetadataPageMixin, Page
+    DigitalTebPageMixin, MetadataPageMixin,
+    CheckPhoneVerifiedMixin, Page
 ):
     category = models.OneToOneField(
         ArticleCategory, blank=False,
@@ -152,7 +154,7 @@ class ArticleEnglishTag(TaggedItemBase):
     )
 
 
-class Article(DigitalTebPageMixin, MetadataPageMixin, Page):
+class Article(DigitalTebPageMixin, MetadataPageMixin, CheckPhoneVerifiedMixin, Page):
     article_title = RichTextField(
         features=[], blank=False, null=True,
         help_text='It has to start with a farsi word'

@@ -59,11 +59,6 @@ urlpatterns = [
         name='edit_account'
     ),
     path(
-        'accounts/update-profile-image',
-        views.ProfilePicUpdate.as_view(),
-        name='update_profile_image'
-    ),
-    path(
         'accounts/change-password/',
         views.PasswordChangeView.as_view(),
         name='change_password'

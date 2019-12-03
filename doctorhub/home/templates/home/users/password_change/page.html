@@ -1,7 +1,6 @@
-{% load staticfiles %}
 {% load crispy_forms_tags %}
-{% load pages %}
 {% load i18n %}
+{% load staticfiles %}
 
 <div class="row">
     <div class="col-md-1"></div>
@@ -11,21 +10,23 @@
                 <img src="{% static 'doctorhub/assets/images/logo-light-text.png' %}"
                      alt="{{ request.site.site_name }}" class="dark-logo"/>
             </div>
-            <div class="card-body" style="padding-left: 10%; padding-right: 10%;">
-                <p class="text-center">
-                    {% blocktrans trimmed with username=user.username %}
-                        Your Username is <b>{{ username }}</b>. Please change your password.
-                    {% endblocktrans %}
-                </p>
-                <form action="" method="POST">
+            <div class="card-body bg-dark" style="padding-left: 10%; padding-right: 10%;">
+                <form action="{% url 'change_password' %}"
+                      method="POST">
                     {% csrf_token %}
-                    <div class="form-body">
-                        {{ form|crispy }}
-                        <div class="form-group text-center">
-                            <button class="btn btn-lg btn-success large-text" type="submit">
+                    {{ form|crispy }}
+                    <br>
+                    <br>
+                    <div class="form-row">
+                        <div class="col-md-4"></div>
+                        <div class="col-md-4">
+                            <button type="submit"
+                                    style="width: 100%; height: 100%;"
+                                    class="btn btn-success btn-lg">
                                 {% trans 'Change Password' %}
                             </button>
                         </div>
+                        <div class="col-md-4"></div>
                     </div>
                 </form>
             </div>

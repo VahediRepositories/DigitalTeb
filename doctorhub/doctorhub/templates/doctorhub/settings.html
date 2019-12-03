@@ -1,0 +1,34 @@
+{% load i18n %}
+{% load languages %}
+
+<div class="col-md-12">
+    <b>
+        {% trans 'Language Settings:' %}
+    </b>
+    <br>
+    <br>
+</div>
+
+<div class="col-md-12">
+    <div class="row">
+        {% get_all_languages as langs %}
+        {% get_active_language as active_lang %}
+        {% for lang in langs %}
+            <div class="col-md-6">
+                <a href="{% get_current_url request lang %}"
+                   style="width: 100%;"
+                   class="btn btn-primary {% if active_lang == lang %} disabled {% endif %}">
+                        <b>
+                            {{ lang.name }}
+                        </b>
+                        <br>
+                     ({{ lang }})
+                </a>
+            </div>
+
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+</script>

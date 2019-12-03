@@ -1,8 +1,8 @@
 from django.contrib import messages
 from django.contrib.auth import views as auth_views
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpResponseRedirect, JsonResponse
-from django.urls import reverse
+from django.http import HttpResponseRedirect
+from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
 from django.views.generic.base import View, TemplateView
 
@@ -12,10 +12,18 @@ from .phone.forms import PhoneUpdateForm
 from .phone.models import Phone
 from ..models import DigitalTebPageMixin
 from ..modules import authentication, sms, images
+from ..multilingual.mixins import MultilingualViewMixin
 
 
-class LoginView(SuccessMessageMixin, AuthenticatedForbiddenMixin, auth_views.LoginView):
-    success_message = 'خوش آمديد!'
+class LoginView(
+    SuccessMessageMixin, AuthenticatedForbiddenMixin,
+    MultilingualViewMixin, auth_views.LoginView
+):
+    success_message = translation.gettext_lazy('Welcome!')
+
+    @property
+    def template_name(self):
+        return f'registration/{self.language_direction}/login.html'
 
     def get(self, request, *args, **kwargs):
         self.forbid_authenticated()
@@ -28,7 +36,7 @@ class LogoutView(LoginRequiredMixin, auth_views.LogoutView):
         super(LogoutView, self).get(request, *args, **kwargs)
         messages.success(
             request,
-            'با موفقيت از حساب كاربرى خود خارج شديد.',
+            translation.gettext('You logged out of your account, successfully.'),
             extra_tags='successful-logout'
         )
         return HttpResponseRedirect(
@@ -36,12 +44,13 @@ class LogoutView(LoginRequiredMixin, auth_views.LogoutView):
         )
 
 
-class SignUpView(AuthenticatedForbiddenMixin, FormView):
-    template_name = 'registration/signup.html'
+class SignUpView(AuthenticatedForbiddenMixin, MultilingualViewMixin, FormView):
     form_class = UserCreationForm
+    success_url = reverse_lazy('profile')
 
-    def get_success_url(self):
-        return reverse('profile')
+    @property
+    def template_name(self):
+        return f'registration/{self.language_direction}/signup.html'
 
     def get(self, request, *args, **kwargs):
         self.forbid_authenticated()
@@ -55,7 +64,9 @@ class SignUpView(AuthenticatedForbiddenMixin, FormView):
         user.save()
         profile = authentication.create_profile(user, form)
         self.set_user_groups(user)
-        success_message = 'حساب كاربرى شما با موفقيت ايجاد شد. اكنون ميتوانيد وارد شويد.'
+        success_message = translation.gettext(
+            'Your account was created successfully. Now you can login.'
+        )
         messages.success(
             request=self.request,
             message=success_message,
@@ -68,9 +79,12 @@ class SignUpView(AuthenticatedForbiddenMixin, FormView):
         pass
 
 
-class ForgotAccountView(AuthenticatedForbiddenMixin, FormView):
-    template_name = 'registration/forgot_account.html'
+class ForgotAccountView(AuthenticatedForbiddenMixin, MultilingualViewMixin, FormView):
     form_class = ForgotAccountForm
+
+    @property
+    def template_name(self):
+        return f'registration/{self.language_direction}/forgot_account.html'
 
     def get(self, request, *args, **kwargs):
         self.forbid_authenticated()
@@ -79,9 +93,11 @@ class ForgotAccountView(AuthenticatedForbiddenMixin, FormView):
     def form_valid(self, form):
         self.forbid_authenticated()
         phone_number = form.cleaned_data['phone']
-        success_message = 'پيامكى حاوى كد تغيير رمز عبور به شماره ى {} ارسال شد.'.format(
-            phone_number
-        )
+        success_message = translation.gettext(
+            'A password change code was sent to %(phone)s'
+        ) % {
+                'phone': phone_number
+        }
         messages.success(
             request=self.request,
             message=success_message,
@@ -96,9 +112,12 @@ class ForgotAccountView(AuthenticatedForbiddenMixin, FormView):
         )
 
 
-class PasswordChangeCodeView(AuthenticatedForbiddenMixin, FormView):
-    template_name = 'registration/password_change_code.html'
+class PasswordChangeCodeView(AuthenticatedForbiddenMixin, MultilingualViewMixin, FormView):
     form_class = PasswordChangeCodeForm
+
+    @property
+    def template_name(self):
+        return f'registration/{self.language_direction}/password_change_code.html'
 
     def get(self, request, *args, **kwargs):
         self.forbid_authenticated()
@@ -123,7 +142,9 @@ class PasswordChangeCodeView(AuthenticatedForbiddenMixin, FormView):
         else:
             form.add_error(
                 'password_change_code', ValidationError(
-                    'كد وارد شده يا اشتباه است و يا منقضى شده است.'
+                    translation.gettext(
+                        'The entered code either is invalid or expired.'
+                    )
                 )
             )
             return super(PasswordChangeCodeView, self).form_invalid(form)
@@ -138,23 +159,32 @@ class ResendPasswordChangeCodeView(AuthenticatedForbiddenMixin, View):
         if resent:
             messages.success(
                 request,
-                'كد تغيير رمز عبور، به شماره ى {} ارسال شد.'.format(phone)
+                translation.gettext(
+                    'A password change code was sent to %(phone)s'
+                ) % {
+                    'phone': phone
+                }
             )
         else:
             messages.warning(
                 request,
-                'براى ارسال مجدد پيامك بايد {} ثانيه صبر كنيد.'.format(
-                    sms.get_remained_password_change_resend_time(phone)
-                )
+                translation.gettext(
+                    'You need to wait %(num)d seconds to resend SMS.'
+                ) % {
+                    'num': sms.get_remained_password_change_resend_time(phone)
+                },
             )
         return HttpResponseRedirect(
             reverse('password_change_code', args=[phone])
         )
 
 
-class ResetPasswordView(AuthenticatedForbiddenMixin, FormView):
+class ResetPasswordView(AuthenticatedForbiddenMixin, MultilingualViewMixin, FormView):
     form_class = auth_forms.SetPasswordForm
-    template_name = 'registration/reset_password.html'
+
+    @property
+    def template_name(self):
+        return f'registration/{self.language_direction}/reset_password.html'
 
     def get(self, request, *args, **kwargs):
         self.forbid_authenticated()
@@ -192,7 +222,9 @@ class ResetPasswordView(AuthenticatedForbiddenMixin, FormView):
         )
         messages.success(
             self.request,
-            'تغيير رمز عبور شما با موفقيت انجام شد. اكنون ميتوانيد وارد حساب كاربرى خود شويد.',
+            translation.gettext(
+                'Your password was changed successfully. Now you can login to you account.'
+            ),
             'successful-password-reset'
         )
         return HttpResponseRedirect(
@@ -200,16 +232,22 @@ class ResetPasswordView(AuthenticatedForbiddenMixin, FormView):
         )
 
 
-class InvalidPasswordChangeCode(AuthenticatedForbiddenMixin, TemplateView):
-    template_name = 'registration/invalid_password_change_code.html'
+class InvalidPasswordChangeCode(AuthenticatedForbiddenMixin, MultilingualViewMixin, TemplateView):
+
+    @property
+    def template_name(self):
+        return f'registration/{self.language_direction}/invalid_password_change_code.html'
 
     def get(self, request, *args, **kwargs):
         self.forbid_authenticated()
         return super(InvalidPasswordChangeCode, self).get(request, *args, **kwargs)
 
 
-class ProfileUpdateView(LoginRequiredMixin, TemplateView):
-    template_name = 'home/users/profile_edit.html'
+class ProfileUpdateView(LoginRequiredMixin, MultilingualViewMixin, TemplateView):
+
+    @property
+    def template_name(self):
+        return f'home/users/{self.language_direction}/profile_edit.html'
 
     def get_context_data(self, **kwargs):
         context = super(ProfileUpdateView, self).get_context_data(**kwargs)
@@ -240,7 +278,7 @@ class ProfileUpdateView(LoginRequiredMixin, TemplateView):
             image_data = self.request.POST.get('profile_image')
             if image_data:
                 try:
-                    file_name = f'{self.request.user.username}.'
+                    file_name = f'{self.request.user.username}'
 
                     def save_profile_image(file_path, content_file):
                         self.request.user.profile.profile_image.save(
@@ -254,7 +292,9 @@ class ProfileUpdateView(LoginRequiredMixin, TemplateView):
 
             messages.success(
                 request,
-                'اطلاعات حساب كاربرى شما، به روز رسانى شد.',
+                translation.gettext(
+                    'Your account information has updated.'
+                ),
                 'successful-profile-edit'
             )
             return HttpResponseRedirect(
@@ -269,33 +309,17 @@ class ProfileUpdateView(LoginRequiredMixin, TemplateView):
             return self.render_to_response(context)
 
 
-class ProfilePicUpdate(LoginRequiredMixin, View):
-    def post(self, *args, **kwargs):
-        try:
-            image_data = self.request.POST.get('profile_image')
-            file_name = f'{self.request.user.username}.'
+class PasswordChangeView(
+    LoginRequiredMixin, SuccessMessageMixin,
+    MultilingualViewMixin, auth_views.PasswordChangeView
+):
 
-            def save_profile_image(file_path, content_file):
-                self.request.user.profile.profile_image.save(
-                    file_path, content_file, save=True
-                )
+    @property
+    def template_name(self):
+        return f'home/users/{self.language_direction}/password_change.html'
 
-            images.save_base64_to_file(file_name, image_data, save_profile_image)
+    success_message = translation.gettext_lazy(
+        'Your new password was submitted successfully.'
+    )
+    success_url = reverse_lazy('profile')
 
-            return JsonResponse(
-                {'status': 'success'}
-            )
-        except Exception as e:
-            import traceback
-            traceback.print_exc()
-            return JsonResponse(
-                {'status': 'fail'}
-            )
-
-
-class PasswordChangeView(LoginRequiredMixin, SuccessMessageMixin, auth_views.PasswordChangeView):
-    template_name = 'home/users/password_change.html'
-    success_message = 'رمز عبور جديد شما با موفقيت ثبت شد.'
-
-    def get_success_url(self):
-        return reverse('profile')

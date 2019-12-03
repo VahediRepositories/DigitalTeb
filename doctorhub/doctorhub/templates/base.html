@@ -1,52 +1,62 @@
 {% load static wagtailuserbar %}
 {% load meta %}
+{% load languages %}
 
 <!DOCTYPE html>
-<html class="no-js" lang="fa" dir="rtl">
-    <head>
 
-        <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-	    <meta name="author" content="Hossein Vahedi"/>
-        {% include "meta/meta.html" %}
+{% get_active_language as lang %}
+<html class="no-js"
+      lang="{{ lang.general_language_code }}"
+      dir="{{ lang.direction }}">
 
-        <title>
-            {% block title %}
-                {% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}
-            {% endblock %}
-            {% block title_suffix %}
-                {% with self.get_site.site_name as site_name %}
-                    {% if site_name %}- {{ site_name }}{% endif %}
-                {% endwith %}
-            {% endblock %}
-        </title>
+<head>
 
-        <style>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="author" content="Hossein Vahedi"/>
+    {% include "meta/meta.html" %}
 
-            .row-flex {
-                display: flex;
-                flex-wrap: wrap;
-            }
-
-        </style>
-
-        {% block extra_css %}
-
+    <title>
+        {% block title %}
+            {% if self.seo_title %}{{ self.seo_title }}{% else %}{{ self.title }}{% endif %}
         {% endblock %}
-
-    </head>
-
-    <body class="{% block body_class %}{% endblock %}">
-
-        {% wagtailuserbar %}
-
-        {% block content %}{% endblock %}
-
-
-        {% block extra_js %}
-
+        {% block title_suffix %}
+            {% with request.site.site_name as site_name %}
+                {% if site_name %}- {{ site_name }}{% endif %}
+            {% endwith %}
         {% endblock %}
+    </title>
 
-    </body>
+    <style>
+
+        .row-flex {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        [class*="col-"] {
+            margin-bottom: 2px;
+        }
+
+    </style>
+
+    {% block extra_css %}
+
+    {% endblock %}
+
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+
+{% wagtailuserbar %}
+
+{% block content %}{% endblock %}
+
+
+{% block extra_js %}
+
+{% endblock %}
+
+</body>
 </html>

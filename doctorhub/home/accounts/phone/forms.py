@@ -1,21 +1,21 @@
 from django import forms
+
+from .fields import PhoneField, ConfirmationCodeField
 from .models import *
-from .fields import PhoneField
 
 
 class ConfirmationCodeForm(forms.Form):
-    confirmation_code = forms.CharField(
-        max_length=CODE_LENGTH,
-        label='كد فعال سازى',
-        help_text=f'كد {CODE_LENGTH} رقمى اى كه برايتان ارسال شده است را وارد كنيد',
-    )
+    confirmation_code = ConfirmationCodeField()
+
+    def __init__(self, *args, **kwargs):
+        super(ConfirmationCodeForm, self).__init__(*args, **kwargs)
+        self.fields['confirmation_code'].help_text = self.fields['confirmation_code'].help_text % {
+            'num': CODE_LENGTH
+        }
 
 
 class PhoneUpdateForm(forms.ModelForm):
-    number = PhoneField(
-        label='شماره موبايل',
-        max_length=20,
-    )
+    number = PhoneField()
 
     class Meta:
         model = Phone

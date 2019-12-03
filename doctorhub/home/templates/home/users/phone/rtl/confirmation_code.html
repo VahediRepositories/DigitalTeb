@@ -1,7 +1,7 @@
 {% extends 'doctorhub/layouts/rtl/light/green/master.html' %}
 
 {% load staticfiles %}
-{% load pages %}
+{% load i18n %}
 
 {% block additional_css %}
 
@@ -14,12 +14,12 @@
 {% block breadcrumb %}
 
     <li class="breadcrumb-item active">
-    كد تغيير رمز عبور
+        {% trans 'Cell phone confirmation' %}
     </li>
 
     <li class="breadcrumb-item">
-        <a href="{% home_page_url %}">
-            خانه
+        <a href="">
+            {% trans 'Profile' %}
         </a>
     </li>
 
@@ -27,7 +27,7 @@
 
 {% block main_content %}
 
-    {% include 'registration/password_change_code/page.html' %}
+    {% include 'home/users/phone/page.html' %}
 
 {% endblock %}
 

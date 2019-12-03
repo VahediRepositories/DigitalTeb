@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
+from django.utils import translation
 
 
 class ConfirmedForbiddenMixin:
@@ -17,6 +18,10 @@ class CheckPhoneVerifiedMixin:
             if not phone.verified:
                 messages.warning(
                     request,
-                    'شماره موبايل شما هنوز فعال نشده است. براى استفاده از تمامى امكانات، بايد شماره ى خود را فعال كنيد.',
+                    translation.gettext(
+                            'Your cell phone number has not been verified. '
+                            'In order to have access to all resources, '
+                            'you have to verify your number.'
+                    ),
                     'phone-not-confirmed-warning'
                 )
