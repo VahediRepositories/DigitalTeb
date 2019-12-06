@@ -1,3 +1,4 @@
+from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from ..categories.models import *
@@ -5,6 +6,12 @@ from ..categories.models import *
 
 @register_snippet
 class ArticleCategory(Category):
+
+    horizontal_image = models.ForeignKey(
+        'wagtailimages.Image',
+        help_text='high quality horizontal image',
+        null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
+    )
     square_image = models.ForeignKey(
         'wagtailimages.Image',
         help_text='high quality square image',
@@ -19,6 +26,7 @@ class ArticleCategory(Category):
             return self.horizontal_image
 
     panels = Category.panels + [
+        ImageChooserPanel('horizontal_image'),
         ImageChooserPanel('square_image'),
     ]
 
