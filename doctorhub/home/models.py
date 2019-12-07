@@ -110,6 +110,7 @@ class ArticlesCategoryPage(
     promote_panels = []
     settings_panels = []
 
+    @property
     def child_pages(self):
         child_pages = []
         for child_page in super(ArticlesCategoryPage, self).child_pages:
@@ -314,10 +315,6 @@ class ArticlePage(Article):
     @property
     def manager(self):
         return ArticlePage.objects
-
-    @property
-    def farsi_tags(self):
-        return self.tags
 
     parent_page_types = ['home.ArticlesCategoryPage']
     subpage_types = []

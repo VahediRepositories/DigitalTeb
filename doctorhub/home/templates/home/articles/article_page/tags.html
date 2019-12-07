@@ -1,4 +1,4 @@
-{% if page.farsi_tags.all or page.english_tags.all %}
+{% if page.ltr_tags.all or page.rtl_tags.all %}
     <div class="row">
         <div class="col-md-1"></div>
         <div class="col-md-9">
@@ -6,13 +6,13 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12 text-center">
-                            {% for tag in page.farsi_tags.all %}
+                            {% for tag in page.rtl_tags.all %}
                                 <a class="btn waves-effect waves-light btn-secondary large-text"
                                    style="margin-bottom: 1%;">
                                     {{ tag }}
                                 </a>
                             {% endfor %}
-                            {% for tag in page.english_tags.all %}
+                            {% for tag in page.ltr_tags.all %}
                                 <a class="btn waves-effect waves-light btn-secondary large-text"
                                    style="margin-bottom: 1%;">
                                     {{ tag }}

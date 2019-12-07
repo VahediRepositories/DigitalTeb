@@ -1,6 +1,7 @@
 {% load wagtailimages_tags %}
 {% load wagtailcore_tags %}
 {% load text_processing %}
+{% load pages %}
 
 <div class="row">
     <div class="col-lg-12">
@@ -20,7 +21,7 @@
 
                     </div>
                     <div class="col-lg-10">
-                        {% in_row page.child_pages 2 as row_articles %}
+                        {% in_rows page.child_pages 2 as row_articles %}
                         {% for article_row in row_articles %}
                             {% with length=article_row|length %}
                                 {% if length == 1 %}
