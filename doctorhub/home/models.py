@@ -316,6 +316,10 @@ class ArticlePage(Article):
     def manager(self):
         return ArticlePage.objects
 
+    @property
+    def template(self):
+        return super(ArticlePage, self).template
+
     parent_page_types = ['home.ArticlesCategoryPage']
     subpage_types = []
 
@@ -355,3 +359,7 @@ class WebMDBlogPost(Article):
     @property
     def manager(self):
         return WebMDBlogPost.objects
+
+    @property
+    def template(self):
+        return super(WebMDBlogPost, self).template
