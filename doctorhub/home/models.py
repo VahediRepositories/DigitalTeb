@@ -18,7 +18,7 @@ from .accounts.phone.mixins import CheckPhoneVerifiedMixin
 from .articles.blocks import *
 from .articles.models import *
 from .articles.serializers import *
-from .mixins import ParentPageMixin
+from .mixins import *
 from .modules import text_processing, languages
 from .multilingual.pages.models import MultilingualPage, MonolingualPage
 
@@ -137,13 +137,13 @@ class ArticlesCategoryPage(
         self.search_description = translation.gettext(
             'Everything about %(category)s'
         ) % {
-            'category': self.category.name
-        }
+                                      'category': self.category.name
+                                  }
         self.seo_title = translation.gettext(
             'Blogs - %(category)s'
         ) % {
-            'category': self.category.name
-        }
+                             'category': self.category.name
+                         }
         self.search_image = self.category.icon
         return super().serve(request, *args, **kwargs)
 
@@ -167,19 +167,10 @@ class ArticlesCategoryPage(
     ]
 
 
-# class ArticleTag(TaggedItemBase):
-#     content_object = ParentalKey(
-#         'ArticlePage', related_name='article_tags', on_delete=models.CASCADE
-#     )
-#
-#
-# class ArticleEnglishTag(TaggedItemBase):
-#     content_object = ParentalKey(
-#         'ArticlePage', related_name='article_english_tags', on_delete=models.CASCADE
-#     )
-
-
-class Article(DigitalTebPageMixin, MetadataPageMixin, CheckPhoneVerifiedMixin, MonolingualPage):
+class Article(
+    DigitalTebPageMixin, MetadataPageMixin, CheckPhoneVerifiedMixin,
+    TaggedPageMixin, MonolingualPage
+):
     article_title = RichTextField(
         features=[], blank=False, null=True,
     )
@@ -228,19 +219,21 @@ class Article(DigitalTebPageMixin, MetadataPageMixin, CheckPhoneVerifiedMixin, M
             self.search_description = translation.gettext(
                 '%(article_title)s including %(article_sections)s'
             ) % {
-                'article_title': self.title,
-                'article_sections': text_processing.str_list_to_comma_separated(
-                    [
-                        text_processing.html_to_str(section.value['title'].source)
-                        for section in self.sections_with_title
-                    ]
-                )
+                    'article_title': self.title,
+                    'article_sections': text_processing.str_list_to_comma_separated(
+                        [
+                            text_processing.html_to_str(section.value['title'].source)
+                            for section in self.sections_with_title
+                        ]
+                    )
             }
+        else:
+            self.search_description = self.title
         self.seo_title = translation.gettext(
             'Blogs - %(category)s - %(article_title)s'
         ) % {
-            'category': self.get_parent().specific.category.name,
-            'article_title': self.title
+                'category': self.get_parent().specific.category.name,
+                'article_title': self.title
         }
         return super().serve(request, *args, **kwargs)
 
@@ -249,27 +242,6 @@ class Article(DigitalTebPageMixin, MetadataPageMixin, CheckPhoneVerifiedMixin, M
         while self.manager.filter(uuid4=uuid4).exists():
             uuid4 = uuid.uuid4()
         self.uuid4 = str(uuid4)
-
-    class Meta:
-        abstract = True
-        ordering = [
-            '-first_published_at'
-        ]
-
-
-class ArticlePage(Article):
-    categories = ParentalManyToManyField(ArticleCategory, blank=False)
-    # tags = ClusterTaggableManager(
-    #     through=ArticleTag, blank=False, related_name='farsi_tags'
-    # )
-    # english_tags = ClusterTaggableManager(
-    #     through=ArticleEnglishTag, blank=True, related_name='english_tags'
-    # )
-    image = models.ForeignKey(
-        'wagtailimages.Image',
-        help_text='high quality image',
-        null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
-    )
 
     content_panels = [
         MultiFieldPanel(
@@ -287,19 +259,43 @@ class ArticlePage(Article):
                 RichTextFieldPanel('article_conclusion'),
             ], heading='Content', classname="collapsible collapsed"
         ),
-        # MultiFieldPanel(
-        #     [
-        #         FieldPanel('tags'),
-        #     ], heading='Farsi Tags', classname='collapsible collapsed'
-        # ),
-        # MultiFieldPanel(
-        #     [
-        #         FieldPanel('english_tags'),
-        #     ], heading='English Tags', classname='collapsible collapsed'
-        # ),
-    ] + [
+    ] + TaggedPageMixin.tags_panel + [
         MonolingualPage.language_panel
     ]
+
+    class Meta:
+        abstract = True
+        ordering = [
+            '-first_published_at'
+        ]
+
+
+class RTLArticlePageTag(TaggedItemBase):
+    content_object = ParentalKey(
+        'ArticlePage', related_name='article_page_rtl_tags', on_delete=models.CASCADE
+    )
+
+
+class LTRArticlePageTag(TaggedItemBase):
+    content_object = ParentalKey(
+        'ArticlePage', related_name='article_page_ltr_tags', on_delete=models.CASCADE
+    )
+
+
+class ArticlePage(Article):
+    categories = ParentalManyToManyField(ArticleCategory, blank=False)
+    rtl_tags = ClusterTaggableManager(
+        through=RTLArticlePageTag, blank=True, related_name='rtl_tags'
+    )
+    ltr_tags = ClusterTaggableManager(
+        through=LTRArticlePageTag, blank=True, related_name='ltr_tags'
+    )
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        help_text='high quality image',
+        null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
+    )
+
     promote_panels = []
     settings_panels = []
 
@@ -327,61 +323,32 @@ class ArticlePage(Article):
     subpage_types = []
 
 
-# class WebMDBlogPostFarsiTag(TaggedItemBase):
-#     content_object = ParentalKey(
-#         'WebMDBlogPost', related_name='webmd_farsi_tags', on_delete=models.CASCADE
-#     )
+class RTLWebMDBlogPostTag(TaggedItemBase):
+    content_object = ParentalKey(
+        'WebMDBlogPost', related_name='webmd_blog_post_rtl_tags', on_delete=models.CASCADE
+    )
 
 
-# class WebMDBlogPostEnglishTag(TaggedItemBase):
-#     content_object = ParentalKey(
-#         'WebMDBlogPost', related_name='webmd_english_tags', on_delete=models.CASCADE
-#     )
+class LTRWebMDBlogPostTag(TaggedItemBase):
+    content_object = ParentalKey(
+        'WebMDBlogPost', related_name='webmd_blog_post_ltr_tags', on_delete=models.CASCADE
+    )
 
 
 class WebMDBlogPost(Article):
     categories = ParentalManyToManyField(ArticleCategory, blank=False)
-    # farsi_tags = ClusterTaggableManager(
-    #     through=WebMDBlogPostFarsiTag, blank=False, related_name='webmd_farsi_tags'
-    # )
-    # english_tags = ClusterTaggableManager(
-    #     through=WebMDBlogPostEnglishTag, blank=True, related_name='webmd_english_tags'
-    # )
+    rtl_tags = ClusterTaggableManager(
+        through=RTLWebMDBlogPostTag, blank=True, related_name='webmd_rtl_tags'
+    )
+    ltr_tags = ClusterTaggableManager(
+        through=LTRWebMDBlogPostTag, blank=True, related_name='webmd_ltr_tags'
+    )
     image = models.ForeignKey(
         'wagtailimages.Image',
         help_text='high quality horizontal image',
         null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
     )
 
-    content_panels = [
-        MultiFieldPanel(
-            [
-                RichTextFieldPanel('article_title'),
-                ImageChooserPanel('image'),
-                FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
-            ], heading='Details', classname="collapsible collapsed"
-        ),
-        MultiFieldPanel(
-            [
-                RichTextFieldPanel('article_summary'),
-                RichTextFieldPanel('article_introduction'),
-                StreamFieldPanel('sections'),
-                RichTextFieldPanel('article_conclusion'),
-            ], heading='Content', classname="collapsible collapsed"
-        ),
-        # MultiFieldPanel(
-        #     [
-        #         FieldPanel('farsi_tags'),
-        #     ], heading='Farsi Tags', classname='collapsible collapsed'
-        # ),
-        # MultiFieldPanel(
-        #     [
-        #         FieldPanel('english_tags'),
-        #     ], heading='English Tags', classname='collapsible collapsed'
-        # ),
-    ] + [
-        MonolingualPage.language_panel
-    ]
     promote_panels = []
     settings_panels = []
 
