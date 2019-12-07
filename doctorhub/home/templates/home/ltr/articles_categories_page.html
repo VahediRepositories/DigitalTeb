@@ -1,0 +1,34 @@
+{% extends 'doctorhub/layouts/ltr/light/green/master.html' %}
+
+{% load staticfiles %}
+
+{% block additional_css %}
+
+{% endblock %}
+
+{% block page_title %}
+
+{% endblock %}
+
+{% block breadcrumb %}
+
+    <li class="breadcrumb-item">
+        <a href="{{ page.get_home_page.get_url }}">
+            {{ page.get_home_page.translated_title }}
+        </a>
+    </li>
+    <li class="breadcrumb-item active">
+        {{ page.translated_title }}
+    </li>
+
+{% endblock %}
+
+{% block main_content %}
+
+    {% include 'home/articles/articles_categories_page/page.html' %}
+
+{% endblock %}
+
+{% block additional_js %}
+
+{% endblock %}

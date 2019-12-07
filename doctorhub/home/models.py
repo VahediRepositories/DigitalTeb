@@ -8,19 +8,19 @@ from django.utils.text import slugify
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalManyToManyField, ParentalKey
 from taggit.models import TaggedItemBase
-from wagtail.admin.edit_handlers import MultiFieldPanel, StreamFieldPanel, RichTextFieldPanel
+from wagtail.admin.edit_handlers import StreamFieldPanel, RichTextFieldPanel
 from wagtail.core.fields import StreamField, RichTextField
 from wagtail.core.models import Page
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtailmetadata.models import MetadataPageMixin
 
+from .accounts.phone.mixins import CheckPhoneVerifiedMixin
 from .articles.blocks import *
 from .articles.models import *
 from .articles.serializers import *
-from .modules import list_processing
-from .modules import text_processing
-from .accounts.phone.mixins import CheckPhoneVerifiedMixin
-from . import configurations
+from .mixins import ParentPageMixin
+from .modules import text_processing, languages
+from .multilingual.pages.models import MultilingualPage, MonolingualPage
 
 
 class DigitalTebPageMixin:
@@ -38,39 +38,56 @@ class DigitalTebPageMixin:
         return ArticlesCategoriesPage.objects.first()
 
 
-class HomePage(DigitalTebPageMixin, CheckPhoneVerifiedMixin, Page):
+class HomePage(DigitalTebPageMixin, CheckPhoneVerifiedMixin, MultilingualPage):
     subpage_types = [
         'home.ArticlesCategoriesPage',
     ]
+
+    settings_panels = []
+    promote_panels = []
+    content_panels = []
 
     def serve(self, request, *args, **kwargs):
         blogs_page = self.get_blogs_page()
         return HttpResponseRedirect(blogs_page.get_url())
 
+    @property
+    def translated_title(self):
+        return translation.gettext('Home')
+
+    def clean(self):
+        super(HomePage, self).clean()
+        self.title = 'Home'
+        self.slug = slugify(self.title)
+
 
 class ArticlesCategoriesPage(
     DigitalTebPageMixin,
-    MetadataPageMixin, CheckPhoneVerifiedMixin, Page
+    MetadataPageMixin, CheckPhoneVerifiedMixin,
+    ParentPageMixin, MultilingualPage
 ):
     parent_page_types = ['home.HomePage']
     subpage_types = ['home.ArticlesCategoryPage']
 
     def serve(self, request, *args, **kwargs):
         self.check_phone_verified(request)
-        children = self.get_children().live().public()
-        categories = [page.specific.category.farsi_name for page in children]
-        self.search_description = 'مقالات ' + text_processing.str_list_to_comma_separated(categories)
-        self.seo_title = 'وبلاگ'
+        categories = [page.category.name for page in self.child_pages]
+        self.search_description = text_processing.str_list_to_comma_separated(categories)
+        self.seo_title = translation.gettext('Blogs')
         return super().serve(request, *args, **kwargs)
 
     def clean(self):
-        super().clean()
-        self.title = 'وبلاگ'
-        self.slug = 'blogs'
+        super(ArticlesCategoriesPage, self).clean()
+        self.title = 'Blogs'
+        self.slug = slugify(self.title)
 
-    def get_row_categories(self, n=7):
-        children = self.get_children().live().public()
-        return list_processing.list_to_sublists_of_size_n(children, n)
+    @property
+    def template(self):
+        return super(ArticlesCategoriesPage, self).template
+
+    @property
+    def translated_title(self):
+        return translation.gettext('Blogs')
 
     content_panels = []
     promote_panels = []
@@ -79,7 +96,7 @@ class ArticlesCategoriesPage(
 
 class ArticlesCategoryPage(
     DigitalTebPageMixin, MetadataPageMixin,
-    CheckPhoneVerifiedMixin, Page
+    CheckPhoneVerifiedMixin, ParentPageMixin, MultilingualPage
 ):
     category = models.OneToOneField(
         ArticleCategory, blank=False,
@@ -93,15 +110,17 @@ class ArticlesCategoryPage(
     promote_panels = []
     settings_panels = []
 
-    @staticmethod
-    def get_row_articles(posts, n=2):
-        return list(
-            reversed(list_processing.list_to_sublists_of_size_n(posts, n))
-        )
+    def child_pages(self):
+        child_pages = []
+        for child_page in super(ArticlesCategoryPage, self).child_pages:
+            if isinstance(child_page, MonolingualPage):
+                if child_page.supports_language():
+                    child_pages.append(child_page)
+        return child_pages
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        children = self.get_children().live().public()
+        children = self.child_pages
         paginator = Paginator(children, 5)
         page = request.GET.get('page')
         try:
@@ -110,27 +129,33 @@ class ArticlesCategoryPage(
             posts = paginator.page(1)
         except EmptyPage:
             posts = paginator.page(paginator.num_pages)
-        context['row_articles'] = self.get_row_articles(posts)
         context['posts'] = posts
         return context
 
     def serve(self, request, *args, **kwargs):
         self.check_phone_verified(request)
-        self.search_description = 'مقالات حوزه ى {}'.format(
-            self.category.farsi_name
-        )
-        self.seo_title = 'وبلاگ - {}'.format(
-            self.category.farsi_name
-        )
+        self.search_description = translation.gettext(
+            'Everything about %(category)s'
+        ) % {
+            'category': self.category.name
+        }
+        self.seo_title = translation.gettext(
+            'Blogs - %(category)s'
+        ) % {
+            'category': self.category.name
+        }
         self.search_image = self.category.icon
         return super().serve(request, *args, **kwargs)
 
     def clean(self):
-        super().clean()
+        super(ArticlesCategoryPage, self).clean()
         if self.category:
-            self.title = self.category.farsi_name
-            self.slug = slugify(self.category.english_name)
-            # self.search_image = self.category.horizontal_image
+            self.title = self.category.default_name
+            self.slug = slugify(self.title)
+
+    @property
+    def template(self):
+        return super(ArticlesCategoryPage, self).template
 
     parent_page_types = [
         'home.ArticlesCategoriesPage',
@@ -142,34 +167,30 @@ class ArticlesCategoryPage(
     ]
 
 
-class ArticleTag(TaggedItemBase):
-    content_object = ParentalKey(
-        'ArticlePage', related_name='article_tags', on_delete=models.CASCADE
-    )
+# class ArticleTag(TaggedItemBase):
+#     content_object = ParentalKey(
+#         'ArticlePage', related_name='article_tags', on_delete=models.CASCADE
+#     )
+#
+#
+# class ArticleEnglishTag(TaggedItemBase):
+#     content_object = ParentalKey(
+#         'ArticlePage', related_name='article_english_tags', on_delete=models.CASCADE
+#     )
 
 
-class ArticleEnglishTag(TaggedItemBase):
-    content_object = ParentalKey(
-        'ArticlePage', related_name='article_english_tags', on_delete=models.CASCADE
-    )
-
-
-class Article(DigitalTebPageMixin, MetadataPageMixin, CheckPhoneVerifiedMixin, Page):
+class Article(DigitalTebPageMixin, MetadataPageMixin, CheckPhoneVerifiedMixin, MonolingualPage):
     article_title = RichTextField(
         features=[], blank=False, null=True,
-        help_text='It has to start with a farsi word'
     )
     article_summary = RichTextField(
         features=configurations.RICHTEXT_FEATURES, blank=False, null=True,
-        help_text='It has to start with a farsi word'
     )
     article_introduction = RichTextField(
         features=configurations.RICHTEXT_FEATURES, blank=True, null=True,
-        help_text='It has to start with a farsi word'
     )
     article_conclusion = RichTextField(
         features=configurations.RICHTEXT_FEATURES, blank=True, null=True,
-        help_text='It has to start with a farsi word'
     )
     sections = StreamField(
         [
@@ -188,7 +209,7 @@ class Article(DigitalTebPageMixin, MetadataPageMixin, CheckPhoneVerifiedMixin, P
         return sections
 
     def clean(self):
-        super().clean()
+        super(Article, self).clean()
         if not self.id:
             self.refresh_slug()
         if self.article_title:
@@ -203,18 +224,24 @@ class Article(DigitalTebPageMixin, MetadataPageMixin, CheckPhoneVerifiedMixin, P
 
     def serve(self, request, *args, **kwargs):
         self.check_phone_verified(request)
-        self.search_description = self.title
         if self.sections_with_title:
-            self.search_description += ' شامل ' + text_processing.str_list_to_comma_separated(
-                [
-                    text_processing.html_to_str(section.value['title'].source)
-                    for section in self.sections_with_title
-                ]
-            )
-        self.seo_title = 'وبلاگ - {} - {}'.format(
-            self.get_parent().specific.category.farsi_name,
-            self.title
-        )
+            self.search_description = translation.gettext(
+                '%(article_title)s including %(article_sections)s'
+            ) % {
+                'article_title': self.title,
+                'article_sections': text_processing.str_list_to_comma_separated(
+                    [
+                        text_processing.html_to_str(section.value['title'].source)
+                        for section in self.sections_with_title
+                    ]
+                )
+            }
+        self.seo_title = translation.gettext(
+            'Blogs - %(category)s - %(article_title)s'
+        ) % {
+            'category': self.get_parent().specific.category.name,
+            'article_title': self.title
+        }
         return super().serve(request, *args, **kwargs)
 
     def set_uuid4(self):
@@ -232,12 +259,12 @@ class Article(DigitalTebPageMixin, MetadataPageMixin, CheckPhoneVerifiedMixin, P
 
 class ArticlePage(Article):
     categories = ParentalManyToManyField(ArticleCategory, blank=False)
-    tags = ClusterTaggableManager(
-        through=ArticleTag, blank=False, related_name='farsi_tags'
-    )
-    english_tags = ClusterTaggableManager(
-        through=ArticleEnglishTag, blank=True, related_name='english_tags'
-    )
+    # tags = ClusterTaggableManager(
+    #     through=ArticleTag, blank=False, related_name='farsi_tags'
+    # )
+    # english_tags = ClusterTaggableManager(
+    #     through=ArticleEnglishTag, blank=True, related_name='english_tags'
+    # )
     image = models.ForeignKey(
         'wagtailimages.Image',
         help_text='high quality image',
@@ -260,16 +287,18 @@ class ArticlePage(Article):
                 RichTextFieldPanel('article_conclusion'),
             ], heading='Content', classname="collapsible collapsed"
         ),
-        MultiFieldPanel(
-            [
-                FieldPanel('tags'),
-            ], heading='Farsi Tags', classname='collapsible collapsed'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('english_tags'),
-            ], heading='English Tags', classname='collapsible collapsed'
-        ),
+        # MultiFieldPanel(
+        #     [
+        #         FieldPanel('tags'),
+        #     ], heading='Farsi Tags', classname='collapsible collapsed'
+        # ),
+        # MultiFieldPanel(
+        #     [
+        #         FieldPanel('english_tags'),
+        #     ], heading='English Tags', classname='collapsible collapsed'
+        # ),
+    ] + [
+        MonolingualPage.language_panel
     ]
     promote_panels = []
     settings_panels = []
@@ -298,26 +327,26 @@ class ArticlePage(Article):
     subpage_types = []
 
 
-class WebMDBlogPostFarsiTag(TaggedItemBase):
-    content_object = ParentalKey(
-        'WebMDBlogPost', related_name='webmd_farsi_tags', on_delete=models.CASCADE
-    )
+# class WebMDBlogPostFarsiTag(TaggedItemBase):
+#     content_object = ParentalKey(
+#         'WebMDBlogPost', related_name='webmd_farsi_tags', on_delete=models.CASCADE
+#     )
 
 
-class WebMDBlogPostEnglishTag(TaggedItemBase):
-    content_object = ParentalKey(
-        'WebMDBlogPost', related_name='webmd_english_tags', on_delete=models.CASCADE
-    )
+# class WebMDBlogPostEnglishTag(TaggedItemBase):
+#     content_object = ParentalKey(
+#         'WebMDBlogPost', related_name='webmd_english_tags', on_delete=models.CASCADE
+#     )
 
 
 class WebMDBlogPost(Article):
     categories = ParentalManyToManyField(ArticleCategory, blank=False)
-    farsi_tags = ClusterTaggableManager(
-        through=WebMDBlogPostFarsiTag, blank=False, related_name='webmd_farsi_tags'
-    )
-    english_tags = ClusterTaggableManager(
-        through=WebMDBlogPostEnglishTag, blank=True, related_name='webmd_english_tags'
-    )
+    # farsi_tags = ClusterTaggableManager(
+    #     through=WebMDBlogPostFarsiTag, blank=False, related_name='webmd_farsi_tags'
+    # )
+    # english_tags = ClusterTaggableManager(
+    #     through=WebMDBlogPostEnglishTag, blank=True, related_name='webmd_english_tags'
+    # )
     image = models.ForeignKey(
         'wagtailimages.Image',
         help_text='high quality horizontal image',
@@ -340,16 +369,18 @@ class WebMDBlogPost(Article):
                 RichTextFieldPanel('article_conclusion'),
             ], heading='Content', classname="collapsible collapsed"
         ),
-        MultiFieldPanel(
-            [
-                FieldPanel('farsi_tags'),
-            ], heading='Farsi Tags', classname='collapsible collapsed'
-        ),
-        MultiFieldPanel(
-            [
-                FieldPanel('english_tags'),
-            ], heading='English Tags', classname='collapsible collapsed'
-        ),
+        # MultiFieldPanel(
+        #     [
+        #         FieldPanel('farsi_tags'),
+        #     ], heading='Farsi Tags', classname='collapsible collapsed'
+        # ),
+        # MultiFieldPanel(
+        #     [
+        #         FieldPanel('english_tags'),
+        #     ], heading='English Tags', classname='collapsible collapsed'
+        # ),
+    ] + [
+        MonolingualPage.language_panel
     ]
     promote_panels = []
     settings_panels = []

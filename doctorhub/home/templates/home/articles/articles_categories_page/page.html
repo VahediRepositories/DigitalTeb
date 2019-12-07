@@ -1,5 +1,6 @@
 {% load wagtailimages_tags %}
 {% load staticfiles %}
+{% load pages %}
 
 <div class="row">
     <div class="col-lg-1">
@@ -7,7 +8,8 @@
     <div class="col-lg-10">
         <div class="card">
             <div class="card-body">
-                {% for category_row in page.get_row_categories %}
+                {% in_rows page.child_pages 7 as rows %}
+                {% for category_row in rows %}
                     <div class="row">
                         <div class="col-12 m-t-30">
                             <div class="card-deck">
@@ -21,7 +23,7 @@
                                                      style="width: 100px; height: 100px;"
                                                      alt="{{ category_img.alt }}">
                                                 <h4 class="large-text">
-                                                    {{ category.farsi_name }}
+                                                    {{ category.name }}
                                                 </h4>
                                             </a>
                                         {% endwith %}

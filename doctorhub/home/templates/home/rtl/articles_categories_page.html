@@ -12,7 +12,14 @@
 
 {% block breadcrumb %}
 
-    {% include 'home/articles/articles_categories_page/breadcrumb.html' %}
+    <li class="breadcrumb-item active">
+        {{ page.translated_title }}
+    </li>
+    <li class="breadcrumb-item">
+        <a href="{{ page.get_home_page.get_url }}">
+            {{ page.get_home_page.translated_title }}
+        </a>
+    </li>
 
 {% endblock %}
 

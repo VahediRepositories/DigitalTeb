@@ -11,7 +11,7 @@
             <div class="card-body text-center">
                 <h1 class="card-text x-large-text"
                     style="padding: 5% 15%;">
-                    {{ page.category.farsi_name }}
+                    {{ page.category.name }}
                 </h1>
                 <br>
                 <br>
@@ -20,6 +20,7 @@
 
                     </div>
                     <div class="col-lg-10">
+                        {% in_row page.child_pages 2 as row_articles %}
                         {% for article_row in row_articles %}
                             {% with length=article_row|length %}
                                 {% if length == 1 %}
