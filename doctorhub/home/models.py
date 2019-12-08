@@ -267,7 +267,7 @@ class Article(
     class Meta:
         abstract = True
         ordering = [
-            '-first_published_at'
+            'first_published_at'
         ]
 
 
