@@ -362,4 +362,4 @@ class WebMDBlogPost(Article):
 
     @property
     def template(self):
-        return self.get_template_path(ArticlePage)
+        return self.get_template_path(WebMDBlogPost)
