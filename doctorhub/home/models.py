@@ -318,7 +318,7 @@ class ArticlePage(Article):
 
     @property
     def template(self):
-        return super(ArticlePage, self).template
+        return self.get_template_path(ArticlePage)
 
     parent_page_types = ['home.ArticlesCategoryPage']
     subpage_types = []
@@ -362,4 +362,4 @@ class WebMDBlogPost(Article):
 
     @property
     def template(self):
-        return super(WebMDBlogPost, self).template
+        return self.get_template_path(ArticlePage)

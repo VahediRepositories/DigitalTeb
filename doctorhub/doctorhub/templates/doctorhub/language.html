@@ -1,0 +1,13 @@
+{% load languages %}
+
+<div class="col-md-6">
+    <a href="{% get_current_url request lang %}"
+       style="width: 100%;"
+       class="btn btn-primary {% if active_lang == lang %} disabled {% endif %}">
+        <b>
+            {{ lang.name }}
+        </b>
+        <br>
+        ({{ lang }})
+    </a>
+</div>
