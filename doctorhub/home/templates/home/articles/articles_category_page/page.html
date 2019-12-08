@@ -21,7 +21,7 @@
 
                     </div>
                     <div class="col-lg-10">
-                        {% in_rows page.child_pages 2 as row_articles %}
+                        {% in_rows posts 2 as row_articles %}
                         {% for article_row in row_articles %}
                             {% with length=article_row|length %}
                                 {% if length == 1 %}
