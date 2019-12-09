@@ -19,7 +19,7 @@ from .articles.blocks import *
 from .articles.models import *
 from .articles.serializers import *
 from .mixins import *
-from .modules import text_processing, languages
+from .modules import text_processing
 from .multilingual.pages.models import MultilingualPage, MonolingualPage
 
 
