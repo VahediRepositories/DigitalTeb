@@ -6,6 +6,7 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from ..categories.models import *
+from ..modules import languages
 
 
 @register_snippet
@@ -42,10 +43,10 @@ class ArticleCategory(Category):
             [
                 FieldRowPanel(
                     [
-                         FieldPanel('name_en_us', widget=TextInput),
-                         FieldPanel('name_fa_ir', widget=TextInput),
+                        FieldPanel(f'name_{language}', widget=TextInput)
+                        for language in languages.get_all_translated_field_postfixes()
                     ]
-                ),
+                )
             ], heading='Name', classname="collapsible collapsed"
         ),
         MultiFieldPanel(

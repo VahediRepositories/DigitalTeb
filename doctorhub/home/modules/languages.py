@@ -19,3 +19,11 @@ def get_default_language():
     )
 
 
+def get_all_translated_field_postfixes():
+    languages = get_all_languages()
+    return [
+        language.language_code.replace('-', '_')
+        for language in languages
+    ]
+
+
