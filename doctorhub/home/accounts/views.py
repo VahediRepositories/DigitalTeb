@@ -46,17 +46,12 @@ class LogoutView(LoginRequiredMixin, auth_views.LogoutView):
         )
 
 
-class SignUpView(AuthenticatedForbiddenMixin, MultilingualViewMixin, FormView):
-    form_class = UserCreationForm
+class RegistrationView(AuthenticatedForbiddenMixin, MultilingualViewMixin, FormView):
     success_url = reverse_lazy('profile')
-
-    @property
-    def template_name(self):
-        return f'registration/{self.language_direction}/signup.html'
 
     def get(self, request, *args, **kwargs):
         self.forbid_authenticated()
-        return super(SignUpView, self).get(request, *args, **kwargs)
+        return super(RegistrationView, self).get(request, *args, **kwargs)
 
     def form_valid(self, form):
         self.forbid_authenticated()
@@ -65,7 +60,9 @@ class SignUpView(AuthenticatedForbiddenMixin, MultilingualViewMixin, FormView):
         user.last_name = form.cleaned_data['last_name']
         user.save()
         profile = authentication.create_profile(user, form)
-        self.set_user_groups(user)
+
+        self.set_user_properties(user, form)
+
         success_message = translation.gettext(
             'Your account was created successfully. Now you can login.'
         )
@@ -75,10 +72,24 @@ class SignUpView(AuthenticatedForbiddenMixin, MultilingualViewMixin, FormView):
             extra_tags='successful-registration'
         )
         sms.send_confirmation_code(profile.phone)
-        return super(SignUpView, self).form_valid(form)
+        return super(RegistrationView, self).form_valid(form)
 
-    def set_user_groups(self, user):
+    def set_user_properties(self, user, form):
         pass
+
+
+class SignUpView(RegistrationView):
+    form_class = UserCreationForm
+
+    @property
+    def template_name(self):
+        return f'registration/{self.language_direction}/signup.html'
+
+    def set_user_properties(self, user, form):
+        # TODO: Define a separate Model to represent birthdate.
+        profile = user.profile
+        profile.birthdate = form.cleaned_data['birthdate']
+        profile.save()
 
 
 class ForgotAccountView(AuthenticatedForbiddenMixin, MultilingualViewMixin, FormView):
@@ -98,8 +109,8 @@ class ForgotAccountView(AuthenticatedForbiddenMixin, MultilingualViewMixin, Form
         success_message = translation.gettext(
             'A password change code was sent to %(phone)s'
         ) % {
-                'phone': phone_number
-        }
+                              'phone': phone_number
+                          }
         messages.success(
             request=self.request,
             message=success_message,
@@ -324,13 +335,3 @@ class PasswordChangeView(
         'Your new password was submitted successfully.'
     )
     success_url = reverse_lazy('profile')
-
-
-def email(request):
-    subject = 'Thank you for registering to our site'
-    message = ' it  means a world to us '
-    email_from = settings.DEFAULT_FROM_EMAIL
-    recipient_list = [request.GET['address'], ]
-    res = send_mail(subject, message, email_from, recipient_list)
-    return HttpResponse(res)
-

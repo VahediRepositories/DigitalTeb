@@ -1,0 +1,18 @@
+{% load i18n %}
+
+<div class="form-row text-center" style="padding-right: 5%; padding-left: 5%;">
+    <div class="col-md-6 text-center">
+        <div class="form-group">
+            <a href="{% url 'edit_technical_info' %}" style="width: 100%;" class="btn btn-outline-success btn-lg">
+                {% trans 'Technical Information' %}
+            </a>
+        </div>
+    </div>
+    <div class="col-md-6 text-center">
+        <div class="form-group">
+            <a href="{% url 'personal_page' request.user.id %}" style="width: 100%;" class="btn btn-outline-success btn-lg">
+                {% trans 'Personal Page' %}
+            </a>
+        </div>
+    </div>
+</div>

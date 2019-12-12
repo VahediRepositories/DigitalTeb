@@ -1,0 +1,40 @@
+{% load staticfiles %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+        <div class="card border-success">
+            <div class="card-header bg-success text-center">
+                <img src="{% static 'doctorhub/assets/images/logo-light-text.png' %}"
+                     alt="{{ request.site.site_name }}" class="dark-logo"/>
+            </div>
+            <div class="card-body bg-white" style="padding-left: 10%; padding-right: 10%;">
+
+                <div id="summernote">
+                    {{ object.biography|safe }}
+                </div>
+
+                <form method="POST" action="" onsubmit="transfer_richtext()">
+                    {% csrf_token %}
+                    <div style="display: none">
+                        {{ form|crispy }}
+                    </div>
+                    <br>
+                    <div class="form-row text-center" style="padding-right: 10%; padding-left: 10%;">
+                        <div class="col-md-12 text-center">
+                            <div class="form-group">
+                                <button style="width: 100%;" class="btn btn-success btn-lg" type="submit">
+                                    {% trans 'Submit Biography' %}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% include 'home/specialists/technical_profile_links/links.html' %}
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-1"></div>
+</div>

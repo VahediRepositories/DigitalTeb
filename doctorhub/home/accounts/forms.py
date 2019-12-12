@@ -11,10 +11,9 @@ from .phone.models import CODE_LENGTH
 from ..modules import phones
 
 
-class UserCreationForm(auth_forms.UserCreationForm):
-
+class RegistrationForm(auth_forms.UserCreationForm):
     def __init__(self, *args, **kwargs):
-        super(UserCreationForm, self).__init__(*args, **kwargs)
+        super(RegistrationForm, self).__init__(*args, **kwargs)
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
 
@@ -24,26 +23,7 @@ class UserCreationForm(auth_forms.UserCreationForm):
         choices=GENDER_CHOICES
     )
     phone = PhoneField()
-    birthdate = forms.DateField(
-        label=translation.gettext_lazy('Birthdate'),
-        widget=forms.DateInput(
-            attrs={
-                'class': 'persian-datepicker'
-            }
-        )
-    )
-
     captcha = reCaptchaField
-
-    def clean_birthdate(self):
-        birthdate = self.cleaned_data['birthdate']
-        today = datetime.date.today()
-        if birthdate >= today:
-            raise ValidationError(
-                forms.DateField.default_error_messages['invalid'], code='invalid'
-            )
-        else:
-            return birthdate
 
     def clean_phone(self):
         phone = self.cleaned_data['phone']
@@ -54,6 +34,27 @@ class UserCreationForm(auth_forms.UserCreationForm):
             )
         else:
             return phone
+
+
+class UserCreationForm(RegistrationForm):
+    birthdate = forms.DateField(
+        label=translation.gettext_lazy('Birthdate'),
+        widget=forms.DateInput(
+            attrs={
+                'class': 'persian-datepicker'
+            }
+        )
+    )
+
+    def clean_birthdate(self):
+        birthdate = self.cleaned_data['birthdate']
+        today = datetime.date.today()
+        if birthdate >= today:
+            raise ValidationError(
+                forms.DateField.default_error_messages['invalid'], code='invalid'
+            )
+        else:
+            return birthdate
 
     class Meta:
         model = User

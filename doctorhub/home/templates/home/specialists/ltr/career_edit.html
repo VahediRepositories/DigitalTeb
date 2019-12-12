@@ -1,0 +1,43 @@
+{% extends 'doctorhub/layouts/ltr/light/green/master.html' %}
+
+{% load staticfiles %}
+{% load pages %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block additional_css %}
+
+    {% include 'home/specialists/career_edit/additional_css.html' %}
+    <link href="{% static 'doctorhub/main/dist/css/pages/widget-page.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+{% block page_title %}
+
+{% endblock %}
+
+{% block breadcrumb %}
+
+    <li class="breadcrumb-item">
+        <a href="">
+            {% trans 'Profile' %}
+        </a>
+    </li>
+
+    <li class="breadcrumb-item active">
+        {% trans 'Technical Information' %}
+    </li>
+
+{% endblock %}
+
+{% block main_content %}
+
+    {% include 'home/specialists/career_edit/page.html' %}
+
+{% endblock %}
+
+{% block additional_js %}
+
+    {% include 'home/specialists/career_edit/additional_js.html' %}
+
+{% endblock %}

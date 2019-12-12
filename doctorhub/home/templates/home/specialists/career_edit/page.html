@@ -1,0 +1,88 @@
+{% load i18n %}
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                            <h4 class="card-title text-center">
+                                {% trans 'Professional Labels' %}
+                            </h4>
+                        <hr>
+                        <div class="text-center">
+                            {% if labels %}
+                                {% for label in labels %}
+                                    <div class="badge badge-primary">
+                                        {{ label.name }}
+                                    </div>
+                                {% endfor %}
+                            {% else %}
+                                <h6 class="text-center">
+                                    {% trans "Please enter you professional labels so that patients know you better."  %}
+                                </h6>
+                            {% endif %}
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12 text-center" style="padding-left: 5%; padding-right: 5%;">
+                                <a href="{% url 'edit_labels' %}" style="width: 100%;" class="btn btn-outline-success">
+                                    {% trans 'Edit Labels' %}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                            <h4 class="card-title text-center">
+                                {% trans 'Biography' %}
+                            </h4>
+                        <hr>
+                        <div class="text-center">
+                            <h6 class="text-center">
+                                {% trans "Adding biography helps your patients feel more comfortable with you." %}
+                            </h6>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12 text-center" style="padding-left: 5%; padding-right: 5%;">
+                                <a href="{% url 'edit_biography' request.user.biography.pk %}" style="width: 100%;" class="btn btn-outline-success">
+                                    {% trans 'Edit Biography' %}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                            <h4 class="card-title text-center">
+                                {% trans 'Educational History' %}
+                            </h4>
+                        <hr>
+                        <div class="text-center">
+                            <h6 class="text-center">
+                                {% trans "Let your patients know about your educational history." %}
+                            </h6>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12 text-center" style="padding-left: 5%; padding-right: 5%;">
+                                <a href="" style="width: 100%;" class="btn btn-outline-success">
+                                    {% trans 'Edit Educational History' %}
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-1"></div>
+</div>

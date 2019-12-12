@@ -7,11 +7,6 @@ from .phone import urls as phone_urls
 urlpatterns = [
 
     path(
-        'send-email/',
-        views.email,
-        name='send_email',
-    ),
-    path(
         'accounts/profile/',
         RedirectView.as_view(
             url='/'
