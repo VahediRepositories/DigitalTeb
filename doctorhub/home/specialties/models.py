@@ -11,7 +11,7 @@ from ..modules import languages
 
 @register_snippet
 class Specialty(models.Model):
-    name = models.TextField(unique=True)
+    name = models.TextField(unique=True, max_length=200)
     specialist_name = models.TextField(default='')
     group = models.OneToOneField(
         Group, on_delete=models.SET_NULL, blank=False, null=True
