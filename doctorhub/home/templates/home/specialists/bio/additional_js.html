@@ -5,7 +5,7 @@
         $('#summernote').summernote('editor.insertText', '{{ form.bio }}');
     });
     function transfer_richtext() {
-        $('#id_biography').val(
+        $('#biography-field').val(
             $('.note-editable').html()
         );
     }
