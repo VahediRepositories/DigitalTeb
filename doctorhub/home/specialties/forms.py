@@ -1,5 +1,4 @@
 from django import forms
-from djrichtextfield.widgets import RichTextWidget
 
 from .models import *
 from ..accounts.forms import RegistrationForm
