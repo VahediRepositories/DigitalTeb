@@ -1,16 +1,15 @@
-from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
-from django.views.generic import TemplateView, FormView, UpdateView, DetailView
+from django.views.generic import TemplateView, UpdateView, DetailView
 
 from .forms import *
-from ..accounts.views import RegistrationView, LoginRequiredMixin
-from ..modules import moderation, specialties
-from ..multilingual.mixins import MultilingualViewMixin
 from .mixins import NonSpecialistForbiddenMixin
+from ..accounts.views import RegistrationView, LoginRequiredMixin
+from ..modules import specialties
+from ..multilingual.mixins import MultilingualViewMixin
 
 
 class SpecialistSignUpView(RegistrationView):

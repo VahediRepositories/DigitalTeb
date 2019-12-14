@@ -18,9 +18,6 @@
 
                 <form method="POST" action="" onsubmit="transfer_richtext()">
                     {% csrf_token %}
-{#                    <div style="display: none">#}
-{#                        {{ form|crispy }}#}
-{#                    </div>#}
                     <input type="hidden" id="biography-field" name="biography">
                     <br>
                     <div class="form-row text-center" style="padding-right: 10%; padding-left: 10%;">

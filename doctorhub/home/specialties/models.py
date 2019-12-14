@@ -32,8 +32,8 @@ class Specialty(models.Model):
             [
                 FieldRowPanel(
                     [
-                        FieldPanel('specialist_name_en_us', widget=TextInput),
-                        FieldPanel('specialist_name_fa_ir', widget=TextInput),
+                        FieldPanel(f'specialist_name_{language}', widget=TextInput)
+                        for language in languages.get_all_translated_field_postfixes()
                     ]
                 ),
             ], heading='Specialist Name', classname="collapsible collapsed"

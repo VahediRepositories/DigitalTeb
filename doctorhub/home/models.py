@@ -220,22 +220,22 @@ class Article(
             self.search_description = translation.gettext(
                 '%(article_title)s including %(article_sections)s'
             ) % {
-                    'article_title': self.title,
-                    'article_sections': text_processing.str_list_to_comma_separated(
-                        [
-                            text_processing.html_to_str(section.value['title'].source)
-                            for section in self.sections_with_title
-                        ]
-                    )
-            }
+                                          'article_title': self.title,
+                                          'article_sections': text_processing.str_list_to_comma_separated(
+                                              [
+                                                  text_processing.html_to_str(section.value['title'].source)
+                                                  for section in self.sections_with_title
+                                              ]
+                                          )
+                                      }
         else:
             self.search_description = self.title
         self.seo_title = translation.gettext(
             'Blogs - %(category)s - %(article_title)s'
         ) % {
-                'category': self.get_parent().specific.category.name,
-                'article_title': self.title
-        }
+                             'category': self.get_parent().specific.category.name,
+                             'article_title': self.title
+                         }
         return super().serve(request, *args, **kwargs)
 
     def set_uuid4(self):
@@ -245,24 +245,24 @@ class Article(
         self.uuid4 = str(uuid4)
 
     content_panels = [
-        MultiFieldPanel(
-            [
-                RichTextFieldPanel('article_title'),
-                ImageChooserPanel('image'),
-                FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
-            ], heading='Details', classname="collapsible collapsed"
-        ),
-        MultiFieldPanel(
-            [
-                RichTextFieldPanel('article_summary'),
-                RichTextFieldPanel('article_introduction'),
-                StreamFieldPanel('sections'),
-                RichTextFieldPanel('article_conclusion'),
-            ], heading='Content', classname="collapsible collapsed"
-        ),
-    ] + TaggedPageMixin.tags_panel + [
-        MonolingualPage.language_panel
-    ]
+                         MultiFieldPanel(
+                             [
+                                 RichTextFieldPanel('article_title'),
+                                 ImageChooserPanel('image'),
+                                 FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
+                             ], heading='Details', classname="collapsible collapsed"
+                         ),
+                         MultiFieldPanel(
+                             [
+                                 RichTextFieldPanel('article_summary'),
+                                 RichTextFieldPanel('article_introduction'),
+                                 StreamFieldPanel('sections'),
+                                 RichTextFieldPanel('article_conclusion'),
+                             ], heading='Content', classname="collapsible collapsed"
+                         ),
+                     ] + TaggedPageMixin.tags_panel + [
+                         MonolingualPage.language_panel
+                     ]
 
     class Meta:
         abstract = True
