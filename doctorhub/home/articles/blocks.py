@@ -9,7 +9,6 @@ class ImageParagraphBlock(blocks.StructBlock):
     image = ImageChooserBlock(help_text='high quality image')
     paragraph = blocks.RichTextBlock(
         features=configurations.RICHTEXT_FEATURES,
-        help_text='It has to start with a farsi word'
     )
 
 
@@ -20,7 +19,6 @@ class VideoCaptionBlock(blocks.StructBlock):
     paragraph = blocks.RichTextBlock(
         features=configurations.RICHTEXT_FEATURES,
         required=False,
-        help_text='It has to start with a farsi word'
     )
 
 
@@ -29,20 +27,17 @@ class ImageCaptionBlock(blocks.StructBlock):
     paragraph = blocks.RichTextBlock(
         features=configurations.RICHTEXT_FEATURES,
         required=False,
-        help_text='It has to start with a farsi word'
     )
 
 
 class ListBlock(blocks.StructBlock):
     paragraph = blocks.RichTextBlock(
         features=configurations.RICHTEXT_FEATURES,
-        help_text='It has to start with a farsi word',
         required=False
     )
     items = blocks.ListBlock(
         blocks.RichTextBlock(
             features=configurations.RICHTEXT_FEATURES,
-            help_text='It has to start with a farsi word',
         )
     )
 
@@ -51,15 +46,15 @@ class SectionBlock(blocks.StructBlock):
     title = blocks.RichTextBlock(
         features=[],
         required=False,
-        help_text='It has to start with a farsi word'
     )
     content = blocks.StreamBlock(
         [
-            ('text', blocks.RichTextBlock(
-                features=configurations.RICHTEXT_FEATURES,
-                icon='doc-full',
-                help_text='It has to start with a farsi word'
-            )),
+            (
+                'text', blocks.RichTextBlock(
+                    features=configurations.RICHTEXT_FEATURES,
+                    icon='doc-full',
+                )
+            ),
             ('UL', ListBlock(icon='list-ul')),
             ('OL', ListBlock(icon='list-ol')),
             ('image_and_text_row', ImageParagraphBlock(icon='horizontalrule')),

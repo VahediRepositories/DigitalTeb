@@ -173,16 +173,17 @@ class Article(
     TaggedPageMixin, MonolingualPage
 ):
     article_title = RichTextField(
-        features=[], blank=False, null=True,
+        features=[],
+        blank=False, null=True,
     )
     article_summary = RichTextField(
-        features=configurations.RICHTEXT_FEATURES, blank=False, null=True,
+        features=configurations.BASIC_RICHTEXT_FEATURES, blank=False, null=True,
     )
     article_introduction = RichTextField(
         features=configurations.RICHTEXT_FEATURES, blank=True, null=True,
     )
     article_conclusion = RichTextField(
-        features=configurations.RICHTEXT_FEATURES, blank=True, null=True,
+        features=configurations.BASIC_RICHTEXT_FEATURES, blank=True, null=True,
     )
     sections = StreamField(
         [
