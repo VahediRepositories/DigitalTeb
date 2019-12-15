@@ -3,23 +3,63 @@
 {% load staticfiles %}
 {% load text_processing %}
 
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-9 text-center">
+        <h1 class="x-large-text">
+            {{ page.title }}
+        </h1>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-9">
+        {% image page.image fill-4000x2000 as image %}
+        <img src="{{ image.url }}"
+             style="width: 100%; height: 100%;"
+             alt="{{ image.alt }}">
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
 <div class="row row-flex">
     <div class="col-md-1"></div>
-    <div class="col-md-3">
-        <div class="card text-center" style="height: 100%;">
-            {% image page.image fill-1000x1000 as image %}
-            <img src="{{ image.url }}"
-                 class="card-img-top img-responsive"
-                 alt="{{ image.alt }}">
+    <div class="col-md-9">
+        {% comment %}<div class="card"
+             style="height: 100%;">
             <div class="card-body">
-                <h1 class="x-large-text card-text" style="float: bottom;">
-                    {{ page.title }}
-                </h1>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div style="padding: 10%;">
+                            {{ page.article_summary|richtext }}
+                            {% if page.has_sections_with_title %}
+                                <br>
+                                <br>
+                                <b>
+                                    در اين مقاله ميخوانيد:
+                                </b>
+                                <br>
+                                <br>
+                                <ul>
+                                    {% for section in page.sections %}
+                                        {% if section.value.title %}
+                                            <li>
+                                                <a href="#{{ section.value.title.source|html_to_str|replace_white_space_with_underscore }}">
+                                                    {{ section.value.title.source|html_to_str }}
+                                                </a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
             </div>
-
-        </div>
-    </div>
-    <div class="col-md-6">
+        </div>{% endcomment %}
         {% include 'home/articles/article_page/summary.html' %}
     </div>
     <div class="col-md-2"></div>
@@ -230,4 +270,3 @@
     </div>
     <div class="col-md-2"></div>
 </div>
-

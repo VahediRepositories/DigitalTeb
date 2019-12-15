@@ -74,7 +74,7 @@ class ArticlesCategoriesPage(
 
     @property
     def template(self):
-        return super().template
+        return super().get_template_path(ArticlesCategoriesPage)
 
     @property
     def translated_title(self):
@@ -145,7 +145,7 @@ class ArticlesCategoryPage(
 
     @property
     def template(self):
-        return super().template
+        return super().get_template_path(ArticlesCategoryPage)
 
     parent_page_types = [
         'home.ArticlesCategoriesPage',
