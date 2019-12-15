@@ -1,14 +1,14 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import inlineformset_factory
-from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import TemplateView, UpdateView, DetailView
 
 from .forms import *
 from .mixins import NonSpecialistForbiddenMixin
 from ..accounts.views import RegistrationView, LoginRequiredMixin
-from ..modules import specialties
+from ..models import *
+from ..modules import edition, pages
 from ..multilingual.mixins import MultilingualViewMixin
 
 
@@ -22,7 +22,8 @@ class SpecialistSignUpView(RegistrationView):
     def set_user_properties(self, user, form):
         specialty = form.cleaned_data['specialty']
         specialties.make_user_specialist(user, specialty)
-        # moderation.make_user_moderator(user)
+        edition.make_user_editor(user)
+        pages.create_specialist_page(user)
         bio = Biography(user=user)
         bio.save()
 

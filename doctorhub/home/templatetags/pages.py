@@ -17,6 +17,11 @@ def blogs_url():
 
 
 @register.simple_tag
+def specialists_url():
+    return DigitalTebPageMixin.get_specialists_page().get_url()
+
+
+@register.simple_tag
 def in_rows(objects, row_size):
     return list_processing.list_to_sublists_of_size_n(objects, row_size)
 

@@ -1,6 +1,5 @@
 from django import forms
-from django.contrib.auth.models import Group
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.contrib.auth.models import Group, User
 from django.http import HttpResponseRedirect
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalManyToManyField, ParentalKey
@@ -16,7 +15,7 @@ from .articles.blocks import *
 from .articles.models import *
 from .articles.serializers import *
 from .mixins import *
-from .modules import text_processing
+from .modules import text_processing, pagination, specialties
 from .multilingual.pages.models import MultilingualPage, MonolingualPage
 
 
@@ -30,10 +29,15 @@ class DigitalTebPageMixin:
     def get_blogs_page():
         return ArticlesCategoriesPage.objects.first()
 
+    @staticmethod
+    def get_specialists_page():
+        return SpecialistsPage.objects.first()
+
 
 class HomePage(DigitalTebPageMixin, CheckPhoneVerifiedMixin, MultilingualPage):
     subpage_types = [
         'home.ArticlesCategoriesPage',
+        'home.SpecialistsPage',
     ]
 
     settings_panels = []
@@ -112,16 +116,9 @@ class ArticlesCategoryPage(
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        children = self.child_pages
-        paginator = Paginator(children, 5)
-        page = request.GET.get('page')
-        try:
-            posts = paginator.page(page)
-        except PageNotAnInteger:
-            posts = paginator.page(1)
-        except EmptyPage:
-            posts = paginator.page(paginator.num_pages)
-        context['posts'] = posts
+        context['posts'] = pagination.get_paginated_objects(
+            request, self.child_pages
+        )
         return context
 
     def serve(self, request, *args, **kwargs):
@@ -129,13 +126,13 @@ class ArticlesCategoryPage(
         self.search_description = translation.gettext(
             'Everything about %(category)s'
         ) % {
-            'category': self.category.name
-        }
+                                      'category': self.category.name
+                                  }
         self.seo_title = translation.gettext(
             'Blogs - %(category)s'
         ) % {
-            'category': self.category.name
-        }
+                             'category': self.category.name
+                         }
         self.search_image = self.category.icon
         return super().serve(request, *args, **kwargs)
 
@@ -200,43 +197,43 @@ class Article(
             self.search_description = translation.gettext(
                 '%(article_title)s including %(article_sections)s'
             ) % {
-                'article_title': self.title,
-                'article_sections': text_processing.str_list_to_comma_separated(
-                    [
-                        text_processing.html_to_str(section.value['title'].source)
-                        for section in self.sections_with_title
-                    ]
-                )
-            }
+                                          'article_title': self.title,
+                                          'article_sections': text_processing.str_list_to_comma_separated(
+                                              [
+                                                  text_processing.html_to_str(section.value['title'].source)
+                                                  for section in self.sections_with_title
+                                              ]
+                                          )
+                                      }
         else:
             self.search_description = self.title
         self.seo_title = translation.gettext(
             'Blogs - %(category)s - %(article_title)s'
         ) % {
-            'category': self.get_parent().specific.category.name,
-            'article_title': self.title
-        }
+                             'category': self.get_parent().specific.category.name,
+                             'article_title': self.title
+                         }
         return super().serve(request, *args, **kwargs)
 
     content_panels = [
-        MultiFieldPanel(
-            [
-                RichTextFieldPanel('article_title'),
-                ImageChooserPanel('image'),
-                FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
-            ], heading='Details', classname="collapsible collapsed"
-        ),
-        MultiFieldPanel(
-            [
-                RichTextFieldPanel('article_summary'),
-                RichTextFieldPanel('article_introduction'),
-                StreamFieldPanel('sections'),
-                RichTextFieldPanel('article_conclusion'),
-            ], heading='Content', classname="collapsible collapsed"
-        ),
-    ] + TaggedPageMixin.tags_panel + [
-        MonolingualPage.language_panel
-    ]
+                         MultiFieldPanel(
+                             [
+                                 RichTextFieldPanel('article_title'),
+                                 ImageChooserPanel('image'),
+                                 FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
+                             ], heading='Details', classname="collapsible collapsed"
+                         ),
+                         MultiFieldPanel(
+                             [
+                                 RichTextFieldPanel('article_summary'),
+                                 RichTextFieldPanel('article_introduction'),
+                                 StreamFieldPanel('sections'),
+                                 RichTextFieldPanel('article_conclusion'),
+                             ], heading='Content', classname="collapsible collapsed"
+                         ),
+                     ] + TaggedPageMixin.tags_panel + [
+                         MonolingualPage.language_panel
+                     ]
 
     class Meta:
         abstract = True
@@ -296,3 +293,79 @@ class ArticlePage(Article):
 
     parent_page_types = ['home.ArticlesCategoryPage']
     subpage_types = []
+
+
+class SpecialistsPage(
+    DigitalTebPageMixin, MetadataPageMixin,
+    CheckPhoneVerifiedMixin, ParentPageMixin, MultilingualPage
+):
+    content_panels = []
+    promote_panels = []
+    settings_panels = []
+
+    def serve(self, request, *args, **kwargs):
+        self.check_phone_verified(request)
+        self.seo_title = translation.gettext('Specialists')
+        self.search_description = translation.gettext(
+            'Talk to a specialist online, get your medication and health screening packages from wherever you are!'
+        )
+        return super().serve(request, *args, **kwargs)
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        context['specialist_pages'] = pagination.get_paginated_objects(
+            request, self.child_pages
+        )
+        return context
+
+    def save(self, *args, **kwargs):
+        self.title = 'Specialists'
+        super().save(*args, **kwargs)
+
+    @property
+    def translated_title(self):
+        return translation.gettext('Specialists')
+
+    parent_page_types = ['home.HomePage']
+    subpage_types = ['home.SpecialistPage']
+
+
+class SpecialistPage(
+    DigitalTebPageMixin, MetadataPageMixin,
+    CheckPhoneVerifiedMixin, MultilingualPage
+):
+    user = models.OneToOneField(
+        User, blank=False, on_delete=models.SET_NULL, null=True
+    )
+
+    content_panels = []
+    promote_panels = []
+    settings_panels = []
+
+    parent_page_types = ['home.SpecialistsPage']
+    subpage_types = []
+
+    def serve(self, request, *args, **kwargs):
+        self.check_phone_verified(request)
+        user_specialties = specialties.get_user_specialties(self.user)
+        specialist_name = f'{self.user.first_name} {self.user.last_name}'
+        self.seo_title = translation.gettext(
+            'Specialists - %(specialties)s - %(specialist_name)s'
+        ) % {
+            'specialties': text_processing.str_list_to_comma_separated(
+                [
+                    specialty.name for specialty in user_specialties
+                ]
+            ),
+            'specialist_name': specialist_name
+        }
+        self.search_description = translation.gettext(
+            'Consult %(specialist_name)s via message or video call now.'
+        ) % {
+            'specialist_name': specialist_name
+        }
+        return super().serve(request, *args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        self.title = self.user.username
+        super().save(*args, **kwargs)
