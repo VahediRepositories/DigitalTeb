@@ -45,7 +45,7 @@ class MultilingualPage(Page):
 class MonolingualPage(MultilingualPage):
     language = models.ForeignKey(
         Language, on_delete=models.SET_NULL,
-        null=True, blank=True
+        null=True, blank=False
     )
 
     language_panel = MultiFieldPanel(
