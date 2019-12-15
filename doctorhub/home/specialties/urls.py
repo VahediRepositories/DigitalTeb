@@ -15,9 +15,14 @@ urlpatterns = [
         name='edit_technical_info'
     ),
     path(
-        'specialists/skills',
+        'specialists/skills/',
         views.SpecialistLabelsView.as_view(),
         name='edit_labels'
+    ),
+    path(
+        'specialists/education/',
+        views.SpecialistEducationView.as_view(),
+        name='edit_education'
     ),
     path(
         'specialists/biography/<pk>/',

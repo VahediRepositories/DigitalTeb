@@ -84,7 +84,7 @@ class Biography(models.Model):
 
 
 @register_snippet
-class EducationalRecord(models.Model):
+class Education(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     level = models.CharField(max_length=200)
     field = models.CharField(max_length=500)

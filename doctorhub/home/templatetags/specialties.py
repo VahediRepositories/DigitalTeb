@@ -18,3 +18,8 @@ def is_specialist(user):
 @register.simple_tag
 def user_labels(user):
     return specialties.get_user_labels(user)
+
+
+@register.simple_tag
+def user_education_records(user):
+    return specialties.get_user_education_records(user)

@@ -7,8 +7,6 @@
 
 {% block additional_css %}
 
-    <link href="{% static 'doctorhub/rtl/dist/css/pages/widget-page.css' %}" rel="stylesheet">
-
 {% endblock %}
 
 {% block page_title %}
@@ -18,7 +16,7 @@
 {% block breadcrumb %}
 
     <li class="breadcrumb-item active">
-        {% trans 'Technical Information' %}
+        {% trans 'Education' %}
     </li>
 
     <li class="breadcrumb-item">
@@ -31,7 +29,7 @@
 
 {% block main_content %}
 
-    {% include 'home/specialists/career_edit/page.html' %}
+    {% include 'home/specialists/education_edit/page.html' %}
 
 {% endblock %}
 

@@ -1,15 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth import views as auth_views
-from django.conf import settings
 from django.contrib.messages.views import SuccessMessageMixin
-from django.core.mail import send_mail
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseRedirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import FormView
 from django.views.generic.base import View, TemplateView
 
 from .forms import *
 from .mixins import AuthenticatedForbiddenMixin, LoginRequiredMixin
+from ..accounts.phone.mixins import CheckPhoneVerifiedMixin
 from .phone.forms import PhoneUpdateForm
 from .phone.models import Phone
 from ..models import DigitalTebPageMixin
@@ -256,7 +255,10 @@ class InvalidPasswordChangeCode(AuthenticatedForbiddenMixin, MultilingualViewMix
         return super().get(request, *args, **kwargs)
 
 
-class ProfileUpdateView(LoginRequiredMixin, MultilingualViewMixin, TemplateView):
+class ProfileUpdateView(
+    LoginRequiredMixin, MultilingualViewMixin,
+    CheckPhoneVerifiedMixin, TemplateView
+):
 
     @property
     def template_name(self):
@@ -268,6 +270,10 @@ class ProfileUpdateView(LoginRequiredMixin, MultilingualViewMixin, TemplateView)
         context['profile_form'] = ProfileUpdateForm(instance=self.request.user.profile)
         context['phone_form'] = PhoneUpdateForm(instance=self.request.user.profile.phone)
         return context
+
+    def get(self, request, *args, **kwargs):
+        self.check_phone_verified(request)
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         user_form = UserUpdateForm(
@@ -324,8 +330,12 @@ class ProfileUpdateView(LoginRequiredMixin, MultilingualViewMixin, TemplateView)
 
 class PasswordChangeView(
     LoginRequiredMixin, SuccessMessageMixin,
-    MultilingualViewMixin, auth_views.PasswordChangeView
+    MultilingualViewMixin, CheckPhoneVerifiedMixin, auth_views.PasswordChangeView
 ):
+
+    def get(self, request, *args, **kwargs):
+        self.check_phone_verified(request)
+        return super().get(request, *args, **kwargs)
 
     @property
     def template_name(self):

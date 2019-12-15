@@ -44,3 +44,7 @@ def get_user_specialties(user):
 
 def get_user_labels(user):
     return Label.objects.filter(user=user)
+
+
+def get_user_education_records(user):
+    return Education.objects.filter(user=user)

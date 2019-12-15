@@ -43,6 +43,7 @@
     <!-- Column -->
     <!-- Column -->
     {% user_labels page.user as labels %}
+    {% user_education_records page.user as education_records %}
     <div class="col-lg-8 col-xlg-9 col-md-7">
         <div class="card">
             <!-- Nav tabs -->
@@ -57,7 +58,10 @@
                         {% trans 'Skills' %}
                     </a>
                 </li>
-                <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#settings" role="tab">Settings</a>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#education" role="tab">
+                        {% trans 'Education' %}
+                    </a>
                 </li>
             </ul>
             <!-- Tab panes -->
@@ -74,83 +78,45 @@
                     </div>
                 </div>
                 <!--second tab-->
-                    <div class="tab-pane" id="skills" role="tabpanel">
-                        <div class="card-body">
-                            {% if labels %}
-                                <ul>
-                                    {% for label in labels %}
-                                        <li>
-                                            {{ label.name }}
-                                            {% if label.description %}
-                                                :
-                                                <br>
-                                                {{ label.description }}
-                                            {% endif %}
-                                        </li>
-                                    {% endfor %}
-                                </ul>
-                            {% else %}
-                                <p class="text-danger text-center">
-                                    {% trans 'Nothing Submitted yet.' %}
-                                </p>
-                            {% endif %}
-                        </div>
-                    </div>
-                <div class="tab-pane" id="settings" role="tabpanel">
+                <div class="tab-pane" id="skills" role="tabpanel">
                     <div class="card-body">
-                        <form class="form-horizontal form-material">
-                            <div class="form-group">
-                                <label class="col-md-12">Full Name</label>
-                                <div class="col-md-12">
-                                    <input type="text" placeholder="Johnathan Doe"
-                                           class="form-control form-control-line">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="example-email" class="col-md-12">Email</label>
-                                <div class="col-md-12">
-                                    <input type="email" placeholder="johnathan@admin.com"
-                                           class="form-control form-control-line" name="example-email"
-                                           id="example-email">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-12">Password</label>
-                                <div class="col-md-12">
-                                    <input type="password" value="password" class="form-control form-control-line">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-12">Phone No</label>
-                                <div class="col-md-12">
-                                    <input type="text" placeholder="123 456 7890"
-                                           class="form-control form-control-line">
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-md-12">Message</label>
-                                <div class="col-md-12">
-                                    <textarea rows="5" class="form-control form-control-line"></textarea>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-12">Select Country</label>
-                                <div class="col-sm-12">
-                                    <select class="form-control form-control-line">
-                                        <option>London</option>
-                                        <option>India</option>
-                                        <option>Usa</option>
-                                        <option>Canada</option>
-                                        <option>Thailand</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-sm-12">
-                                    <button class="btn btn-success">Update Profile</button>
-                                </div>
-                            </div>
-                        </form>
+                        {% if labels %}
+                            <ul>
+                                {% for label in labels %}
+                                    <li>
+                                        {{ label.name }}
+                                        {% if label.description %}
+                                            :
+                                            <br>
+                                            {{ label.description }}
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-danger text-center">
+                                {% trans 'Nothing Submitted yet.' %}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="tab-pane" id="education" role="tabpanel">
+                    <div class="card-body">
+                        {% if education_records %}
+                            <ul>
+                                {% for record in education_records %}
+                                    <li>
+                                        {{ record.level }}:
+                                            <br>
+                                        {{ record.field }} | {{ record.institution }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-danger text-center">
+                                {% trans 'Nothing Submitted yet.' %}
+                            </p>
+                        {% endif %}
                     </div>
                 </div>
             </div>

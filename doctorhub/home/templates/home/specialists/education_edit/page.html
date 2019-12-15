@@ -1,0 +1,58 @@
+{% load staticfiles %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+        <div class="card border-success">
+            <div class="card-header bg-success text-center">
+                <img src="{% static 'doctorhub/assets/images/logo-light-text.png' %}"
+                     alt="{{ request.site.site_name }}" class="dark-logo"/>
+            </div>
+            <div class="card-body bg-white" style="padding-left: 10%; padding-right: 10%;">
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <h5>
+                        {% trans 'Please enter your educational history.' %}
+                    </h5>
+                    {{ formset.management_form }}
+                    {% for form in formset.forms %}
+                        {% if forloop.last %}
+                            <div class="bg-dark" style="padding-bottom: 2%;">
+                                <h3 class="text-center" style="padding-top: 4%;">
+                                    {% trans 'Enter New Education Record' %}
+                                </h3>
+                                <div style="padding: 5%;">
+                                    {{ form|crispy }}
+                                </div>
+                            </div>
+                        {% else %}
+                            <div style="padding-bottom: 2%;">
+                                <div class="bg-success" style="padding: 5%;">
+                                    <h3 class="text-center">
+                                        {{ forloop.counter }}
+                                    </h3>
+
+                                    {{ form|crispy }}
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                    <br>
+                    <div class="form-row text-center" style="padding-right: 10%; padding-left: 10%;">
+                        <div class="col-md-12 text-center">
+                            <div class="form-group">
+                                <button style="width: 100%;" class="btn btn-success btn-lg" type="submit">
+                                    {% trans 'Submit Changes' %}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% include 'home/specialists/technical_profile_links/links.html' %}
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-1"></div>
+</div>
