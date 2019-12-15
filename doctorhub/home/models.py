@@ -186,8 +186,6 @@ class Article(
         ], blank=False
     )
 
-    uuid4 = models.TextField(default='')
-
     @property
     def sections_with_title(self):
         sections = []
@@ -196,19 +194,12 @@ class Article(
                 sections.append(section)
         return sections
 
-    def clean(self):
-        super().clean()
+    def save(self, *args, **kwargs):
+        self.title = text_processing.html_to_str(self.article_title)
         if not self.id:
-            self.refresh_slug()
-        if self.article_title:
-            self.title = text_processing.html_to_str(self.article_title)
-        # self.search_image = self.image
-
-    def refresh_slug(self):
-        self.set_uuid4()
-        self.slug = '{}-'.format(
-            type(self).__name__
-        ) + self.uuid4
+            super().save(*args, **kwargs)
+        self.slug = self.id
+        super().save(*args, **kwargs)
 
     def serve(self, request, *args, **kwargs):
         self.check_phone_verified(request)
@@ -234,31 +225,25 @@ class Article(
                          }
         return super().serve(request, *args, **kwargs)
 
-    def set_uuid4(self):
-        uuid4 = uuid.uuid4()
-        while self.manager.filter(uuid4=uuid4).exists():
-            uuid4 = uuid.uuid4()
-        self.uuid4 = str(uuid4)
-
     content_panels = [
-                         MultiFieldPanel(
-                             [
-                                 RichTextFieldPanel('article_title'),
-                                 ImageChooserPanel('image'),
-                                 FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
-                             ], heading='Details', classname="collapsible collapsed"
-                         ),
-                         MultiFieldPanel(
-                             [
-                                 RichTextFieldPanel('article_summary'),
-                                 RichTextFieldPanel('article_introduction'),
-                                 StreamFieldPanel('sections'),
-                                 RichTextFieldPanel('article_conclusion'),
-                             ], heading='Content', classname="collapsible collapsed"
-                         ),
-                     ] + TaggedPageMixin.tags_panel + [
-                         MonolingualPage.language_panel
-                     ]
+        MultiFieldPanel(
+            [
+                RichTextFieldPanel('article_title'),
+                ImageChooserPanel('image'),
+                FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
+            ], heading='Details', classname="collapsible collapsed"
+        ),
+        MultiFieldPanel(
+            [
+                RichTextFieldPanel('article_summary'),
+                RichTextFieldPanel('article_introduction'),
+                StreamFieldPanel('sections'),
+                RichTextFieldPanel('article_conclusion'),
+            ], heading='Content', classname="collapsible collapsed"
+        ),
+    ] + TaggedPageMixin.tags_panel + [
+        MonolingualPage.language_panel
+    ]
 
     class Meta:
         abstract = True
