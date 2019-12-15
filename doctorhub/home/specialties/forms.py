@@ -11,7 +11,7 @@ class SpecialistCreationForm(RegistrationForm):
     )
 
     def __init__(self, *args, **kwargs):
-        super(SpecialistCreationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         specialty_choices = [
             (specialty.default_name, specialty.name)
             for specialty in Specialty.objects.all()

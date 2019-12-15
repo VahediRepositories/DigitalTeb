@@ -31,18 +31,18 @@ class ConfirmationCodeView(
 
     def get_success_url(self):
         self.success_url = DigitalTebPageMixin.get_home_page().get_url()
-        return super(ConfirmationCodeView, self).get_success_url()
+        return super().get_success_url()
 
     def get(self, request, *args, **kwargs):
         self.forbid_confirmed()
-        return super(ConfirmationCodeView, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
         self.forbid_confirmed()
         code = form.cleaned_data['confirmation_code']
         verified = sms.verify_phone(self.request.user, code)
         if verified:
-            return super(ConfirmationCodeView, self).form_valid(form)
+            return super().form_valid(form)
         else:
             form.add_error(
                 'confirmation_code', ValidationError(
@@ -51,7 +51,7 @@ class ConfirmationCodeView(
                     )
                 )
             )
-            return super(ConfirmationCodeView, self).form_invalid(form)
+            return super().form_invalid(form)
 
 
 class ResendConfirmationCodeView(LoginRequiredMixin, ConfirmedForbiddenMixin, View):

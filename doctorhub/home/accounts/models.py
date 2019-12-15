@@ -71,7 +71,7 @@ class Profile(models.Model):
                 return static(NONE_AVATAR)
 
     def save(self, *args, **kwargs):
-        super(Profile, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
         self.make_square_image()
         self.compress_image()
 

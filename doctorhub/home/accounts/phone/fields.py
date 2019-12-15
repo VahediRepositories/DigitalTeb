@@ -11,20 +11,20 @@ class PhoneField(forms.CharField):
     )
 
     def __init__(self, *args, **kwargs):
-        super(PhoneField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.validators.append(self.phone_validator)
         self.label = translation.gettext_lazy('Cellphone Number')
         self.max_length = 20
 
     def clean(self, value):
-        phone = super(PhoneField, self).clean(value)
+        phone = super().clean(value)
         return phone[-10:]
 
 
 class ConfirmationCodeField(forms.CharField):
 
     def __init__(self, *args, **kwargs):
-        super(ConfirmationCodeField, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.max_length = sms.CODE_LENGTH
         self.label = translation.gettext_lazy('Confirmation Code')
         self.help_text = translation.gettext_lazy(

@@ -25,10 +25,6 @@ from .multilingual.pages.models import MultilingualPage, MonolingualPage
 
 class DigitalTebPageMixin:
 
-    def __init__(self, *args, **kwargs):
-        super(DigitalTebPageMixin, self).__init__(*args, **kwargs)
-        self.messages_links = {}
-
     @staticmethod
     def get_home_page():
         return HomePage.objects.first()
@@ -56,7 +52,7 @@ class HomePage(DigitalTebPageMixin, CheckPhoneVerifiedMixin, MultilingualPage):
         return translation.gettext('Home')
 
     def clean(self):
-        super(HomePage, self).clean()
+        super().clean()
         self.title = 'Home'
         self.slug = slugify(self.title)
 
@@ -77,13 +73,13 @@ class ArticlesCategoriesPage(
         return super().serve(request, *args, **kwargs)
 
     def clean(self):
-        super(ArticlesCategoriesPage, self).clean()
+        super().clean()
         self.title = 'Blogs'
         self.slug = slugify(self.title)
 
     @property
     def template(self):
-        return super(ArticlesCategoriesPage, self).template
+        return super().template
 
     @property
     def translated_title(self):
@@ -113,7 +109,7 @@ class ArticlesCategoryPage(
     @property
     def child_pages(self):
         child_pages = []
-        for child_page in super(ArticlesCategoryPage, self).child_pages:
+        for child_page in super().child_pages:
             if isinstance(child_page, MonolingualPage):
                 if child_page.supports_language():
                     child_pages.append(child_page)
@@ -149,14 +145,14 @@ class ArticlesCategoryPage(
         return super().serve(request, *args, **kwargs)
 
     def clean(self):
-        super(ArticlesCategoryPage, self).clean()
+        super().clean()
         if self.category:
             self.title = self.category.default_name
             self.slug = slugify(self.title)
 
     @property
     def template(self):
-        return super(ArticlesCategoryPage, self).template
+        return super().template
 
     parent_page_types = [
         'home.ArticlesCategoriesPage',
@@ -164,7 +160,6 @@ class ArticlesCategoryPage(
 
     subpage_types = [
         'home.ArticlePage',
-        'home.WebMDBlogPost',
     ]
 
 
@@ -202,7 +197,7 @@ class Article(
         return sections
 
     def clean(self):
-        super(Article, self).clean()
+        super().clean()
         if not self.id:
             self.refresh_slug()
         if self.article_title:
@@ -323,44 +318,3 @@ class ArticlePage(Article):
 
     parent_page_types = ['home.ArticlesCategoryPage']
     subpage_types = []
-
-
-class RTLWebMDBlogPostTag(TaggedItemBase):
-    content_object = ParentalKey(
-        'WebMDBlogPost', related_name='webmd_blog_post_rtl_tags', on_delete=models.CASCADE
-    )
-
-
-class LTRWebMDBlogPostTag(TaggedItemBase):
-    content_object = ParentalKey(
-        'WebMDBlogPost', related_name='webmd_blog_post_ltr_tags', on_delete=models.CASCADE
-    )
-
-
-class WebMDBlogPost(Article):
-    categories = ParentalManyToManyField(ArticleCategory, blank=False)
-    rtl_tags = ClusterTaggableManager(
-        through=RTLWebMDBlogPostTag, blank=True, related_name='webmd_rtl_tags'
-    )
-    ltr_tags = ClusterTaggableManager(
-        through=LTRWebMDBlogPostTag, blank=True, related_name='webmd_ltr_tags'
-    )
-    image = models.ForeignKey(
-        'wagtailimages.Image',
-        help_text='high quality horizontal image',
-        null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
-    )
-
-    promote_panels = []
-    settings_panels = []
-
-    parent_page_types = ['home.ArticlesCategoryPage']
-    subpage_types = []
-
-    @property
-    def manager(self):
-        return WebMDBlogPost.objects
-
-    @property
-    def template(self):
-        return self.get_template_path(WebMDBlogPost)

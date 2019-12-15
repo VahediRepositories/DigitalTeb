@@ -44,7 +44,7 @@ class SpecialistLabelsView(
         return f'home/specialists/{self.language_direction}/labels_edit.html'
 
     def get_context_data(self, **kwargs):
-        context = super(SpecialistLabelsView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['formset'] = self.Formset(
             instance=self.request.user
         )
@@ -70,7 +70,7 @@ class TechnicalInformationView(
     MultilingualViewMixin, TemplateView
 ):
     def get_context_data(self, **kwargs):
-        context = super(TechnicalInformationView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['labels'] = Label.objects.filter(user=self.request.user)
         return context
 
@@ -80,7 +80,7 @@ class TechnicalInformationView(
 
     def get(self, *args, **kwargs):
         self.forbid_non_specialist()
-        return super(TechnicalInformationView, self).get(*args, **kwargs)
+        return super().get(*args, **kwargs)
 
 
 class BiographyView(
@@ -102,7 +102,7 @@ class BiographyView(
 
     def get(self, *args, **kwargs):
         self.forbid_non_specialist()
-        return super(BiographyView, self).get(*args, **kwargs)
+        return super().get(*args, **kwargs)
 
 
 class PersonalPageView(

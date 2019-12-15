@@ -29,13 +29,13 @@ class LoginView(
 
     def get(self, request, *args, **kwargs):
         self.forbid_authenticated()
-        return super(LoginView, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
 
 class LogoutView(LoginRequiredMixin, auth_views.LogoutView):
 
     def get(self, request, *args, **kwargs):
-        super(LogoutView, self).get(request, *args, **kwargs)
+        super().get(request, *args, **kwargs)
         messages.success(
             request,
             translation.gettext('You logged out of your account, successfully.'),
@@ -51,7 +51,7 @@ class RegistrationView(AuthenticatedForbiddenMixin, MultilingualViewMixin, FormV
 
     def get(self, request, *args, **kwargs):
         self.forbid_authenticated()
-        return super(RegistrationView, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
         self.forbid_authenticated()
@@ -72,7 +72,7 @@ class RegistrationView(AuthenticatedForbiddenMixin, MultilingualViewMixin, FormV
             extra_tags='successful-registration'
         )
         sms.send_confirmation_code(profile.phone)
-        return super(RegistrationView, self).form_valid(form)
+        return super().form_valid(form)
 
     def set_user_properties(self, user, form):
         pass
@@ -101,7 +101,7 @@ class ForgotAccountView(AuthenticatedForbiddenMixin, MultilingualViewMixin, Form
 
     def get(self, request, *args, **kwargs):
         self.forbid_authenticated()
-        return super(ForgotAccountView, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
         self.forbid_authenticated()
@@ -134,10 +134,10 @@ class PasswordChangeCodeView(AuthenticatedForbiddenMixin, MultilingualViewMixin,
 
     def get(self, request, *args, **kwargs):
         self.forbid_authenticated()
-        return super(PasswordChangeCodeView, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(PasswordChangeCodeView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['phone'] = self.kwargs['phone']
         return context
 
@@ -160,7 +160,7 @@ class PasswordChangeCodeView(AuthenticatedForbiddenMixin, MultilingualViewMixin,
                     )
                 )
             )
-            return super(PasswordChangeCodeView, self).form_invalid(form)
+            return super().form_invalid(form)
 
 
 class ResendPasswordChangeCodeView(AuthenticatedForbiddenMixin, View):
@@ -205,7 +205,7 @@ class ResetPasswordView(AuthenticatedForbiddenMixin, MultilingualViewMixin, Form
         phone = self.kwargs['phone']
         verified = authentication.verify_password_change_code(phone, code)
         if verified:
-            return super(ResetPasswordView, self).get(request, *args, **kwargs)
+            return super().get(request, *args, **kwargs)
         else:
             return HttpResponseRedirect(
                 reverse(
@@ -223,7 +223,7 @@ class ResetPasswordView(AuthenticatedForbiddenMixin, MultilingualViewMixin, Form
         return Phone.get_user_by_phone_number(phone)
 
     def get_context_data(self, **kwargs):
-        context = super(ResetPasswordView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['user'] = self.get_user()
         return context
 
@@ -253,7 +253,7 @@ class InvalidPasswordChangeCode(AuthenticatedForbiddenMixin, MultilingualViewMix
 
     def get(self, request, *args, **kwargs):
         self.forbid_authenticated()
-        return super(InvalidPasswordChangeCode, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
 
 class ProfileUpdateView(LoginRequiredMixin, MultilingualViewMixin, TemplateView):
@@ -263,7 +263,7 @@ class ProfileUpdateView(LoginRequiredMixin, MultilingualViewMixin, TemplateView)
         return f'home/users/{self.language_direction}/profile_edit.html'
 
     def get_context_data(self, **kwargs):
-        context = super(ProfileUpdateView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['user_form'] = UserUpdateForm(instance=self.request.user)
         context['profile_form'] = ProfileUpdateForm(instance=self.request.user.profile)
         context['phone_form'] = PhoneUpdateForm(instance=self.request.user.profile.phone)

@@ -13,7 +13,7 @@ from ..modules import phones
 
 class RegistrationForm(auth_forms.UserCreationForm):
     def __init__(self, *args, **kwargs):
-        super(RegistrationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
 
@@ -88,7 +88,7 @@ class PasswordChangeCodeForm(forms.Form):
     password_change_code = PasswordChangeCodeField()
 
     def __init__(self, *args, **kwargs):
-        super(PasswordChangeCodeForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['password_change_code'].help_text = self.fields['password_change_code'].help_text % {
             'num': CODE_LENGTH
         }
@@ -97,7 +97,7 @@ class PasswordChangeCodeForm(forms.Form):
 class UserUpdateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
-        super(UserUpdateForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
 

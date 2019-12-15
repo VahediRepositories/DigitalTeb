@@ -8,7 +8,7 @@ class ConfirmationCodeForm(forms.Form):
     confirmation_code = ConfirmationCodeField()
 
     def __init__(self, *args, **kwargs):
-        super(ConfirmationCodeForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['confirmation_code'].help_text = self.fields['confirmation_code'].help_text % {
             'num': CODE_LENGTH
         }
