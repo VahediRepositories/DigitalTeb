@@ -369,3 +369,7 @@ class SpecialistPage(
     def save(self, *args, **kwargs):
         self.title = self.user.username
         super().save(*args, **kwargs)
+
+    @property
+    def template(self):
+        return super().get_template_path(SpecialistPage)
