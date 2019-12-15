@@ -1,10 +1,7 @@
-import uuid
-
 from django import forms
 from django.contrib.auth.models import Group
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponseRedirect
-from django.utils.text import slugify
 from modelcluster.contrib.taggit import ClusterTaggableManager
 from modelcluster.fields import ParentalManyToManyField, ParentalKey
 from taggit.models import TaggedItemBase
@@ -51,10 +48,9 @@ class HomePage(DigitalTebPageMixin, CheckPhoneVerifiedMixin, MultilingualPage):
     def translated_title(self):
         return translation.gettext('Home')
 
-    def clean(self):
-        super().clean()
+    def save(self, *args, **kwargs):
         self.title = 'Home'
-        self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
 
 class ArticlesCategoriesPage(
@@ -72,10 +68,9 @@ class ArticlesCategoriesPage(
         self.seo_title = translation.gettext('Blogs')
         return super().serve(request, *args, **kwargs)
 
-    def clean(self):
-        super().clean()
+    def save(self, *args, **kwargs):
         self.title = 'Blogs'
-        self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
     @property
     def template(self):
@@ -134,21 +129,19 @@ class ArticlesCategoryPage(
         self.search_description = translation.gettext(
             'Everything about %(category)s'
         ) % {
-                                      'category': self.category.name
-                                  }
+            'category': self.category.name
+        }
         self.seo_title = translation.gettext(
             'Blogs - %(category)s'
         ) % {
-                             'category': self.category.name
-                         }
+            'category': self.category.name
+        }
         self.search_image = self.category.icon
         return super().serve(request, *args, **kwargs)
 
-    def clean(self):
-        super().clean()
-        if self.category:
-            self.title = self.category.default_name
-            self.slug = slugify(self.title)
+    def save(self, *args, **kwargs):
+        self.title = self.category.default_name
+        super().save(*args, **kwargs)
 
     @property
     def template(self):
@@ -207,22 +200,22 @@ class Article(
             self.search_description = translation.gettext(
                 '%(article_title)s including %(article_sections)s'
             ) % {
-                                          'article_title': self.title,
-                                          'article_sections': text_processing.str_list_to_comma_separated(
-                                              [
-                                                  text_processing.html_to_str(section.value['title'].source)
-                                                  for section in self.sections_with_title
-                                              ]
-                                          )
-                                      }
+                'article_title': self.title,
+                'article_sections': text_processing.str_list_to_comma_separated(
+                    [
+                        text_processing.html_to_str(section.value['title'].source)
+                        for section in self.sections_with_title
+                    ]
+                )
+            }
         else:
             self.search_description = self.title
         self.seo_title = translation.gettext(
             'Blogs - %(category)s - %(article_title)s'
         ) % {
-                             'category': self.get_parent().specific.category.name,
-                             'article_title': self.title
-                         }
+            'category': self.get_parent().specific.category.name,
+            'article_title': self.title
+        }
         return super().serve(request, *args, **kwargs)
 
     content_panels = [
