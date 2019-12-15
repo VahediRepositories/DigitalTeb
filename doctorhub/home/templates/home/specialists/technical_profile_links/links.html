@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load pages %}
 
 <div class="form-row text-center" style="padding-right: 5%; padding-left: 5%;">
     <div class="col-md-6 text-center">
@@ -10,7 +11,8 @@
     </div>
     <div class="col-md-6 text-center">
         <div class="form-group">
-            <a href="{% url 'personal_page' request.user.id %}" style="width: 100%;" class="btn btn-outline-success btn-lg">
+            {% specialist_url request.user as personal_page_url %}
+            <a href="{{ personal_page_url }}" style="width: 100%;" class="btn btn-outline-success btn-lg">
                 {% trans 'Personal Page' %}
             </a>
         </div>

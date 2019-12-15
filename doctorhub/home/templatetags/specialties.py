@@ -14,3 +14,7 @@ def get_specialties(user):
 def is_specialist(user):
     return specialties.is_specialist(user)
 
+
+@register.simple_tag
+def user_labels(user):
+    return specialties.get_user_labels(user)

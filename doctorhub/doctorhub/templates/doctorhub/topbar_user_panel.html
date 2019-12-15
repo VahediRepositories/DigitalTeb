@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load specialties %}
+{% load pages %}
 
 <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" href=""
@@ -38,7 +39,8 @@
                 class="fa fa-power-off m-r-5 m-l-5"></i>{% trans 'Logout' %}</a>
         {% if user_is_specialist %}
             <div class="p-l-30 p-10">
-                <a href="{% url 'personal_page' request.user.pk %}"
+                {% specialist_url request.user as personal_page_url %}
+                <a href="{{ personal_page_url }}"
                    class="btn btn-sm btn-success btn-rounded">
                     {% trans 'Personal Page' %}
                 </a>

@@ -1,7 +1,6 @@
-from django.contrib.auth.models import Group
 from django.http import Http404
 
-from ..specialties.models import Specialty
+from ..specialties.models import *
 
 
 def make_user_specialist(user, specialty_default_name):
@@ -41,3 +40,7 @@ def get_user_specialties(user):
         ).exists():
             specialties.append(specialty)
     return specialties
+
+
+def get_user_labels(user):
+    return Label.objects.filter(user=user)

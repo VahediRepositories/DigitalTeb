@@ -5,11 +5,6 @@ from . import views
 urlpatterns = [
 
     path(
-        'specialists/personal_page/<pk>/',
-        views.PersonalPageView.as_view(),
-        name='personal_page'
-    ),
-    path(
         'specialists/signup/',
         views.SpecialistSignUpView.as_view(),
         name='specialist_signup'
@@ -20,7 +15,7 @@ urlpatterns = [
         name='edit_technical_info'
     ),
     path(
-        'specialists/labels',
+        'specialists/skills',
         views.SpecialistLabelsView.as_view(),
         name='edit_labels'
     ),

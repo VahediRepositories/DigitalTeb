@@ -32,7 +32,7 @@ class SpecialistLabelsView(
     PermissionRequiredMixin,
     MultilingualViewMixin, TemplateView
 ):
-    permission_required = ('home.add_label', 'home.change_label', 'home.delete_label')
+    permission_required = ('home.add_label', )
     Formset = inlineformset_factory(
         User, Label, fields=('name', 'description'), extra=1, labels={
             'name': translation.gettext_lazy('name'),
@@ -72,7 +72,9 @@ class TechnicalInformationView(
 ):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['labels'] = Label.objects.filter(user=self.request.user)
+        context['labels'] = specialties.get_user_labels(
+            self.request.user
+        )
         return context
 
     @property
@@ -105,12 +107,3 @@ class BiographyView(
         self.forbid_non_specialist()
         return super().get(*args, **kwargs)
 
-
-class PersonalPageView(
-    MultilingualViewMixin, DetailView
-):
-    model = User
-
-    @property
-    def template_name(self):
-        return f'home/specialists/{self.language_direction}/personal_page.html'

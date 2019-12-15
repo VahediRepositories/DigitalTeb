@@ -15,14 +15,14 @@
                 <form method="POST" action="">
                     {% csrf_token %}
                     <h5>
-                        {% trans 'Please enter every label that could help patients to understand your specialties and skills.' %}
+                        {% trans 'Please enter every skill that could help patients to understand your specialties.' %}
                     </h5>
                     {{ formset.management_form }}
                     {% for form in formset.forms %}
                         {% if forloop.last %}
                             <div class="bg-dark" style="padding-bottom: 2%;">
                                 <h3 class="text-center" style="padding-top: 4%;">
-                                    {% trans 'Enter New Label' %}
+                                    {% trans 'Enter New Skill' %}
                                 </h3>
                                 <div style="padding: 5%;">
                                     {{ form|crispy }}

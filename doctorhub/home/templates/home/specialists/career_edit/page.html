@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load pages %}
 
 <div class="row">
     <div class="col-md-1"></div>
@@ -8,7 +9,7 @@
                 <div class="card">
                     <div class="card-body">
                             <h4 class="card-title text-center">
-                                {% trans 'Professional Labels' %}
+                                {% trans 'Skills' %}
                             </h4>
                         <hr>
                         <div class="text-center">
@@ -20,7 +21,7 @@
                                 {% endfor %}
                             {% else %}
                                 <h6 class="text-center">
-                                    {% trans "Please enter you professional labels so that patients know you better."  %}
+                                    {% trans "Please enter your skills so that patients can know you better."  %}
                                 </h6>
                             {% endif %}
                         </div>
@@ -28,7 +29,7 @@
                         <div class="row">
                             <div class="col-md-12 text-center" style="padding-left: 5%; padding-right: 5%;">
                                 <a href="{% url 'edit_labels' %}" style="width: 100%;" class="btn btn-outline-success">
-                                    {% trans 'Edit Labels' %}
+                                    {% trans 'Edit Skills' %}
                                 </a>
                             </div>
                         </div>

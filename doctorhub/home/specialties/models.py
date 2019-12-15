@@ -81,3 +81,11 @@ class Biography(models.Model):
 
     class Meta:
         verbose_name_plural = 'Biographies'
+
+
+@register_snippet
+class EducationalRecord(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    level = models.CharField(max_length=200)
+    field = models.CharField(max_length=500)
+    institution = models.CharField(max_length=200)
