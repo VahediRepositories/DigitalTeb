@@ -28,38 +28,6 @@
 <div class="row row-flex">
     <div class="col-md-1"></div>
     <div class="col-md-9">
-        {% comment %}<div class="card"
-             style="height: 100%;">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div style="padding: 10%;">
-                            {{ page.article_summary|richtext }}
-                            {% if page.has_sections_with_title %}
-                                <br>
-                                <br>
-                                <b>
-                                    در اين مقاله ميخوانيد:
-                                </b>
-                                <br>
-                                <br>
-                                <ul>
-                                    {% for section in page.sections %}
-                                        {% if section.value.title %}
-                                            <li>
-                                                <a href="#{{ section.value.title.source|html_to_str|replace_white_space_with_underscore }}">
-                                                    {{ section.value.title.source|html_to_str }}
-                                                </a>
-                                            </li>
-                                        {% endif %}
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>{% endcomment %}
         {% include 'home/articles/article_page/summary.html' %}
     </div>
     <div class="col-md-2"></div>
@@ -79,61 +47,6 @@
         <div class="card m-b-0">
             <!-- .chat-row -->
             <div class="chat-main-box" style="height: 100%;">
-                {% comment %} <!-- .chat-left-panel -->
-                    <div class="chat-left-aside">
-                        <div class="open-panel"><i class="ti-angle-right"></i></div>
-                        <div class="chat-left-inner">
-                            <div class="form-material">
-                                <input class="form-control p-2" type="text" placeholder="Search Contact">
-                            </div>
-                            <ul class="chatonline style-none ">
-                                <li>
-                                    <a href="javascript:void(0)"><img src="../assets/images/users/1.jpg" alt="user-img"
-                                                                      class="img-circle"> <span>Varun Dhavan <small
-                                            class="text-success">online</small></span></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)" class="active"><img src="../assets/images/users/2.jpg"
-                                                                                     alt="user-img" class="img-circle">
-                                        <span>Genelia Deshmukh <small class="text-warning">Away</small></span></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)"><img src="../assets/images/users/3.jpg" alt="user-img"
-                                                                      class="img-circle"> <span>Ritesh Deshmukh <small
-                                            class="text-danger">Busy</small></span></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)"><img src="../assets/images/users/4.jpg" alt="user-img"
-                                                                      class="img-circle"> <span>Arijit Sinh <small
-                                            class="text-muted">Offline</small></span></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)"><img src="../assets/images/users/5.jpg" alt="user-img"
-                                                                      class="img-circle"> <span>Govinda Star <small
-                                            class="text-success">online</small></span></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)"><img src="../assets/images/users/6.jpg" alt="user-img"
-                                                                      class="img-circle"> <span>John Abraham<small
-                                            class="text-success">online</small></span></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)"><img src="../assets/images/users/7.jpg" alt="user-img"
-                                                                      class="img-circle"> <span>Hritik Roshan<small
-                                            class="text-success">online</small></span></a>
-                                </li>
-                                <li>
-                                    <a href="javascript:void(0)"><img src="../assets/images/users/8.jpg" alt="user-img"
-                                                                      class="img-circle"> <span>Pwandeep rajan <small
-                                            class="text-success">online</small></span></a>
-                                </li>
-                                <li class="p-20"></li>
-                            </ul>
-                        </div>
-                    </div>
-                    <!-- .chat-left-panel -->
-                    <!-- .chat-right-panel -->{% endcomment %}
-                {#                    <div class="chat-right-aside">#}
                 <div class="chat-main-header">
                     <div class="p-3 b-b">
                         <h4 class="box-title large-text">

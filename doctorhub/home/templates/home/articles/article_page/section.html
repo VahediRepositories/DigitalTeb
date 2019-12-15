@@ -23,39 +23,6 @@
                         <div class="col-md-12">
                             {{ item.value|richtext }}
                         </div>
-                    {% elif item.block_type == 'UL' %}
-                        <div class="col-md-12">
-                            {{ item.value.paragraph|richtext }}
-                            <ul>
-                                {% for item in item.value.items %}
-                                    <li>
-                                        {{ item }}
-                                    </li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                    {% elif item.block_type == 'OL' %}
-                        <div class="col-md-12">
-                            {{ item.value.paragraph|richtext }}
-                            <ol>
-                                {% for item in item.value.items %}
-                                    <li>
-                                        {{ item }}
-                                    </li>
-                                {% endfor %}
-                            </ol>
-                        </div>
-                    {% elif item.block_type == 'image_and_text_row' %}
-                        <div class="col-md-6">
-                            {{ item.value.paragraph|richtext }}
-                        </div>
-                        <div class="col-md-1"></div>
-                        <div class="col-md-5" style="padding-right: 5%; padding-left: 5%;">
-                            {% image item.value.image fill-1000x1000 as image %}
-                            <img src="{{ image.url }}"
-                                 class="img-thumbnail img-responsive"
-                                 alt="{{ image.alt }}">
-                        </div>
                     {% elif item.block_type == 'image' %}
                         <div class="col-md-12">
                             <div class="row">
