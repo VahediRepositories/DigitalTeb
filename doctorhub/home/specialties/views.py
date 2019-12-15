@@ -29,8 +29,8 @@ class SpecialistSignUpView(RegistrationView):
 
 
 class SpecialistInlineFormsetView(
-    PermissionRequiredMixin, MultilingualViewMixin,
-    NonSpecialistForbiddenMixin, CheckPhoneVerifiedMixin, TemplateView
+    MultilingualViewMixin, NonSpecialistForbiddenMixin,
+    CheckPhoneVerifiedMixin, TemplateView
 ):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -60,7 +60,6 @@ class SpecialistInlineFormsetView(
 
 
 class SpecialistLabelsView(SpecialistInlineFormsetView):
-    permission_required = ('home.add_label',)
     formset_class = inlineformset_factory(
         User, Label, fields=('name', 'description'), extra=1, labels={
             'name': translation.gettext_lazy('name'),
@@ -75,7 +74,6 @@ class SpecialistLabelsView(SpecialistInlineFormsetView):
 
 
 class SpecialistEducationView(SpecialistInlineFormsetView):
-    permission_required = ('home.add_education',)
     formset_class = inlineformset_factory(
         User, Education, fields=('level', 'field', 'institution'), extra=1, labels={
             'level': translation.gettext_lazy('level'),
