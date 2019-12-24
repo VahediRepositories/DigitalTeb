@@ -480,7 +480,9 @@ class SpecialistPage(
 
     @property
     def articles(self):
-        articles = ArticlePage.objects.filter(owner=self.user).live().public()
+        articles = ArticlePage.objects.filter(
+            owner=self.user
+        ).live().public().order_by('-first_published_at')
         return [
             article for article in articles
             if isinstance(article, MonolingualPage) and article.supports_language()
