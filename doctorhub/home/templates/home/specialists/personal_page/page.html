@@ -6,7 +6,7 @@
 
 <div class="row">
     <div class="col-lg-4 col-xlg-3 col-md-5">
-        <div class="card">
+        <div class="card" style="height: 500px; overflow-y: scroll;">
             <div class="card-body text-center">
                 <img src="{{ page.user.profile.image_url }}" class="img-circle" width="150"/>
                 <h4 class="card-title m-t-10">
@@ -46,7 +46,7 @@
     {% user_labels page.user as labels %}
     {% user_education_records page.user as education_records %}
     <div class="col-lg-8 col-xlg-9 col-md-7">
-        <div class="card">
+        <div class="card" style="height: 500px; overflow-y: scroll;">
             <!-- Nav tabs -->
             <ul class="nav nav-tabs profile-tab" role="tablist">
                 <li class="nav-item">
@@ -121,7 +121,9 @@
                 </div>
             </div>
         </div>
-        {% if articles %}
+    </div>
+    {% if articles %}
+        <div class="col-lg-12 col-xlg-12 col-md-7">
             <div class="card">
                 <div class="card-header bg-transparent">
                     <h3>
@@ -143,7 +145,7 @@
 
                 </div>
             </div>
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
 
 </div>
