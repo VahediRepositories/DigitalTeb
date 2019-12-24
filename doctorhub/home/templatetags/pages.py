@@ -32,4 +32,6 @@ def profile_url(user):
 
 @register.simple_tag
 def in_rows(objects, row_size):
-    return list_processing.list_to_sublists_of_size_n(objects, row_size)
+    return reversed(
+        list_processing.list_to_sublists_of_size_n(objects, row_size)
+    )
