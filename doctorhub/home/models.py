@@ -212,6 +212,10 @@ class SpecialistsArticlesCategoryPage(
         super().save(*args, **kwargs)
 
     @property
+    def category(self):
+        return self.get_parent().specific.category
+
+    @property
     def template(self):
         return super().get_template_path(SpecialistsArticlesCategoryPage)
 
