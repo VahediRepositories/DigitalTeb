@@ -211,6 +211,17 @@ class SpecialistsArticlesCategoryPage(
         self.title = "Specialists"
         super().save(*args, **kwargs)
 
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        context['articles'] = pagination.get_paginated_objects(
+            request, self.articles
+        )
+        return context
+
+    @property
+    def articles(self):
+        return self.get_parent().specific.specialists_articles
+
     @property
     def category(self):
         return self.get_parent().specific.category
@@ -251,7 +262,7 @@ class Article(
 
     def get_edit_url(self):
         return reverse(
-            'wagtailadmin_pages:edit', args=(self.pk, )
+            'wagtailadmin_pages:edit', args=(self.pk,)
         )
 
     @property
@@ -322,9 +333,6 @@ class Article(
 
     class Meta:
         abstract = True
-        ordering = [
-            'first_published_at'
-        ]
 
 
 class RTLArticlePageTag(TaggedItemBase):
@@ -492,4 +500,3 @@ class SpecialistPage(
     @property
     def template(self):
         return super().get_template_path(SpecialistPage)
-
