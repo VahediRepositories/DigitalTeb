@@ -316,7 +316,7 @@ class Article(
                              [
                                  RichTextFieldPanel('article_title'),
                                  ImageChooserPanel('image'),
-                                 FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
+                                 # FieldPanel('categories', widget=forms.CheckboxSelectMultiple),
                              ], heading='Details', classname="collapsible collapsed"
                          ),
                          MultiFieldPanel(
@@ -348,7 +348,7 @@ class LTRArticlePageTag(TaggedItemBase):
 
 
 class ArticlePage(Article):
-    categories = ParentalManyToManyField(ArticleCategory, blank=False)
+    # categories = ParentalManyToManyField(ArticleCategory, blank=False)
     rtl_tags = ClusterTaggableManager(
         through=RTLArticlePageTag, blank=True, related_name='rtl_tags',
         help_text='Tags in "right to left" languages like: Persian, Arabic, Hebrew and ...'
