@@ -93,3 +93,12 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+@register_snippet
+class BirthDate(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    birthdate = DateField(blank=False, null=True)
+
+    def __str__(self):
+        return self.user.username
