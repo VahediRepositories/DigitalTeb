@@ -2,22 +2,5 @@
 {% load pages %}
 
 <div class="form-row text-center" style="padding-right: 5%; padding-left: 5%;">
-    <div class="col-md-6 text-center">
-        <div class="form-group">
-            <a href="{% url 'edit_technical_info' %}" style="width: 100%;" class="btn btn-outline-success btn-lg">
-                {% trans 'Technical Information' %}
-                <i class="ti-support"></i>
-            </a>
-        </div>
-    </div>
-    <div class="col-md-6 text-center">
-        <div class="form-group">
-            {% specialist_url request.user as personal_page_url %}
-            <a href="{{ personal_page_url }}" target="_blank"
-               style="width: 100%;" class="btn btn-outline-success btn-lg">
-                {% trans 'Personal Page' %}
-                <i class="ti-desktop"></i>
-            </a>
-        </div>
-    </div>
+    {% include 'home/specialists/technical_profile_links/buttons.html' %}
 </div>

@@ -13,7 +13,7 @@
                                 {% trans 'Technical Information' %}
                             </h4>
                         <hr>
-                        <div class="text-center">
+                        <div class="text-center" style="height: 200px; overflow-y: scroll;">
                             <h6 class="text-center">
                                 {% trans "Please enter your technical information so that patients would find you easier." %}
                             </h6>
@@ -34,47 +34,19 @@
                 <div class="card">
                     <div class="card-body">
                             <h4 class="card-title text-center">
-                                {% trans 'Articles' %}
+                                {% trans 'Biography' %}
                             </h4>
                         <hr>
-                        <div class="text-center">
+                        <div class="text-center" style="height: 200px; overflow-y: scroll;">
                             <h6 class="text-center">
-                                {% trans 'Share your knowledge with others by creating posts.' %}
-                            </h6>
-                            <br>
-                            <a href="{% blogs_url %}" target="_blank" class="btn btn-primary btn-lg">
-                                {% trans 'Explore DigitalTeb Blogs' %}
-                            </a>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-md-12 text-center" style="padding-left: 5%; padding-right: 5%;">
-                                <a href="{% url 'specialist_articles' %}" style="width: 100%;" class="btn btn-outline-success">
-                                    {% trans 'My Articles' %}
-                                    <i class="ti-receipt"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                            <h4 class="card-title text-center">
-                                {% trans 'Educational History' %}
-                            </h4>
-                        <hr>
-                        <div class="text-center">
-                            <h6 class="text-center">
-                                {% trans "Let your patients know about your educational history." %}
+                                {% trans "Adding biography helps your patients feel more comfortable with you." %}
                             </h6>
                         </div>
                         <hr>
                         <div class="row">
                             <div class="col-md-12 text-center" style="padding-left: 5%; padding-right: 5%;">
-                                <a href="{% url 'edit_education' %}" style="width: 100%;" class="btn btn-outline-success">
-                                    {% trans 'Edit Educational History' %}
+                                <a href="{% url 'edit_biography' request.user.biography.pk %}" style="width: 100%;" class="btn btn-outline-success">
+                                    {% trans 'Edit Biography' %}
                                     <i class="ti-settings"></i>
                                 </a>
                             </div>

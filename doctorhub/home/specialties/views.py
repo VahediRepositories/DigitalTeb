@@ -116,7 +116,7 @@ class BiographyView(
 ):
     model = Biography
     fields = ('biography',)
-    success_url = reverse_lazy('edit_technical_info')
+    success_url = reverse_lazy('specialist_profile')
     success_message = translation.gettext_lazy(
         'Your biography was updated.'
     )
