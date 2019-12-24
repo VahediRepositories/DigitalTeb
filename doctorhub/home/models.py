@@ -489,7 +489,7 @@ class SpecialistPage(
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         context['articles'] = pagination.get_paginated_objects(
-            request, self.articles
+            request, self.articles, page_size=1
         )
         return context
 
