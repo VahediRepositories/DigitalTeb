@@ -1,13 +1,16 @@
 {% load wagtailimages_tags %}
 {% load text_processing %}
+{% load i18n %}
+{% load specialties %}
 
 <div class="col-md-12">
-    <div class="card">
+    <div class="card bg-transparent">
         <div class="card-body">
-            <div class="row bg-inverse">
+            <div class="row {{ bg_color }}">
                 <div class="col-md-4 col-xs-12"
                      style="padding: 2%; margin-bottom: 0px;">
-                    <a href="{{ article_page.get_url }}">
+                    <a href="{% if not editable_article %}{{ article_page.get_url }}{% else %}{{ article_page.get_edit_url }}{% endif %}"
+                        {% if editable_article %} target="_blank" {% endif %}>
                         {% image article_page.specific.image fill-1000x1000-c100 as article_img %}
                         <img src="{{ article_img.url }}"
                              alt="{{ article_img.alt }}"
@@ -15,11 +18,20 @@
                     </a>
                     <br>
                     <br>
-                    <a href="{{ article_page.get_url }}"
-                       style="width: 100%;"
-                       class="btn btn-lg btn-outline-success large-text">
-                        خواندن مقاله
-                    </a>
+                    {% if editable_article %}
+                        <a href="{{ article_page.get_edit_url }}"
+                           style="width: 100%;"
+                           target="_blank"
+                           class="btn btn-lg btn-outline-primary large-text">
+                            {% trans "Edit" %}
+                        </a>
+                    {% else %}
+                        <a href="{{ article_page.get_url }}"
+                           style="width: 100%;"
+                           class="btn btn-lg btn-outline-success large-text">
+                            {% trans "Read Article" %}
+                        </a>
+                    {% endif %}
                 </div>
                 <div class="col-md-8 align-items-center">
                     <div class="text-left">
@@ -27,11 +39,17 @@
                         <h2 class="large-text box-title">
                             {{ article_page.title|truncatechars:100 }}
                         </h2>
+                        {% if not compact_mode %}
+                            <br>
+                            <br>
+                            <p>
+                                {{ article_page.specific.article_summary|html_to_str|truncatechars:350 }}
+                            </p>
+                        {% endif %}
                         <br>
                         <br>
-                        <p>
-                            {{ article_page.specific.article_summary|html_to_str|truncatechars:350 }}
-                        </p>
+
+                        {% include 'home/articles/articles_category_page/author/author.html' %}
                     </div>
 
                 </div>

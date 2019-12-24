@@ -1,11 +1,13 @@
 {% load wagtailimages_tags %}
 {% load text_processing %}
+{% load i18n %}
 
-<div class="col-12 m-t-30">
+<div class="col-12 m-t-30 m-b-30">
     <div class="card-deck">
         {% for article_page in article_row %}
-            <div class="card bg-inverse">
-                <a href="{{ article_page.get_url }}"
+            <div class="card {{ bg_color }}">
+                <a href="{% if not editable_article %}{{ article_page.get_url }}{% else %}{{ article_page.get_edit_url }}{% endif %}"
+                   {% if editable_article %} target="_blank" {% endif %}
                    style="padding: 2% 2% 0px;">
                     {% image article_page.specific.image fill-1000x550-c100 as article_img %}
                     <img class="card-img-top img-responsive"
@@ -21,25 +23,38 @@
 
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="not-visible-big" style="height: 300px; padding: 3%; overflow-y: hidden;">
-                                <p>
-                                    {{ article_page.specific.article_summary|html_to_str|truncatechars:250 }}
-                                </p>
+                            <div style="height: 40px; padding: 3%; overflow-y: hidden;">
+                                {% include 'home/articles/articles_category_page/author/author.html' %}
                             </div>
-                            <div class="not-visible-small" style="height: 170px; padding: 3%; overflow-y: hidden;">
-                                <p>
-                                    {{ article_page.specific.article_summary|html_to_str|truncatechars:250 }}
-                                </p>
-                            </div>
+                            {% if not compact_mode %}
+                                <div class="not-visible-big" style="height: 300px; padding: 3%; overflow-y: hidden;">
+                                    <p>
+                                        {{ article_page.specific.article_summary|html_to_str|truncatechars:250 }}
+                                    </p>
+                                </div>
+                                <div class="not-visible-small" style="height: 170px; padding: 3%; overflow-y: hidden;">
+                                    <p>
+                                        {{ article_page.specific.article_summary|html_to_str|truncatechars:250 }}
+                                    </p>
+                                </div>
+                            {% endif %}
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-lg-12">
-                            <a href="{{ article_page.get_url }}"
-                               class="btn btn-lg btn-outline-success large-text">
-                                خواندن مقاله
-                            </a>
+                            {% if editable_article %}
+                                <a href="{{ article_page.get_edit_url }}"
+                                   target="_blank"
+                                   class="btn btn-lg btn-outline-primary large-text">
+                                    {% trans "Edit" %}
+                                </a>
+                            {% else %}
+                                <a href="{{ article_page.get_url }}"
+                                   class="btn btn-lg btn-outline-success large-text">
+                                    {% trans "Read Article" %}
+                                </a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

@@ -10,8 +10,7 @@ from django.views.generic.base import View
 from .forms import ConfirmationCodeForm
 from .mixins import ConfirmedForbiddenMixin
 from ..mixins import LoginRequiredMixin
-from ...models import DigitalTebPageMixin
-from ...modules import sms
+from ...modules import sms, pages
 from ...multilingual.mixins import MultilingualViewMixin
 
 
@@ -30,7 +29,7 @@ class ConfirmationCodeView(
         return f'home/users/phone/{self.language_direction}/confirmation_code.html'
 
     def get_success_url(self):
-        self.success_url = DigitalTebPageMixin.get_home_page().get_url()
+        self.success_url = pages.get_home_page().get_url()
         return super().get_success_url()
 
     def get(self, request, *args, **kwargs):

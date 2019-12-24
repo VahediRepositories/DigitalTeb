@@ -1,0 +1,89 @@
+{% load i18n %}
+{% load pages %}
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                            <h4 class="card-title text-center">
+                                {% trans 'Technical Information' %}
+                            </h4>
+                        <hr>
+                        <div class="text-center">
+                            <h6 class="text-center">
+                                {% trans "Please enter your technical information so that patients would find you easier." %}
+                            </h6>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12 text-center" style="padding-left: 5%; padding-right: 5%;">
+                                <a href="{% url 'edit_technical_info' %}" style="width: 100%;" class="btn btn-outline-success">
+                                    {% trans 'Technical Information' %}
+                                    <i class="ti-support"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                            <h4 class="card-title text-center">
+                                {% trans 'Articles' %}
+                            </h4>
+                        <hr>
+                        <div class="text-center">
+                            <h6 class="text-center">
+                                {% trans 'Share your knowledge with others by creating posts.' %}
+                            </h6>
+                            <br>
+                            <a href="{% blogs_url %}" target="_blank" class="btn btn-primary btn-lg">
+                                {% trans 'Explore DigitalTeb Blogs' %}
+                            </a>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12 text-center" style="padding-left: 5%; padding-right: 5%;">
+                                <a href="{% url 'specialist_articles' %}" style="width: 100%;" class="btn btn-outline-success">
+                                    {% trans 'My Articles' %}
+                                    <i class="ti-receipt"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                            <h4 class="card-title text-center">
+                                {% trans 'Educational History' %}
+                            </h4>
+                        <hr>
+                        <div class="text-center">
+                            <h6 class="text-center">
+                                {% trans "Let your patients know about your educational history." %}
+                            </h6>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12 text-center" style="padding-left: 5%; padding-right: 5%;">
+                                <a href="{% url 'edit_education' %}" style="width: 100%;" class="btn btn-outline-success">
+                                    {% trans 'Edit Educational History' %}
+                                    <i class="ti-settings"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-1"></div>
+</div>

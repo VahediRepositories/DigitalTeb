@@ -1,0 +1,6 @@
+{% load pages %}
+
+{% specialist_url comment.owner as specialist_page_url %}
+<a href="{{ specialist_page_url }}" target="_blank">
+    {% include 'home/articles/article_page/comments/name.html' %}
+</a>

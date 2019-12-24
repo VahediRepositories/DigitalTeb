@@ -9,11 +9,11 @@
             class="img-circle" width="30"></a>
     <div class="dropdown-menu dropdown-menu-right user-dd animated flipInY">
         <span class="with-arrow"><span class="bg-primary"></span></span>
-        <div class="d-flex no-block align-items-center p-15 bg-primary text-white m-b-10">
+        <div class="d-flex no-block align-items-center p-15 bg-primary text-white m-b-10" dir="ltr">
             <div class=""><img src="{{ request.user.profile.image_url }}"
                                alt="user" class="img-circle"
                                width="60"></div>
-            <div class="m-l-10">
+            <div class="m-l-10 m-r-10">
                 <h4 class="m-b-0">
                     {{ request.user.first_name }}
                     {{ request.user.last_name }}
@@ -21,26 +21,27 @@
             </div>
         </div>
         {% is_specialist request.user as user_is_specialist %}
-        <a class="dropdown-item" href="{% url 'profile' %}"><i
+        <a class="dropdown-item" href="{% profile_url request.user %}" dir="ltr"><i
                 class="ti-user m-r-5 m-l-5"></i>
             {% trans 'Profile' %}
         </a>
-        <a class="dropdown-item" href="{% url 'edit_account' %}"><i
-                class="ti-wallet m-r-5 m-l-5"></i>
+        <a class="dropdown-item" href="{% url 'edit_account' %}" dir="ltr"><i
+                class="ti-comment-alt m-r-5 m-l-5"></i>
             {% trans 'Account Information' %}
         </a>
         {% if user_is_specialist %}
-            <a class="dropdown-item" href="{% url 'edit_technical_info' %}"><i
-                    class="ti-wallet m-r-5 m-l-5"></i>
+            <a class="dropdown-item" href="{% url 'edit_technical_info' %}" dir="ltr"><i
+                    class="ti-support m-r-5 m-l-5"></i>
                 {% trans 'Technical Information' %}
             </a>
         {% endif %}
-        <a class="dropdown-item" href="{% url 'logout' %}"><i
+        <a class="dropdown-item" href="{% url 'logout' %}" dir="ltr"><i
                 class="fa fa-power-off m-r-5 m-l-5"></i>{% trans 'Logout' %}</a>
         {% if user_is_specialist %}
             <div class="p-l-30 p-10">
                 {% specialist_url request.user as personal_page_url %}
-                <a href="{{ personal_page_url }}"
+                <a href="{{ personal_page_url }}" dir="ltr"
+                   target="_blank"
                    class="btn btn-sm btn-success btn-rounded">
                     {% trans 'Personal Page' %}
                 </a>

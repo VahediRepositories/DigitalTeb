@@ -1,0 +1,10 @@
+{% load specialties %}
+
+{% get_specialties page.owner as specialties %}
+
+{% for specialty in specialties %}
+    <div class="badge badge-primary">
+        {{ specialty.specialist_name }}
+    </div>
+{% endfor %}
+<br>

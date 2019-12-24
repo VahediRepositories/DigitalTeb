@@ -1,14 +1,13 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import inlineformset_factory
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, UpdateView
+from django.views.generic import TemplateView, UpdateView, FormView
 
 from .forms import *
 from .mixins import NonSpecialistForbiddenMixin
 from ..accounts.views import RegistrationView, LoginRequiredMixin
 from ..models import *
-from ..modules import edition, pages
+from ..modules import pages
 from ..multilingual.mixins import MultilingualViewMixin
 
 
@@ -22,7 +21,6 @@ class SpecialistSignUpView(RegistrationView):
     def set_user_properties(self, user, form):
         specialty = form.cleaned_data['specialty']
         specialties.make_user_specialist(user, specialty)
-        edition.make_user_editor(user)
         pages.create_specialist_page(user)
         bio = Biography(user=user)
         bio.save()
@@ -126,6 +124,57 @@ class BiographyView(
     @property
     def template_name(self):
         return f'home/specialists/{self.language_direction}/bio.html'
+
+    def get(self, request, *args, **kwargs):
+        self.forbid_non_specialist()
+        self.check_phone_verified(request)
+        return super().get(request, *args, **kwargs)
+
+
+class SpecialistProfileView(
+    LoginRequiredMixin,
+    NonSpecialistForbiddenMixin,
+    MultilingualViewMixin, CheckPhoneVerifiedMixin, TemplateView
+):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
+
+    @property
+    def template_name(self):
+        return f'home/specialists/{self.language_direction}/profile.html'
+
+    def get(self, request, *args, **kwargs):
+        self.forbid_non_specialist()
+        self.check_phone_verified(request)
+        return super().get(request, *args, **kwargs)
+
+
+class SpecialistArticlesView(
+    LoginRequiredMixin,
+    NonSpecialistForbiddenMixin,
+    MultilingualViewMixin, CheckPhoneVerifiedMixin, FormView
+):
+    form_class = ArticleCreationForm
+
+    @property
+    def template_name(self):
+        return f'home/specialists/{self.language_direction}/articles.html'
+
+    def form_valid(self, form):
+        self.forbid_non_specialist()
+        category = form.cleaned_data['category']
+        # TODO: use reverse to get the url
+        return HttpResponseRedirect(
+            f'/admin/pages/add/home/articlepage/{category.articlescategorypage.pk}/'
+        )
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['articles'] = ArticlePage.objects.filter(
+            owner=self.request.user
+        )
+        return context
 
     def get(self, request, *args, **kwargs):
         self.forbid_non_specialist()

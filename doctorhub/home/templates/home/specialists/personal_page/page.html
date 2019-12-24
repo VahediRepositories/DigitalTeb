@@ -1,8 +1,10 @@
 {% load specialties %}
 {% load i18n %}
+{% load hitcount_tags %}
+{% load pages %}
+
 
 <div class="row">
-    <!-- Column -->
     <div class="col-lg-4 col-xlg-3 col-md-5">
         <div class="card">
             <div class="card-body text-center">
@@ -20,14 +22,14 @@
                 <br>
                 <br>
                 <div class="row text-center justify-content-md-center">
-                    <div class="col-4">
-                        <a href="javascript:void(0)" class="link"><i class="icon-people"></i>
-                            <span class="font-medium">254
-                            </span>
-                        </a>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4">
+                        <p>
+                            <i class="ti-eye"></i>
+                            {% get_hit_count for page %}
+                        </p>
                     </div>
-                    <div class="col-4"><a href="javascript:void(0)" class="link"><i class="icon-picture"></i> <span
-                            class="font-medium">54</span></a></div>
+                    <div class="col-md-4"></div>
                 </div>
             </div>
             <div>
@@ -39,9 +41,8 @@
                 <button class="btn btn-circle btn-secondary"><i class="fab fa-youtube"></i></button>
             </div>
         </div>
+
     </div>
-    <!-- Column -->
-    <!-- Column -->
     {% user_labels page.user as labels %}
     {% user_education_records page.user as education_records %}
     <div class="col-lg-8 col-xlg-9 col-md-7">
@@ -49,13 +50,8 @@
             <!-- Nav tabs -->
             <ul class="nav nav-tabs profile-tab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#biography" role="tab">
-                        {% trans 'Biography' %}
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#skills" role="tab">
-                        {% trans 'Skills' %}
+                    <a class="nav-link active" data-toggle="tab" href="#skills" role="tab">
+                        {% trans 'Services' %}
                     </a>
                 </li>
                 <li class="nav-item">
@@ -63,22 +59,15 @@
                         {% trans 'Education' %}
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#biography" role="tab">
+                        {% trans 'Biography' %}
+                    </a>
+                </li>
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
-                <div class="tab-pane active" id="biography" role="tabpanel">
-                    <div class="card-body">
-                        {% if page.user.biography.biography %}
-                            {{ page.user.biography.biography|safe }}
-                        {% else %}
-                            <p class="text-danger text-center">
-                                {% trans 'Nothing Submitted yet.' %}
-                            </p>
-                        {% endif %}
-                    </div>
-                </div>
-                <!--second tab-->
-                <div class="tab-pane" id="skills" role="tabpanel">
+                <div class="tab-pane active" id="skills" role="tabpanel">
                     <div class="card-body">
                         {% if labels %}
                             <ul>
@@ -107,7 +96,7 @@
                                 {% for record in education_records %}
                                     <li>
                                         {{ record.level }}:
-                                            <br>
+                                        <br>
                                         {{ record.field }} | {{ record.institution }}
                                     </li>
                                 {% endfor %}
@@ -119,8 +108,42 @@
                         {% endif %}
                     </div>
                 </div>
+                <div class="tab-pane" id="biography" role="tabpanel">
+                    <div class="card-body">
+                        {% if page.user.biography.biography %}
+                            {{ page.user.biography.biography|safe }}
+                        {% else %}
+                            <p class="text-danger text-center">
+                                {% trans 'Nothing Submitted yet.' %}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
         </div>
+        {% if articles %}
+            <div class="card">
+                <div class="card-header bg-transparent">
+                    <h3>
+                        {% trans "Articles" %}
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            {% in_rows articles 2 as articles_rows %}
+                            {% with bg_color='bg-dark' %}
+                                {% with compact_mode=True %}
+                                    {% include 'home/articles/articles_category_page/articles_list.html' %}
+                                {% endwith %}
+                            {% endwith %}
+                        </div>
+                    </div>
+                    {% include 'home/articles/articles_category_page/pagination.html' %}
+
+                </div>
+            </div>
+        {% endif %}
     </div>
-    <!-- Column -->
+
 </div>

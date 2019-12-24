@@ -1,0 +1,12 @@
+{% load i18n %}
+{% load specialties %}
+
+<small>
+    {% trans 'Author' %}:
+    {% is_specialist article_page.owner as specialist %}
+    {% if specialist %}
+        {% include 'home/articles/articles_category_page/author/specialist_name.html' %}
+    {% else %}
+        {% include 'home/articles/articles_category_page/author/name.html' %}
+    {% endif %}
+</small>

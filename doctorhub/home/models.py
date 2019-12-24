@@ -1,8 +1,8 @@
-from django import forms
 from django.contrib.auth.models import Group, User
 from django.http import HttpResponseRedirect
+from django.urls import reverse
 from modelcluster.contrib.taggit import ClusterTaggableManager
-from modelcluster.fields import ParentalManyToManyField, ParentalKey
+from modelcluster.fields import ParentalManyToManyField
 from taggit.models import TaggedItemBase
 from wagtail.admin.edit_handlers import StreamFieldPanel, RichTextFieldPanel
 from wagtail.core.fields import StreamField, RichTextField
@@ -10,8 +10,12 @@ from wagtail.core.models import Page
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtailmetadata.models import MetadataPageMixin
 
+from hitcount.models import HitCount
+from hitcount.views import HitCountMixin
+
 from .accounts.phone.mixins import CheckPhoneVerifiedMixin
 from .articles.blocks import *
+from .articles.forms import *
 from .articles.models import *
 from .articles.serializers import *
 from .mixins import *
@@ -106,6 +110,16 @@ class ArticlesCategoryPage(
     settings_panels = []
 
     @property
+    def specialists_page(self):
+        for child in super().child_pages:
+            if isinstance(child, SpecialistsArticlesCategoryPage):
+                return child
+        new_page = SpecialistsArticlesCategoryPage()
+        self.add_child(instance=new_page)
+        new_page.save()
+        return new_page
+
+    @property
     def child_pages(self):
         child_pages = []
         for child_page in super().child_pages:
@@ -114,11 +128,27 @@ class ArticlesCategoryPage(
                     child_pages.append(child_page)
         return child_pages
 
+    @property
+    def articles(self):
+        return [
+            child_page
+            for child_page in self.child_pages
+        ]
+
+    @property
+    def specialists_articles(self):
+        return [
+            child_page
+            for child_page in self.child_pages
+            if child_page.written_by_specialist
+        ]
+
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        context['posts'] = pagination.get_paginated_objects(
-            request, self.child_pages
+        context['articles'] = pagination.get_paginated_objects(
+            request, self.articles
         )
+        context['specialists_articles'] = self.specialists_articles[:2]
         return context
 
     def serve(self, request, *args, **kwargs):
@@ -150,7 +180,46 @@ class ArticlesCategoryPage(
 
     subpage_types = [
         'home.ArticlePage',
+        'home.SpecialistsArticlesCategoryPage',
     ]
+
+
+class SpecialistsArticlesCategoryPage(
+    DigitalTebPageMixin, MetadataPageMixin,
+    CheckPhoneVerifiedMixin, ParentPageMixin, MultilingualPage
+):
+    content_panels = []
+    promote_panels = []
+    settings_panels = []
+
+    def serve(self, request, *args, **kwargs):
+        self.check_phone_verified(request)
+        self.search_description = translation.gettext(
+            "Articles written by specialists about %(category)s"
+        ) % {
+                                      'category': self.category.name
+                                  }
+        self.seo_title = translation.gettext(
+            'Blogs - %(category)s - Specialists'
+        ) % {
+                             'category': self.category.name
+                         }
+        self.search_image = self.category.icon
+        return super().serve(request, *args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        self.title = "Specialists"
+        super().save(*args, **kwargs)
+
+    @property
+    def template(self):
+        return super().get_template_path(SpecialistsArticlesCategoryPage)
+
+    parent_page_types = [
+        'home.ArticlesCategoryPage',
+    ]
+
+    subpage_types = []
 
 
 class Article(
@@ -175,6 +244,18 @@ class Article(
             ('section', SectionBlock()),
         ], blank=False
     )
+
+    def get_edit_url(self):
+        return reverse(
+            'wagtailadmin_pages:edit', args=(self.pk, )
+        )
+
+    @property
+    def written_by_specialist(self):
+        if self.owner:
+            return specialties.is_specialist(self.owner)
+        else:
+            return False
 
     @property
     def sections_with_title(self):
@@ -257,16 +338,26 @@ class LTRArticlePageTag(TaggedItemBase):
 class ArticlePage(Article):
     categories = ParentalManyToManyField(ArticleCategory, blank=False)
     rtl_tags = ClusterTaggableManager(
-        through=RTLArticlePageTag, blank=True, related_name='rtl_tags'
+        through=RTLArticlePageTag, blank=True, related_name='rtl_tags',
+        help_text='Tags in "right to left" languages like: Persian, Arabic, Hebrew and ...'
     )
     ltr_tags = ClusterTaggableManager(
-        through=LTRArticlePageTag, blank=True, related_name='ltr_tags'
+        through=LTRArticlePageTag, blank=True, related_name='ltr_tags',
+        help_text='Tags in "left to right" languages like: English, French, Spanish and ...'
     )
     image = models.ForeignKey(
         'wagtailimages.Image',
         help_text='high quality image',
         null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
     )
+
+    def hit_count(self, request):
+        hit_count = HitCount.objects.get_for_object(self)
+        HitCountMixin.hit_count(request, hit_count)
+
+    def serve(self, request, *args, **kwargs):
+        self.hit_count(request)
+        return super().serve(request, *args, **kwargs)
 
     promote_panels = []
     settings_panels = []
@@ -290,6 +381,10 @@ class ArticlePage(Article):
     @property
     def template(self):
         return self.get_template_path(ArticlePage)
+
+    @property
+    def comments(self):
+        return self.article_page_comments.filter(parent=None)
 
     parent_page_types = ['home.ArticlesCategoryPage']
     subpage_types = []
@@ -345,6 +440,10 @@ class SpecialistPage(
     parent_page_types = ['home.SpecialistsPage']
     subpage_types = []
 
+    def hit_count(self, request):
+        hit_count = HitCount.objects.get_for_object(self)
+        HitCountMixin.hit_count(request, hit_count)
+
     def serve(self, request, *args, **kwargs):
         self.check_phone_verified(request)
         user_specialties = specialties.get_user_specialties(self.user)
@@ -352,19 +451,35 @@ class SpecialistPage(
         self.seo_title = translation.gettext(
             'Specialists - %(specialties)s - %(specialist_name)s'
         ) % {
-            'specialties': text_processing.str_list_to_comma_separated(
-                [
-                    specialty.name for specialty in user_specialties
-                ]
-            ),
-            'specialist_name': specialist_name
-        }
+                             'specialties': text_processing.str_list_to_comma_separated(
+                                 [
+                                     specialty.name for specialty in user_specialties
+                                 ]
+                             ),
+                             'specialist_name': specialist_name
+                         }
         self.search_description = translation.gettext(
             'Consult %(specialist_name)s via message or video call now.'
         ) % {
-            'specialist_name': specialist_name
-        }
+                                      'specialist_name': specialist_name
+                                  }
+        self.hit_count(request)
         return super().serve(request, *args, **kwargs)
+
+    @property
+    def articles(self):
+        articles = ArticlePage.objects.filter(owner=self.user).live().public()
+        return [
+            article for article in articles
+            if isinstance(article, MonolingualPage) and article.supports_language()
+        ]
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        context['articles'] = pagination.get_paginated_objects(
+            request, self.articles
+        )
+        return context
 
     def save(self, *args, **kwargs):
         self.title = self.user.username
@@ -373,3 +488,4 @@ class SpecialistPage(
     @property
     def template(self):
         return super().get_template_path(SpecialistPage)
+

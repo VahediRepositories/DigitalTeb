@@ -1,0 +1,19 @@
+{% load specialties %}
+{% load pages %}
+{% load hitcount_tags %}
+
+{% is_specialist page.owner as specialist %}
+{% if specialist %}
+    {% include 'home/articles/article_page/author/specialist_name.html' %}
+    {% include 'home/articles/article_page/author/specialties.html' %}
+{% else %}
+    {% include 'home/articles/article_page/author/name.html' %}
+{% endif %}
+
+<small>
+    {{ page.first_published_at.date }}
+</small>
+<p>
+    <i class="ti-eye"></i>
+    {% get_hit_count for page %}
+</p>

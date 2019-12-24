@@ -1,6 +1,7 @@
-from django.forms import TextInput
-from django.utils import translation
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.utils import translation
+from modelcluster.fields import ParentalKey
 from wagtail.admin.edit_handlers import MultiFieldPanel, FieldRowPanel, FieldPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
@@ -11,7 +12,6 @@ from ..modules import languages
 
 @register_snippet
 class ArticleCategory(Category):
-
     horizontal_image = models.ForeignKey(
         'wagtailimages.Image',
         help_text='high quality horizontal image',
@@ -43,7 +43,7 @@ class ArticleCategory(Category):
             [
                 FieldRowPanel(
                     [
-                        FieldPanel(f'name_{language}', widget=TextInput)
+                        FieldPanel(f'name_{language}')
                         for language in languages.get_all_translated_field_postfixes()
                     ]
                 )
@@ -61,4 +61,44 @@ class ArticleCategory(Category):
         verbose_name_plural = "Article Categories"
 
 
+class Comment(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=False)
+    comment = models.TextField(blank=False, default='', max_length=100)
+    date = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        abstract = True
+        ordering = ('date',)
+
+    def __str__(self):
+        return self.comment
+
+
+@register_snippet
+class ArticlePageComment(Comment):
+    article = ParentalKey(
+        'home.ArticlePage', related_name='article_page_comments', on_delete=models.CASCADE
+    )
+    parent = models.ForeignKey(
+        'self', on_delete=models.SET_NULL, null=True, blank=True
+    )
+
+    @property
+    def children(self):
+        return ArticlePageComment.objects.filter(parent=self)
+
+    @property
+    def comments(self):
+        comments_list = list(self.children)
+        for child in self.children:
+            comments_list.extend(child.comments)
+        return sorted(
+            comments_list, key=lambda comment: comment.date
+        )
+
+    panels = [
+        FieldPanel('owner'),
+        FieldPanel('article'),
+        FieldPanel('parent'),
+        FieldPanel('comment'),
+    ]

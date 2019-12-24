@@ -1,5 +1,7 @@
 from rest_framework.fields import Field
+from rest_framework import serializers
 from wagtail.images.api.fields import ImageRenditionField
+from .models import *
 
 
 class ParagraphField(Field):
@@ -42,3 +44,25 @@ class ArticleCategoriesField(Field):
                 'english_name': category.english_name,
             } for category in categories.all()
         ]
+
+
+class ArticlePageCommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ArticlePageComment
+        fields = [
+            'id', 'comment', 'article', 'parent',
+        ]
+
+    def validate(self, data):
+        parent = data['parent']
+        if parent:
+            if parent.article != data['article']:
+                raise serializers.ValidationError(
+                    translation.gettext("Comment's article and it's parent's article are different")
+                )
+        if self.instance:
+            if self.instance.article != data['article']:
+                raise serializers.ValidationError(
+                    translation.gettext("Comment's article can not be changed")
+                )
+        return data

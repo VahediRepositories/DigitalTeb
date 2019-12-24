@@ -2,6 +2,11 @@
 {% load wagtailcore_tags %}
 {% load staticfiles %}
 {% load text_processing %}
+{% load languages %}
+{% load i18n %}
+{% load specialties %}
+{% load crispy_forms_tags %}
+{% load hitcount_tags %}
 
 
 <div class="row">
@@ -25,7 +30,51 @@
     <div class="col-md-2"></div>
 </div>
 
-<div class="row row-flex">
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-body">
+                {% is_specialist page.owner as specialist %}
+                <div class="row not-visible-small">
+                    <div class="col-md-6">
+                        <div class="row align-items-center">
+                            <div class="col-md-4 col-lg-3 col-xs-6 text-center">
+                                {% if specialist %}
+                                    {% include 'home/articles/article_page/author/specialist_image.html' %}
+                                {% else %}
+                                    {% include 'home/articles/article_page/author/image.html' %}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-8 col-lg-9 col-xs-6">
+                                {% include 'home/articles/article_page/author/detail.html' %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row not-visible-big">
+                    <div class="col-sm-12 col-xs-12">
+                        <div class="row align-items-center">
+                            <div class="col-md-2 col-sm-4 col-xs-4 mb-5">
+                                {% if specialist %}
+                                    {% include 'home/articles/article_page/author/specialist_image_small.html' %}
+                                {% else %}
+                                    {% include 'home/articles/article_page/author/image_small.html' %}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4 col-sm-8 col-xs-8">
+                                {% include 'home/articles/article_page/author/detail.html' %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2"></div>
+</div>
+
+<div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-9">
         {% include 'home/articles/article_page/summary.html' %}
@@ -41,145 +90,100 @@
 
 {% include 'home/articles/article_page/tags.html' %}
 
+{% if page.comments %}
 <div class="row">
     <div class="col-md-1"></div>
-    <div class="col-md-9 bg-success">
-        <div class="card m-b-0">
-            <!-- .chat-row -->
-            <div class="chat-main-box" style="height: 100%;">
-                <div class="chat-main-header">
-                    <div class="p-3 b-b">
-                        <h4 class="box-title large-text">
-                            نظرات كاربران
-                        </h4>
-                    </div>
-                </div>
-                <div class="chat-rbox" style="height: 600px;">
-                    <ul class="chat-list p-3">
-                        <!--chat Row -->
-                        <li>
-                            <div class="chat-img">
-                                <img src="{% static 'doctorhub/assets/images/users/1.jpg' %}"
-                                     alt="user"/>
-                            </div>
-                            <div class="chat-content">
-                                <h5>James Anderson</h5>
-                                <div class="box bg-light-info">Lorem Ipsum is simply dummy text of the printing
-                                    & type setting industry.
+    <div class="col-md-9 p-20">
+        <ul class="list-unstyled bg-dark" style="height: 400px; overflow-y: scroll;">
+            {% for comment in page.comments %}
+                <li class="media">
+                    <img class="d-flex mr-3 img-thumbnail" src="{{ comment.owner.profile.image_url }}" width="60"
+                         alt="Generic placeholder image">
+                    {% is_rtl as rtl_language %}
+                    <div class="media-body" {% if rtl_language %} style="margin-right: 10px;"{% endif %}>
+                        {% is_specialist comment.owner as specialist %}
+                        {% if specialist %}
+                            {% include 'home/articles/article_page/comments/specialist_name.html' %}
+                        {% else %}
+                            {% include 'home/articles/article_page/comments/name.html' %}
+                        {% endif %}
+                        <small>
+                                <i>{{ comment.date }}</i>
+                        </small>
+                        <p>
+                            {{ comment.comment }}
+                        </p>
+                        <a class="btn btn-primary" href="{% url 'article_page_create_comment' %}?article={{ page.pk }}&parent-id={{ comment.pk }}">
+                            {% trans 'Reply' %}
+                        </a>
+                        {% if request.user == comment.owner %}
+                            <button class="btn btn-danger delete-comment" data-detail-url="{% url 'article-page-comments-detail' comment.pk %}">
+                                {% trans 'Delete' %}
+                            </button>
+                        {% endif %}
+                        {% for cm in comment.comments %}
+                            <div class="media mt-3">
+                                <img class="d-flex mr-3 img-thumbnail" src="{{ cm.owner.profile.image_url }}"
+                                     width="60"
+                                     alt="Generic placeholder image">
+                                {% is_rtl as rtl_language %}
+                                <div class="media-body" {% if rtl_language %} style="margin-right: 10px;"{% endif %}>
+                                    {% is_specialist cm.owner as user_is_specialist %}
+                                    {% if user_is_specialist %}
+                                        {% with comment=cm %}
+                                            {% include 'home/articles/article_page/comments/specialist_name.html' %}
+                                        {% endwith %}
+                                    {% else %}
+                                        {% with comment=cm %}
+                                            {% include 'home/articles/article_page/comments/name.html' %}
+                                        {% endwith %}
+                                    {% endif %}
+                                    <small>
+                                        <i>{{ cm.date }}</i>
+                                    </small>
+                                    <br>
+                                    {% is_specialist cm.parent.owner as parent_user_is_specialist %}
+                                    {% if parent_user_is_specialist %}
+                                        {% with comment=cm.parent %}
+                                            {% include 'home/articles/article_page/comments/specialist_mention.html' %}
+                                        {% endwith %}
+                                    {% else %}
+                                        {% with comment=cm.parent %}
+                                            {% include 'home/articles/article_page/comments/mention.html' %}
+                                        {% endwith %}
+                                    {% endif %}
+                                    <p>
+                                        {{ cm.comment }}
+                                    </p>
+                                    <a class="btn btn-primary" href="{% url 'article_page_create_comment' %}?article={{ page.pk }}&parent-id={{ cm.pk }}">
+                                        {% trans 'Reply' %}
+                                    </a>
+                                    {% if request.user == cm.owner %}
+                                        <button class="btn btn-danger delete-comment"
+                                                data-detail-url="{% url 'article-page-comments-detail' cm.pk %}">
+                                            {% trans 'Delete' %}
+                                        </button>
+                                    {% endif %}
                                 </div>
-                                <div class="chat-time">10:56 am</div>
                             </div>
-                        </li>
-                        <!--chat Row -->
-                        <li>
-                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/2.jpg' %}"
-                                                       alt="user"/></div>
-                            <div class="chat-content">
-                                <h5>Bianca Doe</h5>
-                                <div class="box bg-light-info">It’s Great opportunity to work.</div>
-                                <div class="chat-time">10:57 am</div>
-                            </div>
-                        </li>
-                        <!--chat Row -->
-                        <li>
-                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/3.jpg' %}"
-                                                       alt="user"/></div>
-                            <div class="chat-content">
-                                <h5>Angelina Rhodes</h5>
-                                <div class="box bg-light-info">Well we have good budget for the project</div>
-                                <div class="chat-time">11:00 am</div>
-                            </div>
-                        </li>
-                        <!--chat Row -->
-                        <li>
-                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/3.jpg' %}"
-                                                       alt="user"/></div>
-                            <div class="chat-content">
-                                <h5>Angelina Rhodes</h5>
-                                <div class="box bg-light-info">Well we have good budget for the project</div>
-                                <div class="chat-time">11:00 am</div>
-                            </div>
-                        </li>
-                        <!--chat Row -->
-                        <li>
-                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/3.jpg' %}"
-                                                       alt="user"/></div>
-                            <div class="chat-content">
-                                <h5>Angelina Rhodes</h5>
-                                <div class="box bg-light-info">Well we have good budget for the project</div>
-                                <div class="chat-time">11:00 am</div>
-                            </div>
-                        </li>
-                        <!--chat Row -->
-                        <li>
-                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/3.jpg' %}"
-                                                       alt="user"/></div>
-                            <div class="chat-content">
-                                <h5>Angelina Rhodes</h5>
-                                <div class="box bg-light-info">Well we have good budget for the project</div>
-                                <div class="chat-time">11:00 am</div>
-                            </div>
-                        </li>
-                        <!--chat Row -->
-                        <li>
-                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/3.jpg' %}"
-                                                       alt="user"/></div>
-                            <div class="chat-content">
-                                <h5>Angelina Rhodes</h5>
-                                <div class="box bg-light-info">Well we have good budget for the project</div>
-                                <div class="chat-time">11:00 am</div>
-                            </div>
-                        </li>
-                        <!--chat Row -->
-                        <li>
-                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/3.jpg' %}"
-                                                       alt="user"/></div>
-                            <div class="chat-content">
-                                <h5>Angelina Rhodes</h5>
-                                <div class="box bg-light-info">Well we have good budget for the project</div>
-                                <div class="chat-time">11:00 am</div>
-                            </div>
-                        </li>
-                        <!--chat Row -->
-                        <li>
-                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/3.jpg' %}"
-                                                       alt="user"/></div>
-                            <div class="chat-content">
-                                <h5>Angelina Rhodes</h5>
-                                <div class="box bg-light-info">Well we have good budget for the project</div>
-                                <div class="chat-time">11:00 am</div>
-                            </div>
-                        </li>
-                        <!--chat Row -->
-                        <li>
-                            <div class="chat-img"><img src="{% static 'doctorhub/assets/images/users/3.jpg' %}"
-                                                       alt="user"/></div>
-                            <div class="chat-content">
-                                <h5>Angelina Rhodes</h5>
-                                <div class="box bg-light-info">Well we have good budget for the project</div>
-                                <div class="chat-time">11:00 am</div>
-                            </div>
-                        </li>
-                        <!--chat Row -->
-                    </ul>
-                </div>
-                <div class="card-body border-top">
-                    <div class="row">
-                        <div class="col-8">
-                                    <textarea placeholder="Type your message here"
-                                              class="form-control border-0"></textarea>
-                        </div>
-                        <div class="col-4 text-right">
-                            <button type="button" class="btn btn-success btn-circle btn-lg"><i
-                                    class="fas fa-paper-plane"></i></button>
-                        </div>
+                        {% endfor %}
                     </div>
-                </div>
-                {#                    </div>#}
-                <!-- .chat-right-panel -->
-            </div>
-            <!-- /.chat-row -->
-        </div>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
     <div class="col-md-2"></div>
+</div>
+{% endif %}
+
+<div class="row mt-3">
+    <div class="col-md-1"></div>
+    <div class="col-md-4">
+        <a class="btn btn-success btn-lg"
+           href="{% url 'article_page_create_comment' %}?article={{ page.pk }}"
+           style="width: 100%;">
+            {% trans 'Your Comment' %}
+            <i class="ti-plus"></i>
+        </a>
+    </div>
 </div>

@@ -1,6 +1,9 @@
+from django.urls import reverse
+
 from .phones import create_phone
 from ..accounts.models import Profile
 from ..accounts.phone.models import PasswordChangeCode
+from . import specialties
 
 
 def create_profile(user, form):
@@ -30,3 +33,8 @@ def use_password_change_code(user, code):
     )
     for password_change_code in password_change_codes:
         password_change_code.use()
+
+
+def get_profile_url(user):
+    path_name = 'specialist_profile' if specialties.is_specialist(user) else 'profile'
+    return reverse(path_name)

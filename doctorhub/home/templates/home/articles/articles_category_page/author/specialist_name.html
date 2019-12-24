@@ -1,0 +1,7 @@
+{% load pages %}
+
+{% specialist_url article_page.owner as personal_page_url %}
+
+<a href="{{ personal_page_url }}">
+    {% include 'home/articles/articles_category_page/author/name.html' %}
+</a>

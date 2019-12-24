@@ -1,6 +1,7 @@
 {% load static wagtailuserbar %}
 {% load meta %}
 {% load languages %}
+{% load specialties %}
 
 <!DOCTYPE html>
 
@@ -49,7 +50,13 @@
 
 <body class="{% block body_class %}{% endblock %}">
 
-{% wagtailuserbar %}
+
+{% if request.user.is_authenticated %}
+    {% is_specialist request.user as specialist %}
+    {% if not specialist %}
+        {% wagtailuserbar %}
+    {% endif %}
+{% endif %}
 
 {% block content %}{% endblock %}
 

@@ -2,6 +2,8 @@
 {% load wagtailcore_tags %}
 {% load text_processing %}
 {% load pages %}
+{% load languages %}
+{% load i18n %}
 
 <div class="row">
     <div class="col-lg-12">
@@ -21,61 +23,47 @@
 
                     </div>
                     <div class="col-lg-10">
-                        {% in_rows posts 2 as row_articles %}
-                        {% for article_row in row_articles %}
-                            {% with length=article_row|length %}
-                                {% if length == 1 %}
-                                    {% with article_page=article_row.0 %}
-                                        <div class="row not-visible-small">
-                                            {% include 'home/articles/articles_category_page/horizontal_article.html' %}
-                                        </div>
-                                        <div class="row not-visible-big">
-                                            {% include 'home/articles/articles_category_page/vertical_article.html' %}
-                                        </div>
-                                    {% endwith %}
-                                {% elif length == 2 %}
-                                    <div class="row">
-                                        {% include 'home/articles/articles_category_page/vertical_article.html' %}
-                                    </div>
-                                {% endif %}
-                            {% endwith %}
-                        {% endfor %}
+                        {% in_rows articles 2 as articles_rows %}
+                        {% with bg_color='bg-dark' %}
+                            {% include 'home/articles/articles_category_page/articles_list.html' %}
+                        {% endwith %}
                     </div>
                     <div class="col-lg-1">
 
                     </div>
                 </div>
-                {% if posts.paginator.num_pages > 1 %}
+                {% include 'home/articles/articles_category_page/pagination.html' %}
+                {% if specialists_articles %}
+                    <br>
+                    <br>
                     <div class="row">
-                        <div class="col-lg-1"></div>
-                        <div class="col-lg-10">
-                            <div class="btn-toolbar">
-                                <div class="btn-group">
-                                    {% if posts.has_previous %}
-                                        <a href="?page={{ posts.previous_page_number }}" class="btn btn-secondary">
-                                            <span>&laquo;</span>
-                                        </a>
-                                    {% endif %}
-                                    {% for page_num in posts.paginator.page_range %}
-                                        {% if page_num == posts.number %}
-                                            <a class="btn btn-success disabled">
-                                                {{ page_num }}
-                                            </a>
-                                        {% else %}
-                                            <a href="?page={{ page_num }}" class="btn btn-secondary">
-                                                {{ page_num }}
-                                            </a>
-                                        {% endif %}
-                                    {% endfor %}
-                                    {% if posts.has_next %}
-                                        <a href="?page={{ posts.next_page_number }}" class="btn btn-secondary">
-                                            <span>&raquo;</span>
-                                        </a>
-                                    {% endif %}
+                        <div class="col-lg-12 ribbon-wrapper bg-success">
+                            {% is_rtl as rtl_lang %}
+                            <div class="ribbon ribbon-warning ribbon-bookmark {% if rtl_lang %} ribbon-right {% endif %}">
+                                <h3 class="text-dark">
+                                    {% trans "Specialists' Articles" %}
+                                </h3>
+                            </div>
+                            <div class="row ribbon-content">
+                                <div class="col-lg-1">
+
+                                </div>
+                                <div class="col-lg-10">
+                                    {% in_rows specialists_articles 2 as articles_rows %}
+                                    {% with bg_color='bg-light' %}
+                                        {% include 'home/articles/articles_category_page/articles_list.html' %}
+                                    {% endwith %}
+                                    <a class="btn btn-lg btn-light" href="{{ page.specialists_page.get_url }}">
+                                        {% trans "Explore Specialists' Articles" %}
+                                        <i class="ti-search"></i>
+                                    </a>
+
+                                </div>
+                                <div class="col-lg-1">
+
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-1"></div>
                     </div>
                 {% endif %}
             </div>

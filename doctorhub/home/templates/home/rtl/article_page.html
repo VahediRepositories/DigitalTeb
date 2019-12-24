@@ -4,7 +4,8 @@
 
 {% block additional_css %}
 
-    <link href="{% static 'doctorhub/rtl/dist/css/pages/chat-app-page.css' %}" rel="stylesheet">
+    <link href="{% static 'doctorhub/rtl/dist/css/pages/other-pages.css' %}" rel="stylesheet">
+    <link href="{% static 'doctorhub/assets/node_modules/sweetalert2/dist/sweetalert2.min.css' %}" rel="stylesheet">
 
 {% endblock %}
 
@@ -42,6 +43,7 @@
 
 {% block additional_js %}
 
-    <script src="{% static 'doctorhub/rtl/dist/js/pages/chat.js' %}"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    {% include 'home/articles/article_page/additional_js.html' %}
 
 {% endblock %}

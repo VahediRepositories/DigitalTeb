@@ -1,0 +1,58 @@
+{% load staticfiles %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load pages %}
+
+<div class="row">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+        <div class="card border-success">
+            <div class="card-header bg-success text-center">
+                <img src="{% static 'doctorhub/assets/images/logo-light-text.png' %}"
+                     alt="{{ request.site.site_name }}" class="dark-logo"/>
+            </div>
+            <div class="card-body bg-dark" style="padding-left: 10%; padding-right: 10%;">
+
+                <form method="POST" target="_blank">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <br>
+                    <br>
+                    <div class="form-row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6 mt-3">
+                            <button type="submit"
+                                    style="width: 100%; height: 100%;"
+                                    class="btn btn-success btn-lg">
+                                {% trans 'Create New Article' %}
+                                <i class="ti-plus"></i>
+                            </button>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+    <div class="col-md-1"></div>
+</div>
+
+<div class="row">
+    <div class="col-lg-1">
+
+    </div>
+    <div class="col-lg-10">
+        {% in_rows articles 2 as articles_rows %}
+        {% with bg_color='bg-dark' %}
+            {% with editable_article=True %}
+                {% include 'home/articles/articles_category_page/articles_list.html' %}
+            {% endwith %}
+        {% endwith %}
+    </div>
+    <div class="col-lg-1">
+
+    </div>
+</div>
+
+{% include 'home/articles/articles_category_page/pagination.html' %}

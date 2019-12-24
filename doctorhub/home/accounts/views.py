@@ -2,17 +2,16 @@ from django.contrib import messages
 from django.contrib.auth import views as auth_views
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import HttpResponseRedirect
-from django.urls import reverse, reverse_lazy
+from django.urls import reverse
 from django.views.generic import FormView
 from django.views.generic.base import View, TemplateView
 
 from .forms import *
 from .mixins import AuthenticatedForbiddenMixin, LoginRequiredMixin
-from ..accounts.phone.mixins import CheckPhoneVerifiedMixin
 from .phone.forms import PhoneUpdateForm
 from .phone.models import Phone
-from ..models import DigitalTebPageMixin
-from ..modules import authentication, sms, images
+from ..accounts.phone.mixins import CheckPhoneVerifiedMixin
+from ..modules import authentication, sms, images, pages
 from ..multilingual.mixins import MultilingualViewMixin
 
 
@@ -41,16 +40,18 @@ class LogoutView(LoginRequiredMixin, auth_views.LogoutView):
             extra_tags='successful-logout'
         )
         return HttpResponseRedirect(
-            DigitalTebPageMixin.get_home_page().get_url()
+            pages.get_home_page().get_url()
         )
 
 
 class RegistrationView(AuthenticatedForbiddenMixin, MultilingualViewMixin, FormView):
-    success_url = reverse_lazy('profile')
 
     def get(self, request, *args, **kwargs):
         self.forbid_authenticated()
         return super().get(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return pages.get_home_page().get_url()
 
     def form_valid(self, form):
         self.forbid_authenticated()
@@ -240,7 +241,7 @@ class ResetPasswordView(AuthenticatedForbiddenMixin, MultilingualViewMixin, Form
             'successful-password-reset'
         )
         return HttpResponseRedirect(
-            DigitalTebPageMixin.get_home_page().get_url()
+            pages.get_home_page().get_url()
         )
 
 
@@ -317,7 +318,7 @@ class ProfileUpdateView(
                 'successful-profile-edit'
             )
             return HttpResponseRedirect(
-                reverse('profile')
+                authentication.get_profile_url(request.user)
             )
         else:
             context = {
@@ -341,7 +342,9 @@ class PasswordChangeView(
     def template_name(self):
         return f'home/users/{self.language_direction}/password_change.html'
 
+    def get_success_url(self):
+        return authentication.get_profile_url(self.request.user)
+
     success_message = translation.gettext_lazy(
         'Your new password was submitted successfully.'
     )
-    success_url = reverse_lazy('profile')

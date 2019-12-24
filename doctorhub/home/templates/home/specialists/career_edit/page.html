@@ -9,7 +9,7 @@
                 <div class="card">
                     <div class="card-body">
                             <h4 class="card-title text-center">
-                                {% trans 'Skills' %}
+                                {% trans 'Services' %}
                             </h4>
                         <hr>
                         <div class="text-center">
@@ -21,7 +21,7 @@
                                 {% endfor %}
                             {% else %}
                                 <h6 class="text-center">
-                                    {% trans "Please enter your skills so that patients can know you better."  %}
+                                    {% trans "Please enter every services you can provide to patients."  %}
                                 </h6>
                             {% endif %}
                         </div>
@@ -29,7 +29,8 @@
                         <div class="row">
                             <div class="col-md-12 text-center" style="padding-left: 5%; padding-right: 5%;">
                                 <a href="{% url 'edit_labels' %}" style="width: 100%;" class="btn btn-outline-success">
-                                    {% trans 'Edit Skills' %}
+                                    {% trans 'Edit Services' %}
+                                    <i class="ti-settings"></i>
                                 </a>
                             </div>
                         </div>
@@ -53,6 +54,7 @@
                             <div class="col-md-12 text-center" style="padding-left: 5%; padding-right: 5%;">
                                 <a href="{% url 'edit_biography' request.user.biography.pk %}" style="width: 100%;" class="btn btn-outline-success">
                                     {% trans 'Edit Biography' %}
+                                    <i class="ti-settings"></i>
                                 </a>
                             </div>
                         </div>
@@ -76,6 +78,7 @@
                             <div class="col-md-12 text-center" style="padding-left: 5%; padding-right: 5%;">
                                 <a href="{% url 'edit_education' %}" style="width: 100%;" class="btn btn-outline-success">
                                     {% trans 'Edit Educational History' %}
+                                    <i class="ti-settings"></i>
                                 </a>
                             </div>
                         </div>

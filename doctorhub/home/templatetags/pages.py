@@ -1,29 +1,33 @@
 from django import template
 
-from ..models import *
-from ..modules import list_processing, pages
+from ..modules import list_processing, pages, authentication
 
 register = template.Library()
 
 
 @register.simple_tag
 def home_page_url():
-    return DigitalTebPageMixin.get_home_page().get_url()
+    return pages.get_home_page().get_url()
 
 
 @register.simple_tag
 def blogs_url():
-    return DigitalTebPageMixin.get_blogs_page().get_url()
+    return pages.get_blogs_page().get_url()
 
 
 @register.simple_tag
 def specialists_url():
-    return DigitalTebPageMixin.get_specialists_page().get_url()
+    return pages.get_specialists_page().get_url()
 
 
 @register.simple_tag
 def specialist_url(user):
     return pages.get_specialist_page(user).get_url()
+
+
+@register.simple_tag
+def profile_url(user):
+    return authentication.get_profile_url(user)
 
 
 @register.simple_tag
