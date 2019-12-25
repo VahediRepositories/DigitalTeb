@@ -56,7 +56,7 @@ class Profile(models.Model):
         choices=GENDER_CHOICES,
         default=NOT_BINARY,
     )
-    birthdate = DateField(blank=False, null=True)
+    # birthdate = DateField(blank=False, null=True)
 
     @property
     def image_url(self):

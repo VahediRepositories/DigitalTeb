@@ -497,6 +497,7 @@ class SpecialistPage(
 
     def save(self, *args, **kwargs):
         self.title = self.user.username
+        self.slug = self.user.pk
         super().save(*args, **kwargs)
 
     @property

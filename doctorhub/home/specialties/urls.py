@@ -15,6 +15,11 @@ urlpatterns = [
     ),
     path(
         'specialists/edit/',
+        views.SpecialistProfileUpdateView.as_view(),
+        name='edit_specialist_account'
+    ),
+    path(
+        'specialists/technical-info/edit/',
         views.TechnicalInformationView.as_view(),
         name='edit_technical_info'
     ),

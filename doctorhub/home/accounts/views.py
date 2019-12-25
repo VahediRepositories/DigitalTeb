@@ -86,10 +86,11 @@ class SignUpView(RegistrationView):
         return f'registration/{self.language_direction}/signup.html'
 
     def set_user_properties(self, user, form):
-        # TODO: Define a separate Model to represent birthdate.
         profile = user.profile
-        profile.birthdate = form.cleaned_data['birthdate']
         profile.save()
+        BirthDate(
+            user=user, birthdate=form.cleaned_data['birthdate']
+        ).save()
 
 
 class ForgotAccountView(AuthenticatedForbiddenMixin, MultilingualViewMixin, FormView):
@@ -261,10 +262,6 @@ class ProfileUpdateView(
     CheckPhoneVerifiedMixin, TemplateView
 ):
 
-    @property
-    def template_name(self):
-        return f'home/users/{self.language_direction}/profile_edit.html'
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['user_form'] = UserUpdateForm(instance=self.request.user)
@@ -272,44 +269,65 @@ class ProfileUpdateView(
         context['phone_form'] = PhoneUpdateForm(instance=self.request.user.profile.phone)
         return context
 
+    def get_context_data_after_post(self):
+        return {
+            'user_form': self.user_form,
+            'profile_form': self.profile_form,
+            'phone_form': self.phone_form,
+        }
+
     def get(self, request, *args, **kwargs):
         self.check_phone_verified(request)
         return super().get(request, *args, **kwargs)
 
+    @property
+    def user_form(self):
+        return UserUpdateForm(
+            self.request.POST, instance=self.request.user
+        )
+
+    @property
+    def profile_form(self):
+        return ProfileUpdateForm(
+            self.request.POST, instance=self.request.user.profile
+        )
+
+    @property
+    def phone_form(self):
+        return PhoneUpdateForm(
+            self.request.POST, instance=self.request.user.profile.phone
+        )
+
+    def are_valid(self):
+        return self.user_form.is_valid() and self.profile_form.is_valid() and self.phone_form.is_valid()
+
+    def save_data(self):
+        phone_number = self.request.user.profile.phone.number
+        self.user_form.save()
+        self.profile_form.save()
+        phone = self.phone_form.save()
+        if phone_number != phone.number:
+            phone.verified = False
+            phone.save()
+            sms.send_confirmation_code(phone)
+        image_data = self.request.POST.get('profile_image')
+        if image_data:
+            try:
+                file_name = f'{self.request.user.username}'
+
+                def save_profile_image(file_path, content_file):
+                    self.request.user.profile.profile_image.save(
+                        file_path, content_file, save=True
+                    )
+
+                images.save_base64_to_file(file_name, image_data, save_profile_image)
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+
     def post(self, request, *args, **kwargs):
-        user_form = UserUpdateForm(
-            request.POST, instance=request.user
-        )
-        profile_form = ProfileUpdateForm(
-            request.POST, instance=request.user.profile
-        )
-        phone_form = PhoneUpdateForm(
-            request.POST, instance=request.user.profile.phone
-        )
-        phone_number = request.user.profile.phone.number
-        if user_form.is_valid() and profile_form.is_valid() and phone_form.is_valid():
-            user_form.save()
-            profile_form.save()
-            phone = phone_form.save()
-            if phone_number != phone.number:
-                phone.verified = False
-                phone.save()
-                sms.send_confirmation_code(phone)
-            image_data = self.request.POST.get('profile_image')
-            if image_data:
-                try:
-                    file_name = f'{self.request.user.username}'
-
-                    def save_profile_image(file_path, content_file):
-                        self.request.user.profile.profile_image.save(
-                            file_path, content_file, save=True
-                        )
-
-                    images.save_base64_to_file(file_name, image_data, save_profile_image)
-                except Exception as e:
-                    import traceback
-                    traceback.print_exc()
-
+        if self.are_valid():
+            self.save_data()
             messages.success(
                 request,
                 translation.gettext(
@@ -321,12 +339,37 @@ class ProfileUpdateView(
                 authentication.get_profile_url(request.user)
             )
         else:
-            context = {
-                'user_form': user_form,
-                'profile_form': profile_form,
-                'phone_form': phone_form,
-            }
+            context = self.get_context_data_after_post()
             return self.render_to_response(context)
+
+
+class UserProfileUpdateView(ProfileUpdateView):
+    @property
+    def template_name(self):
+        return f'home/users/{self.language_direction}/profile_edit.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['birthdate_form'] = BirthdateUpdateForm(instance=self.request.user.birthdate)
+        return context
+
+    @property
+    def birthdate_form(self):
+        return BirthdateUpdateForm(
+            self.request.POST, instance=self.request.user.birthdate
+        )
+
+    def get_context_data_after_post(self):
+        context = super().get_context_data_after_post()
+        context['birthdate_form'] = self.birthdate_form
+        return context
+
+    def are_valid(self):
+        return super().are_valid() and self.birthdate_form.is_valid()
+
+    def save_data(self):
+        super().save_data()
+        self.birthdate_form.save()
 
 
 class PasswordChangeView(

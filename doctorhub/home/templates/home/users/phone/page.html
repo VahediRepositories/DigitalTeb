@@ -32,7 +32,7 @@
                 <div class="border-top pt-3">
                     <small class="text-muted">
                         {% trans 'Entered wrong cell phone number?' %}
-                        <a class="mr-2 text-success" href="{% url 'edit_account' %}">
+                        <a class="mr-2 text-success" href="{% profile_edit_url request.user %}">
                             {% trans 'Change Account Information' %}
                         </a>
                     </small>

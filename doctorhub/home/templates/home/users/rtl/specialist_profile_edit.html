@@ -3,10 +3,11 @@
 {% load staticfiles %}
 {% load pages %}
 {% load i18n %}
+{% load crispy_forms_tags %}
 
 {% block additional_css %}
 
-    {% include 'home/users/profile_edit/persian_date_picker_css.html' %}
+    {% include 'home/users/profile_edit/image_upload_css.html' %}
 
 {% endblock %}
 
@@ -17,12 +18,12 @@
 {% block breadcrumb %}
 
     <li class="breadcrumb-item active">
-        {% trans 'Registration' %}
+        {% trans 'Account Information' %}
     </li>
 
     <li class="breadcrumb-item">
-        <a href="{% home_page_url %}">
-            {% trans 'Home' %}
+        <a href="{% profile_url request.user %}">
+            {% trans 'Profile' %}
         </a>
     </li>
 
@@ -30,12 +31,12 @@
 
 {% block main_content %}
 
-    {% include 'registration/signup/page.html' %}
+    {% include 'home/users/profile_edit/specialists/page.html' %}
 
 {% endblock %}
 
 {% block additional_js %}
 
-    {% include 'home/users/profile_edit/persian_date_picker_js.html' %}
+    {% include 'home/users/profile_edit/image_upload_js.html' %}
 
 {% endblock %}

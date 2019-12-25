@@ -69,9 +69,8 @@
                 </div>
                 <hr>
                 <form id="profile-edit-form"
-                      action="{% profile_edit_url request.user %}"
                       enctype="multipart/form-data"
-                      onsubmit="onSubmitFunction()"
+                      onsubmit="setImageInput()"
                       method="POST">
                     {% csrf_token %}
                     <input type="hidden" id="id_profile_image" name="profile_image">
@@ -88,16 +87,16 @@
 
                     </div>
                     <div class="form-row">
-                        <div class="form-group col-md-4 mb-0">
+                        <div class="form-group col-md-6 mb-0">
                             {{ profile_form.gender|as_crispy_field }}
                         </div>
-                        <div class="form-group col-md-4 mb-0">
+                        <div class="form-group col-md-6 mb-0">
                             {{ phone_form.number|as_crispy_field }}
                         </div>
-                        <div class="form-group col-md-4 mb-0">
-                            {{ birthdate_form.birthdate|as_crispy_field }}
-                            <input type="hidden" id="birthdate-input">
-                        </div>
+{#                        <div class="form-group col-md-4 mb-0">#}
+{#                            {{ birthdate_form.birthdate|as_crispy_field }}#}
+{#                            <input type="hidden" id="birthdate-input">#}
+{#                        </div>#}
                     </div>
                     <br>
                     <br>

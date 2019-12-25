@@ -25,7 +25,7 @@
                 class="ti-user m-r-5 m-l-5"></i>
             {% trans 'Profile' %}
         </a>
-        <a class="dropdown-item" href="{% url 'edit_account' %}" dir="ltr"><i
+        <a class="dropdown-item" href="{% profile_edit_url request.user %}" dir="ltr"><i
                 class="ti-comment-alt m-r-5 m-l-5"></i>
             {% trans 'Account Information' %}
         </a>

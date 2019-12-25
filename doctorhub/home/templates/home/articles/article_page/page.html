@@ -97,7 +97,7 @@
         <ul class="list-unstyled bg-dark" style="height: 400px; overflow-y: scroll;">
             {% for comment in page.comments %}
                 <li class="media">
-                    <img class="d-flex mr-3 img-thumbnail" src="{{ comment.owner.profile.image_url }}" width="60"
+                    <img class="d-flex mr-3 img-circle" src="{{ comment.owner.profile.image_url }}" width="60"
                          alt="Generic placeholder image">
                     {% is_rtl as rtl_language %}
                     <div class="media-body" {% if rtl_language %} style="margin-right: 10px;"{% endif %}>
@@ -123,7 +123,7 @@
                         {% endif %}
                         {% for cm in comment.comments %}
                             <div class="media mt-3">
-                                <img class="d-flex mr-3 img-thumbnail" src="{{ cm.owner.profile.image_url }}"
+                                <img class="d-flex mr-3 img-circle" src="{{ cm.owner.profile.image_url }}"
                                      width="60"
                                      alt="Generic placeholder image">
                                 {% is_rtl as rtl_language %}

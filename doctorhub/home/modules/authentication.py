@@ -38,3 +38,8 @@ def use_password_change_code(user, code):
 def get_profile_url(user):
     path_name = 'specialist_profile' if specialties.is_specialist(user) else 'profile'
     return reverse(path_name)
+
+
+def get_profile_edit_url(user):
+    path_name = 'edit_specialist_account' if specialties.is_specialist(user) else 'edit_account'
+    return reverse(path_name)

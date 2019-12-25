@@ -1,0 +1,41 @@
+{% load static %}
+
+<script src="{% static 'doctorhub/more/js/persian-date.min.js' %}"></script>
+<script src="{% static 'doctorhub/more/js/persian-datepicker.min.js' %}"></script>
+
+<script>
+
+    function setPersianDatePicker() {
+        $(".persian-datepicker").persianDatepicker(
+            {
+                formatter: function (unixDate) {
+                    var gregorianDate = new Date(unixDate);
+                    var day = gregorianDate.getDate().toString();
+                    var month = (gregorianDate.getMonth() + 1).toString();
+                    var year = gregorianDate.getFullYear().toString();
+                    $('#birthdate-input').val(
+                        year + '-' + month + '-' + day
+                    );
+                    var pdate = new persianDate(unixDate);
+                    day = pdate.date().toString();
+                    month = pdate.month().toString();
+                    year = pdate.year().toString();
+                    return year + '/' + month + '/' + day
+                },
+                autoClose: true,
+                {#initialValue: false,#}
+            }
+        );
+    }
+
+    function set_gregorian_date() {
+        $(".persian-datepicker").val(
+            $('#birthdate-input').val()
+        );
+    }
+
+    $(document).ready(
+        setPersianDatePicker()
+    );
+
+</script>

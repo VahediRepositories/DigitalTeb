@@ -55,7 +55,7 @@ urlpatterns = [
     ),
     path(
         'accounts/edit/',
-        views.ProfileUpdateView.as_view(),
+        views.UserProfileUpdateView.as_view(),
         name='edit_account'
     ),
     path(

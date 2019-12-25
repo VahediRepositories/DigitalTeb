@@ -1,10 +1,6 @@
-import datetime
-
-from django import forms
 from django.contrib.auth import forms as auth_forms
-from django.core.exceptions import ValidationError
 
-from .fields import reCaptchaField, PasswordChangeCodeField
+from .fields import *
 from .models import *
 from .phone.fields import PhoneField
 from .phone.models import CODE_LENGTH
@@ -37,8 +33,7 @@ class RegistrationForm(auth_forms.UserCreationForm):
 
 
 class UserCreationForm(RegistrationForm):
-    birthdate = forms.DateField(
-        label=translation.gettext_lazy('Birthdate'),
+    birthdate = BirthdateField(
         widget=forms.DateInput(
             attrs={
                 'class': 'persian-datepicker'
@@ -46,15 +41,15 @@ class UserCreationForm(RegistrationForm):
         )
     )
 
-    def clean_birthdate(self):
-        birthdate = self.cleaned_data['birthdate']
-        today = datetime.date.today()
-        if birthdate >= today:
-            raise ValidationError(
-                forms.DateField.default_error_messages['invalid'], code='invalid'
-            )
-        else:
-            return birthdate
+    # def clean_birthdate(self):
+    #     birthdate = self.cleaned_data['birthdate']
+    #     today = datetime.date.today()
+    #     if birthdate >= today:
+    #         raise ValidationError(
+    #             forms.DateField.default_error_messages['invalid'], code='invalid'
+    #         )
+    #     else:
+    #         return birthdate
 
     class Meta:
         model = User
@@ -107,20 +102,43 @@ class UserUpdateForm(forms.ModelForm):
 
 
 class ProfileUpdateForm(forms.ModelForm):
+    # birthdate = forms.DateField(
+    #     label=translation.gettext_lazy('Birthdate'),
+    #     widget=forms.DateInput(
+    #         attrs={
+    #             'class': 'persian-datepicker'
+    #         }
+    #     )
+    # )
+
     class Meta:
         model = Profile
         fields = [
             'gender',
-            'birthdate'
+            # 'birthdate'
         ]
         labels = {
             'gender': translation.gettext_lazy('Sex'),
-            'birthdate': translation.gettext_lazy('Birthdate')
+            # 'birthdate': translation.gettext_lazy('Birthdate')
         }
-        widgets = {
-            'birthdate': forms.DateInput(
-                attrs={
-                    'class': 'persian-datepicker'
-                }
-            )
-        }
+
+
+class BirthdateUpdateForm(forms.ModelForm):
+    birthdate = BirthdateField(
+        widget=forms.DateInput(
+            attrs={
+                'class': 'persian-datepicker'
+            }
+        )
+    )
+
+    class Meta:
+        model = BirthDate
+        fields = ['birthdate']
+        # widgets = {
+        #     'birthdate': forms.DateInput(
+        #         attrs={
+        #             'class': 'persian-datepicker'
+        #         }
+        #     )
+        # }
