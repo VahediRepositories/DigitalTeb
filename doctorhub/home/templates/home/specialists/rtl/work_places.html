@@ -7,6 +7,8 @@
 
 {% block additional_css %}
 
+    {% include 'home/croppie/image_upload_css.html' %}
+
 {% endblock %}
 
 {% block page_title %}
@@ -34,5 +36,8 @@
 {% endblock %}
 
 {% block additional_js %}
+
+    {% include 'home/specialists/work_places/image_upload_js.html' %}
+    {% include 'home/specialists/work_places/remove_place_js.html' %}
 
 {% endblock %}

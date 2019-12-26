@@ -137,9 +137,12 @@ class City(models.Model):
                         for language in languages.get_all_translated_field_postfixes()
                     ]
                 ),
-            ], heading='Name', classname="collapsible collapsed"
+            ], heading='Name', classname="collapsible"
         )
     ]
+
+    class Meta:
+        verbose_name_plural = 'Cities'
 
     def __str__(self):
         return self.name
@@ -156,9 +159,9 @@ class WorkPlace(models.Model):
         verbose_name=translation.gettext_lazy('Medical Center'),
     )
     city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=False)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=False)
-    website = models.URLField()
+    website = models.URLField(blank=True)
     address = models.CharField(max_length=400, blank=False)
     logo_image = models.ImageField(
         upload_to='workplace_images', null=True, blank=True
@@ -173,6 +176,7 @@ class WorkPlace(models.Model):
 
     panels = [
         SnippetChooserPanel('medical_center'),
+        SnippetChooserPanel('city'),
         FieldPanel('user'),
         FieldPanel('name'),
         FieldPanel('website'),

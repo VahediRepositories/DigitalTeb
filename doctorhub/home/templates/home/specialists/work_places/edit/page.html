@@ -4,33 +4,12 @@
 {% load pages %}
 
 <div class="row">
-    <div class="col-lg-1">
-
-    </div>
-    <div class="col-lg-10">
-        {% with edit_mode=True %}
-            {% with bg_color='bg-light' %}
-                {% include 'home/specialists/work_places/places_list.html' %}
-            {% endwith %}
-        {% endwith %}
-
-    </div>
-    <div class="col-lg-1">
-
-    </div>
-</div>
-
-
-<div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-10">
         <div class="card border-success">
             <div class="card-header bg-success text-center">
-{#                <img src="{% static 'doctorhub/assets/images/logo-light-text.png' %}"#}
-{#                     alt="{{ request.site.site_name }}" class="dark-logo"/>#}
-                <h3>
-                    {% trans 'Create New Work Place' %}
-                </h3>
+                <img src="{% static 'doctorhub/assets/images/logo-light-text.png' %}"
+                     alt="{{ request.site.site_name }}" class="dark-logo"/>
             </div>
             <div class="card-body bg-dark" style="padding-left: 10%; padding-right: 10%;">
 
@@ -103,7 +82,7 @@
                                 <button type="submit"
                                         style="width: 100%; height: 100%;"
                                         class="btn btn-success btn-lg">
-                                    {% trans 'Submit New Work Place' %}
+                                    {% trans 'Submit Changes' %}
                                     <i class="ti-save"></i>
                                 </button>
                             </div>

@@ -1,6 +1,12 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
 from . import views
+
+router = DefaultRouter()
+router.register(
+    r'specialists-work-places', views.WorkPlaceViewSet, base_name='specialists-work-places'
+)
 
 urlpatterns = [
     path(
@@ -48,5 +54,11 @@ urlpatterns = [
         views.SpecialistWorkPlacesView.as_view(),
         name='edit_work_places'
     ),
+    path(
+        'specialists/work-places/<pk>/',
+        views.SpecialistWorkPlaceUpdateView.as_view(),
+        name='edit_work_place'
+    ),
+    path('api/', include(router.urls))
 
 ]

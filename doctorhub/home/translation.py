@@ -19,3 +19,7 @@ class SpecialtyTranslationOptions(TranslationOptions):
 class MedicalCenterTranslationOptions(TranslationOptions):
     fields = ('name', 'plural_name')
 
+
+@register(City)
+class CityTranslationOptions(TranslationOptions):
+    fields = ('name', )

@@ -60,6 +60,11 @@
                         {% trans 'Biography' %}
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#work-places" role="tab">
+                        {% trans 'Work Places' %}
+                    </a>
+                </li>
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
@@ -86,7 +91,7 @@
                     </div>
                 </div>
                 <div class="tab-pane" id="education" role="tabpanel">
-                    <div class="card-body">
+                    <div class="card-body" style="height: 400px; overflow-y: scroll;">
                         {% if education_records %}
                             <ul>
                                 {% for record in education_records %}
@@ -105,9 +110,26 @@
                     </div>
                 </div>
                 <div class="tab-pane" id="biography" role="tabpanel">
-                    <div class="card-body">
+                    <div class="card-body" style="height: 400px; overflow-y: scroll;">
                         {% if page.user.biography.biography %}
                             {{ page.user.biography.biography|safe }}
+                        {% else %}
+                            <p class="text-danger text-center">
+                                {% trans 'Nothing Submitted yet.' %}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="tab-pane" id="work-places" role="tabpanel">
+                    <div class="card-body" style="height: 400px; overflow-y: scroll;">
+                        {% if page.user.workplace_set %}
+                            {% with places=page.user.workplace_set.all %}
+                                {% with edit_mode=False %}
+                                    {% with bg_color='bg-dark' %}
+                                        {% include 'home/specialists/work_places/places_list.html' %}
+                                    {% endwith %}
+                                {% endwith %}
+                            {% endwith %}
                         {% else %}
                             <p class="text-danger text-center">
                                 {% trans 'Nothing Submitted yet.' %}

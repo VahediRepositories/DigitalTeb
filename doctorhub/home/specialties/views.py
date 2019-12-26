@@ -1,13 +1,18 @@
+from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import inlineformset_factory
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, UpdateView, FormView, CreateView
+from rest_framework import viewsets, permissions
 
+from ..permissions import IsOwnerOrReadOnly
+from .permissions import IsSpecialistOrReadOnly
 from .forms import *
+from .serializers import *
 from .mixins import NonSpecialistForbiddenMixin
 from ..accounts.views import RegistrationView, LoginRequiredMixin, ProfileUpdateView
 from ..models import *
-from ..modules import pages
+from ..modules import pages, places
 from ..multilingual.mixins import MultilingualViewMixin
 
 
@@ -211,25 +216,85 @@ class SpecialistWorkPlacesView(
 ):
     model = WorkPlace
     fields = [
-        'medical_center', 'name', 'address'
+        'medical_center', 'name', 'address', 'city'
     ]
 
     def get_context_data(self, **kwargs):
         self.forbid_non_specialist()
         context = super().get_context_data(**kwargs)
-        places = WorkPlace.objects.filter(user=self.request.user)
-        context['places'] = pagination.get_paginated_objects(
-            self.request, places
-        )
+        context['places'] = WorkPlace.objects.filter(owner=self.request.user)
         return context
 
     def form_valid(self, form):
         self.forbid_non_specialist()
         place = form.save(commit=False)
-        place.user = self.request.user
+        place.owner = self.request.user
         place.save()
-        return super().form_valid(form)
+        image_data = self.request.POST.get('logo_image')
+        if image_data:
+            places.save_place_logo_image(place, image_data)
+        messages.success(
+            self.request,
+            translation.gettext(
+                'Work Place was added.'
+            ),
+            'successful-added-work-place'
+        )
+        return HttpResponseRedirect(
+            reverse('edit_work_places')
+        )
 
     @property
     def template_name(self):
         return f'home/specialists/{self.language_direction}/work_places.html'
+
+
+class SpecialistWorkPlaceUpdateView(
+    LoginRequiredMixin,
+    MultilingualViewMixin, NonSpecialistForbiddenMixin,
+    CheckPhoneVerifiedMixin, UpdateView
+):
+    model = WorkPlace
+    fields = [
+        'medical_center', 'name', 'address', 'city'
+    ]
+
+    def get_context_data(self, **kwargs):
+        self.forbid_non_specialist()
+        return super().get_context_data(**kwargs)
+
+    def form_valid(self, form):
+        self.forbid_non_specialist()
+        place = form.save()
+        image_data = self.request.POST.get('logo_image')
+        if image_data:
+            places.save_place_logo_image(place, image_data)
+        messages.success(
+            self.request,
+            translation.gettext(
+                'Work Place was updated.'
+            ),
+            'successful-updated-work-place'
+        )
+        return HttpResponseRedirect(
+            reverse('edit_work_places')
+        )
+
+    @property
+    def template_name(self):
+        return f'home/specialists/{self.language_direction}/work_place_edit.html'
+
+
+class WorkPlaceViewSet(viewsets.ModelViewSet):
+    queryset = WorkPlace.objects.all()
+    serializer_class = WorkPlaceSerializer
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly,
+        IsSpecialistOrReadOnly,
+    ]
+
+    def perform_create(self, serializer):
+        serializer.save(
+            owner=self.request.user,
+        )

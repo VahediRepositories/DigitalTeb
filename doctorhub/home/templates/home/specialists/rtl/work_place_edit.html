@@ -1,4 +1,4 @@
-{% extends 'doctorhub/layouts/ltr/light/green/master.html' %}
+{% extends 'doctorhub/layouts/rtl/light/green/master.html' %}
 
 {% load staticfiles %}
 {% load pages %}
@@ -18,25 +18,27 @@
 {% block breadcrumb %}
 
     <li class="breadcrumb-item">
-        <a href="{% profile_url request.user %}">
-            {% trans 'Profile' %}
+        <a href="{% url 'edit_work_places' %}">
+            {% trans 'Work Places' %}
         </a>
     </li>
 
-    <li class="breadcrumb-item active">
-        {% trans 'Account Information' %}
+    <li class="breadcrumb-item">
+        <a href="{% profile_url request.user %}">
+            {% trans 'Profile' %}
+        </a>
     </li>
 
 {% endblock %}
 
 {% block main_content %}
 
-    {% include 'home/users/profile_edit/specialists/page.html' %}
+    {% include 'home/specialists/work_places/edit/page.html' %}
 
 {% endblock %}
 
 {% block additional_js %}
 
-    {% include 'home/users/profile_edit/image_upload_js.html' %}
+    {% include 'home/specialists/work_places/edit/image_upload_js.html' %}
 
 {% endblock %}
