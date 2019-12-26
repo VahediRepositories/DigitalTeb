@@ -1,12 +1,14 @@
 from django.conf import settings
 from django.contrib.auth.models import Group, User
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.db import models
 from django.forms import TextInput
 from django.utils import translation
 from wagtail.admin.edit_handlers import MultiFieldPanel, FieldRowPanel, FieldPanel
+from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
-from ..modules import languages
+from ..modules import languages, images
 
 
 @register_snippet
@@ -72,7 +74,6 @@ class Label(models.Model):
 
 @register_snippet
 class Biography(models.Model):
-
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=False)
     biography = models.TextField()
 
@@ -92,26 +93,89 @@ class Education(models.Model):
 
 
 @register_snippet
+class MedicalCenter(models.Model):
+    name = models.CharField(max_length=100)
+    plural_name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel(f'name_{language}', widget=TextInput)
+                        for language in languages.get_all_translated_field_postfixes()
+                    ]
+                ),
+            ], heading='Name', classname="collapsible collapsed"
+        ),
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel(f'plural_name_{language}', widget=TextInput)
+                        for language in languages.get_all_translated_field_postfixes()
+                    ]
+                ),
+            ], heading='Plural Name', classname="collapsible collapsed"
+        ),
+    ]
+
+
+PLACES = 'doctorhub/more/images/places/'
+HOSPITAL_ICON = PLACES + 'hospital.png'
+
+
+@register_snippet
 class WorkPlace(models.Model):
+    medical_center = models.ForeignKey(
+        MedicalCenter, on_delete=models.SET_NULL, blank=True, null=True,
+        verbose_name=translation.gettext_lazy('Medical Center'),
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=False)
     website = models.URLField()
     address = models.TextField()
     logo_image = models.ImageField(
-        upload_to='logo_images', null=True, blank=True
+        upload_to='workplace_images', null=True, blank=True
     )
+
+    @property
+    def image_url(self):
+        if self.profile_image:
+            return self.profile_image.url
+        else:
+            return static(HOSPITAL_ICON)
+
+    panels = [
+        SnippetChooserPanel('medical_center'),
+        FieldPanel('user'),
+        FieldPanel('name'),
+        FieldPanel('website'),
+        FieldPanel('address'),
+        FieldPanel('logo_image'),
+    ]
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.make_square_image()
+        self.compress_image()
+
+    def make_square_image(self):
+        if self.logo_image:
+            images.make_square_image(self.logo_image.path)
+
+    def compress_image(self):
+        if self.logo_image:
+            images.compress_image(self.logo_image.path)
 
 
 @register_snippet
 class WorkPlacePhone(models.Model):
     place = models.ForeignKey(WorkPlace, on_delete=models.CASCADE)
     phone = models.CharField(max_length=30)
-
-
-@register_snippet
-class MedicalCenter(models.Model):
-    name = models.CharField(max_length=100)
-    plural_name = models.CharField(max_length=100)

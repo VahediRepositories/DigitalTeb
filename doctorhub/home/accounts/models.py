@@ -6,6 +6,8 @@ from django.db.models import DateField
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from wagtail.snippets.models import register_snippet
 
+from ..modules import images
+
 MALE = 'M'
 FEMALE = 'F'
 NOT_BINARY = 'N'
@@ -71,19 +73,11 @@ class Profile(models.Model):
 
     def make_square_image(self):
         if self.profile_image:
-            img = Image.open(self.profile_image.path)
-            if img.height != img.width:
-                size = min(img.height, img.width)
-                img = img.resize((size, size))
-                img.save(self.profile_image.path)
+            images.make_square_image(self.profile_image.path)
 
     def compress_image(self):
         if self.profile_image:
-            img = Image.open(self.profile_image.path)
-            if img.height > 512 or img.width > 512:
-                output_size = (512, 512)
-                img = img.resize(output_size)
-                img.save(self.profile_image.path)
+            images.compress_image(self.profile_image.path)
 
     def __str__(self):
         return self.user.username

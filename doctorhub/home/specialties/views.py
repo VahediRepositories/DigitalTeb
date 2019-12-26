@@ -211,7 +211,7 @@ class SpecialistWorkPlacesView(
 ):
     model = WorkPlace
     fields = [
-        'name'
+        'medical_center', 'name', 'address'
     ]
 
     def get_context_data(self, **kwargs):
