@@ -34,6 +34,30 @@
                 <div class="card">
                     <div class="card-body">
                             <h4 class="card-title text-center">
+                                {% trans 'Work Places' %}
+                            </h4>
+                        <hr>
+                        <div class="text-center" style="height: 200px; overflow-y: scroll;">
+                            <h6 class="text-center">
+                                {% trans "Where can your patients find you? Add information about your working schedule during the week." %}
+                            </h6>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-12 text-center" style="padding-left: 5%; padding-right: 5%;">
+                                <a href="{% url 'edit_work_places' %}" style="width: 100%;" class="btn btn-outline-success">
+                                    {% trans 'Edit Your Work Places' %}
+                                    <i class="ti-settings"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                            <h4 class="card-title text-center">
                                 {% trans 'Biography' %}
                             </h4>
                         <hr>

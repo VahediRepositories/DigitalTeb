@@ -2,31 +2,9 @@
     <div class="row">
         <div class="col-lg-1"></div>
         <div class="col-lg-10">
-            <div class="btn-toolbar">
-                <div class="btn-group">
-                    {% if articles.has_previous %}
-                        <a href="?page={{ articles.previous_page_number }}" class="btn btn-secondary">
-                            <span>&laquo;</span>
-                        </a>
-                    {% endif %}
-                    {% for page_num in articles.paginator.page_range %}
-                        {% if page_num == articles.number %}
-                            <a class="btn btn-success disabled">
-                                {{ page_num }}
-                            </a>
-                        {% else %}
-                            <a href="?page={{ page_num }}" class="btn btn-secondary">
-                                {{ page_num }}
-                            </a>
-                        {% endif %}
-                    {% endfor %}
-                    {% if articles.has_next %}
-                        <a href="?page={{ articles.next_page_number }}" class="btn btn-secondary">
-                            <span>&raquo;</span>
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
+            {% with paginated_objects=articles %}
+                {% include 'home/pagination/pagination.html' %}
+            {% endwith %}
         </div>
         <div class="col-lg-1"></div>
     </div>

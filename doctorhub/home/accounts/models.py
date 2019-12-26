@@ -43,11 +43,6 @@ NONE_AVATAR = AVATARS + 'none.png'
 @register_snippet
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    image = models.ForeignKey(
-        'wagtailimages.Image',
-        help_text='high quality image',
-        null=True, blank=True, on_delete=models.SET_NULL, related_name='+'
-    )
     profile_image = models.ImageField(
         upload_to='profile_pics', null=True, blank=True
     )
@@ -56,7 +51,6 @@ class Profile(models.Model):
         choices=GENDER_CHOICES,
         default=NOT_BINARY,
     )
-    # birthdate = DateField(blank=False, null=True)
 
     @property
     def image_url(self):

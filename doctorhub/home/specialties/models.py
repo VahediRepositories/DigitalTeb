@@ -89,3 +89,29 @@ class Education(models.Model):
     level = models.CharField(max_length=200)
     field = models.CharField(max_length=500)
     institution = models.CharField(max_length=200)
+
+
+@register_snippet
+class WorkPlace(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100, blank=False)
+    website = models.URLField()
+    address = models.TextField()
+    logo_image = models.ImageField(
+        upload_to='logo_images', null=True, blank=True
+    )
+
+    def __str__(self):
+        return self.name
+
+
+@register_snippet
+class WorkPlacePhone(models.Model):
+    place = models.ForeignKey(WorkPlace, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=30)
+
+
+@register_snippet
+class MedicalCenter(models.Model):
+    name = models.CharField(max_length=100)
+    plural_name = models.CharField(max_length=100)

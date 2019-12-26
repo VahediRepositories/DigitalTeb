@@ -43,5 +43,10 @@ urlpatterns = [
         views.BiographyView.as_view(),
         name='edit_biography'
     ),
+    path(
+        'specialists/work-places/',
+        views.SpecialistWorkPlacesView.as_view(),
+        name='edit_work_places'
+    ),
 
 ]

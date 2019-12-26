@@ -1,7 +1,7 @@
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import inlineformset_factory
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, UpdateView, FormView
+from django.views.generic import TemplateView, UpdateView, FormView, CreateView
 
 from .forms import *
 from .mixins import NonSpecialistForbiddenMixin
@@ -27,6 +27,7 @@ class SpecialistSignUpView(RegistrationView):
 
 
 class SpecialistInlineFormsetView(
+    LoginRequiredMixin,
     MultilingualViewMixin, NonSpecialistForbiddenMixin,
     CheckPhoneVerifiedMixin, TemplateView
 ):
@@ -201,3 +202,32 @@ class SpecialistProfileUpdateView(
         if 'username' in self.user_form.changed_data:
             for page in SpecialistPage.objects.filter(user=self.request.user):
                 page.save()
+
+
+class SpecialistWorkPlacesView(
+    LoginRequiredMixin,
+    MultilingualViewMixin, NonSpecialistForbiddenMixin,
+    CheckPhoneVerifiedMixin, CreateView
+):
+    model = WorkPlace
+    fields = [
+        'name'
+    ]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        places = WorkPlace.objects.filter(user=self.request.user)
+        context['places'] = pagination.get_paginated_objects(
+            self.request, places
+        )
+        return context
+
+    def form_valid(self, form):
+        place = form.save(commit=False)
+        place.user = self.request.user
+        place.save()
+        return super().form_valid(form)
+
+    @property
+    def template_name(self):
+        return f'home/specialists/{self.language_direction}/work_places.html'
