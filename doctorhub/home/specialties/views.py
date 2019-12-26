@@ -215,6 +215,7 @@ class SpecialistWorkPlacesView(
     ]
 
     def get_context_data(self, **kwargs):
+        self.forbid_non_specialist()
         context = super().get_context_data(**kwargs)
         places = WorkPlace.objects.filter(user=self.request.user)
         context['places'] = pagination.get_paginated_objects(
@@ -223,6 +224,7 @@ class SpecialistWorkPlacesView(
         return context
 
     def form_valid(self, form):
+        self.forbid_non_specialist()
         place = form.save(commit=False)
         place.user = self.request.user
         place.save()

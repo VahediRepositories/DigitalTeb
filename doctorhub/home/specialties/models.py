@@ -124,6 +124,27 @@ class MedicalCenter(models.Model):
     ]
 
 
+@register_snippet
+class City(models.Model):
+    name = models.CharField(max_length=50)
+
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel(f'name_{language}', widget=TextInput)
+                        for language in languages.get_all_translated_field_postfixes()
+                    ]
+                ),
+            ], heading='Name', classname="collapsible collapsed"
+        )
+    ]
+
+    def __str__(self):
+        return self.name
+
+
 PLACES = 'doctorhub/more/images/places/'
 HOSPITAL_ICON = PLACES + 'hospital.png'
 
@@ -134,18 +155,19 @@ class WorkPlace(models.Model):
         MedicalCenter, on_delete=models.SET_NULL, blank=True, null=True,
         verbose_name=translation.gettext_lazy('Medical Center'),
     )
+    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=False)
     website = models.URLField()
-    address = models.TextField()
+    address = models.CharField(max_length=400, blank=False)
     logo_image = models.ImageField(
         upload_to='workplace_images', null=True, blank=True
     )
 
     @property
     def image_url(self):
-        if self.profile_image:
-            return self.profile_image.url
+        if self.logo_image:
+            return self.logo_image.url
         else:
             return static(HOSPITAL_ICON)
 

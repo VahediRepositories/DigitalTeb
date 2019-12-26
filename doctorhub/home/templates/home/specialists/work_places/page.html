@@ -47,10 +47,27 @@
 
     </div>
     <div class="col-lg-10">
-        {% for place in places %}
-            {{ place.name }}
-            <br>
-        {% endfor %}
+        <div class="row-flex">
+            {% for place in places %}
+                <div class="col-lg-6">
+                    <div class="card card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-4 col-lg-3 text-center">
+                                <a href=""><img src="{{ place.image_url }}" alt="{{ place.name }}"
+                                                                       class="img-fluid"></a>
+                            </div>
+                            <div class="col-md-8 col-lg-9">
+                                <h3 class="box-title m-b-0">{{ place.name }}</h3> <small class="badge badge-primary">{{ place.medical_center.name }}</small>
+                                <address>
+                                    {{ place.address|truncatechars:100 }}
+                                </address>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
     </div>
     <div class="col-lg-1">
 
