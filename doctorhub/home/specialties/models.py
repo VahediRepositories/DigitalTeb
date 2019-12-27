@@ -13,7 +13,7 @@ from ..multilingual.mixins import *
 
 
 @register_snippet
-class Specialty(models.Model):
+class Specialty(MultilingualModelMixin, models.Model):
     name = models.TextField()
     specialist_name = models.TextField(default='')
     group = models.OneToOneField(
@@ -61,6 +61,12 @@ class Specialty(models.Model):
 
     class Meta:
         verbose_name_plural = "Specialties"
+
+    def save(self, *args, **kwargs):
+        self.set_multilingual_fields(
+            ['name', 'specialist_name']
+        )
+        super().save(*args, **kwargs)
 
 
 @register_snippet

@@ -7,7 +7,7 @@ from .specialties.models import *
 
 @register(Label)
 class LabelTranslationOptions(TranslationOptions):
-    field = ('name', 'description',)
+    fields = ('name', 'description',)
 
 
 @register(ArticleCategory)
@@ -42,4 +42,4 @@ class EducationTranslationOptions(TranslationOptions):
 
 @register(Biography)
 class BiographyTranslationOptions(TranslationOptions):
-    field = ('biography',)
+    fields = ('biography',)
