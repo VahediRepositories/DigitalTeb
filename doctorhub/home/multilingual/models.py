@@ -24,6 +24,7 @@ class Language(models.Model):
         max_length=5,
         unique=True,
     )
+
     english_name = models.TextField()
     name = models.TextField()
 

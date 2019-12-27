@@ -1,9 +1,8 @@
-from PIL import Image
 from django.contrib.auth.models import User
-from django.utils import translation
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.db import models
 from django.db.models import DateField
-from django.contrib.staticfiles.templatetags.staticfiles import static
+from django.utils import translation
 from wagtail.snippets.models import register_snippet
 
 from ..modules import images

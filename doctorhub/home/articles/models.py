@@ -7,11 +7,11 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from ..categories.models import *
-from ..modules import languages
+from ..multilingual.mixins import *
 
 
 @register_snippet
-class ArticleCategory(Category):
+class ArticleCategory(MultilingualModelMixin, Category):
     horizontal_image = models.ForeignKey(
         'wagtailimages.Image',
         help_text='high quality horizontal image',
@@ -56,6 +56,12 @@ class ArticleCategory(Category):
             ], heading='Image', classname="collapsible collapsed"
         )
     ]
+
+    def save(self, *args, **kwargs):
+        self.set_multilingual_fields(
+            ['name']
+        )
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name_plural = "Article Categories"
