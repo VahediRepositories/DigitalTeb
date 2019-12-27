@@ -122,7 +122,7 @@
                 </div>
                 <div class="tab-pane" id="work-places" role="tabpanel">
                     <div class="card-body" style="height: 400px; overflow-y: scroll;">
-                        {% if page.user.workplace_set %}
+                        {% if page.user.workplace_set.all %}
                             {% with places=page.user.workplace_set.all %}
                                 {% with edit_mode=False %}
                                     {% with bg_color='bg-dark' %}

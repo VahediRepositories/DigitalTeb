@@ -177,7 +177,7 @@ class WorkPlace(models.Model):
     panels = [
         SnippetChooserPanel('medical_center'),
         SnippetChooserPanel('city'),
-        FieldPanel('user'),
+        FieldPanel('owner'),
         FieldPanel('name'),
         FieldPanel('website'),
         FieldPanel('address'),
@@ -188,6 +188,16 @@ class WorkPlace(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
+        current_language = languages.get_language()
+        default_language = languages.get_default_language()
+        if current_language != default_language:
+            current_name = self.name
+            current_address = self.address
+            translation.activate(default_language.language_code)
+            self.name = current_name
+            self.address = current_address
+            translation.activate(current_language.language_code)
+
         super().save(*args, **kwargs)
         self.make_square_image()
         self.compress_image()

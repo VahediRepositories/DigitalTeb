@@ -23,3 +23,8 @@ class MedicalCenterTranslationOptions(TranslationOptions):
 @register(City)
 class CityTranslationOptions(TranslationOptions):
     fields = ('name', )
+
+
+@register(WorkPlace)
+class WorkPlaceTranslationOptions(TranslationOptions):
+    fields = ('name', 'address', )
