@@ -5,6 +5,11 @@ from .articles.models import *
 from .specialties.models import *
 
 
+@register(Label)
+class LabelTranslationOptions(TranslationOptions):
+    field = ('name', 'description',)
+
+
 @register(ArticleCategory)
 class CategoryTranslationOptions(TranslationOptions):
     fields = ('name',)
@@ -22,9 +27,19 @@ class MedicalCenterTranslationOptions(TranslationOptions):
 
 @register(City)
 class CityTranslationOptions(TranslationOptions):
-    fields = ('name', )
+    fields = ('name',)
 
 
 @register(WorkPlace)
 class WorkPlaceTranslationOptions(TranslationOptions):
-    fields = ('name', 'address', )
+    fields = ('name', 'address',)
+
+
+@register(Education)
+class EducationTranslationOptions(TranslationOptions):
+    fields = ('level', 'field', 'institution')
+
+
+@register(Biography)
+class BiographyTranslationOptions(TranslationOptions):
+    field = ('biography',)

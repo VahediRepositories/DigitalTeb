@@ -8,7 +8,8 @@ from wagtail.admin.edit_handlers import MultiFieldPanel, FieldRowPanel, FieldPan
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
-from ..modules import languages, images
+from ..modules import images
+from ..multilingual.mixins import *
 
 
 @register_snippet
@@ -63,17 +64,36 @@ class Specialty(models.Model):
 
 
 @register_snippet
-class Label(models.Model):
+class Label(MultilingualModelMixin, models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=False)
     description = models.CharField(max_length=500, blank=True)
 
+    panels = [
+        MultiFieldPanel(
+            [
+                FieldRowPanel(
+                    [
+                        FieldPanel(f'name_{language}', widget=TextInput)
+                        for language in languages.get_all_translated_field_postfixes()
+                    ]
+                ),
+            ], heading='Name', classname="collapsible"
+        )
+    ]
+
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        self.set_multilingual_fields(
+            ['name', 'description']
+        )
+        super().save(*args, **kwargs)
+
 
 @register_snippet
-class Biography(models.Model):
+class Biography(MultilingualModelMixin, models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=False)
     biography = models.TextField()
 
@@ -83,17 +103,29 @@ class Biography(models.Model):
     class Meta:
         verbose_name_plural = 'Biographies'
 
+    def save(self, *args, **kwargs):
+        self.set_multilingual_fields(
+            ['biography']
+        )
+        super().save(*args, **kwargs)
+
 
 @register_snippet
-class Education(models.Model):
+class Education(MultilingualModelMixin, models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     level = models.CharField(max_length=200)
     field = models.CharField(max_length=500)
     institution = models.CharField(max_length=200)
 
+    def save(self, *args, **kwargs):
+        self.set_multilingual_fields(
+            ['level', 'field', 'institution']
+        )
+        super().save(*args, **kwargs)
+
 
 @register_snippet
-class MedicalCenter(models.Model):
+class MedicalCenter(MultilingualModelMixin, models.Model):
     name = models.CharField(max_length=100)
     plural_name = models.CharField(max_length=100)
 
@@ -123,9 +155,15 @@ class MedicalCenter(models.Model):
         ),
     ]
 
+    def save(self, *args, **kwargs):
+        self.set_multilingual_fields(
+            ['name', 'plural_name']
+        )
+        super().save(*args, **kwargs)
+
 
 @register_snippet
-class City(models.Model):
+class City(MultilingualModelMixin, models.Model):
     name = models.CharField(max_length=50)
 
     panels = [
@@ -147,13 +185,19 @@ class City(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs):
+        self.set_multilingual_fields(
+            ['name']
+        )
+        super().save(*args, **kwargs)
+
 
 PLACES = 'doctorhub/more/images/places/'
 HOSPITAL_ICON = PLACES + 'hospital.png'
 
 
 @register_snippet
-class WorkPlace(models.Model):
+class WorkPlace(MultilingualModelMixin, models.Model):
     medical_center = models.ForeignKey(
         MedicalCenter, on_delete=models.SET_NULL, blank=True, null=True,
         verbose_name=translation.gettext_lazy('Medical Center'),
@@ -188,16 +232,9 @@ class WorkPlace(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        current_language = languages.get_language()
-        default_language = languages.get_default_language()
-        if current_language != default_language:
-            current_name = self.name
-            current_address = self.address
-            translation.activate(default_language.language_code)
-            self.name = current_name
-            self.address = current_address
-            translation.activate(current_language.language_code)
-
+        self.set_multilingual_fields(
+            ['name', 'address']
+        )
         super().save(*args, **kwargs)
         self.make_square_image()
         self.compress_image()
