@@ -71,6 +71,7 @@ class Specialty(MultilingualModelMixin, models.Model):
 
 @register_snippet
 class Label(MultilingualModelMixin, models.Model):
+    # TODO: change user to owner
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=False)
     description = models.CharField(max_length=500, blank=True)
