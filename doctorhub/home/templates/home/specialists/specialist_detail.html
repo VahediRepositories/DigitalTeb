@@ -15,5 +15,6 @@
 <br>
 <br>
 <p>
-    {% user_labels_str specialist.user %}
+    {% user_labels_str specialist.user as labels %}
+    {{ labels|truncatechars:100 }}
 </p>
