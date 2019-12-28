@@ -1,17 +1,14 @@
 from django.contrib.auth.models import Group, User
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from hitcount.models import HitCount
+from hitcount.views import HitCountMixin
 from modelcluster.contrib.taggit import ClusterTaggableManager
-from modelcluster.fields import ParentalManyToManyField
 from taggit.models import TaggedItemBase
 from wagtail.admin.edit_handlers import StreamFieldPanel, RichTextFieldPanel
 from wagtail.core.fields import StreamField, RichTextField
 from wagtail.core.models import Page
-from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtailmetadata.models import MetadataPageMixin
-
-from hitcount.models import HitCount
-from hitcount.views import HitCountMixin
 
 from .accounts.phone.mixins import CheckPhoneVerifiedMixin
 from .articles.blocks import *
@@ -21,6 +18,7 @@ from .articles.serializers import *
 from .mixins import *
 from .modules import text_processing, pagination, specialties
 from .multilingual.pages.models import MultilingualPage, MonolingualPage
+from .specialties.models import *
 
 
 class DigitalTebPageMixin:
@@ -49,8 +47,9 @@ class HomePage(DigitalTebPageMixin, CheckPhoneVerifiedMixin, MultilingualPage):
     content_panels = []
 
     def serve(self, request, *args, **kwargs):
-        blogs_page = self.get_blogs_page()
-        return HttpResponseRedirect(blogs_page.get_url())
+        return HttpResponseRedirect(
+            self.get_specialists_page().get_url()
+        )
 
     @property
     def translated_title(self):
@@ -404,14 +403,14 @@ class ArticlePage(Article):
 
 class SpecialistsPage(
     DigitalTebPageMixin, MetadataPageMixin,
-    CheckPhoneVerifiedMixin, ParentPageMixin, MultilingualPage
+    ParentPageMixin, MultilingualPage
 ):
     content_panels = []
     promote_panels = []
     settings_panels = []
 
     def serve(self, request, *args, **kwargs):
-        self.check_phone_verified(request)
+        # self.check_phone_verified(request)
         self.seo_title = translation.gettext('Specialists')
         self.search_description = translation.gettext(
             'Talk to a specialist online, get your medication and health screening packages from wherever you are!'
@@ -420,10 +419,16 @@ class SpecialistsPage(
 
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
-        context['specialist_pages'] = pagination.get_paginated_objects(
-            request, self.child_pages
+        context['specialists'] = pagination.get_paginated_objects(
+            request, self.specialists
         )
         return context
+
+    @property
+    def specialists(self):
+        return [
+            child_page for child_page in self.child_pages if isinstance(child_page, SpecialistPage)
+        ]
 
     def save(self, *args, **kwargs):
         self.title = 'Specialists'
@@ -436,10 +441,63 @@ class SpecialistsPage(
     parent_page_types = ['home.HomePage']
     subpage_types = ['home.SpecialistPage']
 
+    @property
+    def template(self):
+        return super().get_template_path(SpecialistsPage)
+
+
+class SpecialtyPage(
+    DigitalTebPageMixin, MetadataPageMixin, MultilingualPage
+):
+    specialty = models.OneToOneField(
+        Specialty, blank=False,
+        on_delete=models.SET_NULL, null=True
+    )
+
+    content_panels = [
+        SnippetChooserPanel('specialty'),
+    ]
+    promote_panels = []
+    settings_panels = []
+
+    @property
+    def specialists(self):
+        return [
+            specialist
+            for specialist in self.get_parent().specific.specialists
+            if self.specialty in specialties.get_user_specialties(
+                specialist.user
+            )
+        ]
+
+    def serve(self, request, *args, **kwargs):
+        self.search_description = translation.gettext(
+            '%(specialty)s specialists'
+        ) % {
+                                      'specialty': self.specialty.name
+                                  }
+        self.seo_title = translation.gettext(
+            'Specialists - %(specialty)s'
+        ) % {
+                             'specialty': self.specialty.name
+                         }
+        return super().serve(request, *args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        self.title = self.specialty.default_name
+        super().save(*args, **kwargs)
+
+    @property
+    def template(self):
+        return super().get_template_path(SpecialtyPage)
+
+    parent_page_types = ['home.SpecialistsPage']
+    subpage_types = []
+
 
 class SpecialistPage(
     DigitalTebPageMixin, MetadataPageMixin,
-    CheckPhoneVerifiedMixin, MultilingualPage
+    MultilingualPage
 ):
     user = models.OneToOneField(
         User, blank=False, on_delete=models.SET_NULL, null=True
@@ -457,7 +515,6 @@ class SpecialistPage(
         HitCountMixin.hit_count(request, hit_count)
 
     def serve(self, request, *args, **kwargs):
-        self.check_phone_verified(request)
         user_specialties = specialties.get_user_specialties(self.user)
         specialist_name = f'{self.user.first_name} {self.user.last_name}'
         self.seo_title = translation.gettext(

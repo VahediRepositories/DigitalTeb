@@ -1,0 +1,19 @@
+{% load specialties %}
+
+<a href="{{ specialist.get_url }}">
+    <h3 class="box-title m-b-0">
+        {{ specialist.user.first_name }} {{ specialist.user.last_name }}
+    </h3>
+</a>
+
+{% get_specialties specialist.user as specialties %}
+{% for specialty in specialties %}
+    <small class="badge badge-primary">
+        {{ specialty.name }}
+    </small>
+{% endfor %}
+<br>
+<br>
+<p>
+    {% user_labels_str specialist.user %}
+</p>

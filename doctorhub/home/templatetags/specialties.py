@@ -1,6 +1,6 @@
 from django import template
 
-from ..modules import specialties
+from ..modules import specialties, text_processing
 
 register = template.Library()
 
@@ -18,6 +18,16 @@ def is_specialist(user):
 @register.simple_tag
 def user_labels(user):
     return specialties.get_user_labels(user)
+
+
+@register.simple_tag
+def user_labels_str(user):
+    labels = specialties.get_user_labels(user)
+    return text_processing.str_list_to_comma_separated(
+        [
+            label.name for label in labels
+        ]
+    )
 
 
 @register.simple_tag

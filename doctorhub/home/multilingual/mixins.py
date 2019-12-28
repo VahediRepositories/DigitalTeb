@@ -1,3 +1,6 @@
+from django.db.models import Q
+from django.utils import translation
+
 from ..modules import languages
 
 
@@ -25,3 +28,4 @@ class MultilingualModelMixin:
                         self, f'{field_name}_{languages.get_translated_field_postfix(current_language)}'
                     )
                     setattr(self, translated_field_name, current_field)
+

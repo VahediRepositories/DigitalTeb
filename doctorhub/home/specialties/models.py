@@ -3,13 +3,24 @@ from django.contrib.auth.models import Group, User
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.db import models
 from django.forms import TextInput
-from django.utils import translation
 from wagtail.admin.edit_handlers import MultiFieldPanel, FieldRowPanel, FieldPanel
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
 from ..modules import images
 from ..multilingual.mixins import *
+
+
+class SpecialtyManager(models.Manager):
+    def search(self, **kwargs):
+        qs = self.get_queryset()
+        if kwargs.get('name', ''):
+            name_query = Q(name__icontains=kwargs['name'])
+            specialist_name_query = Q(specialist_name__icontains=kwargs['name'])
+            qs = qs.filter(
+                name_query | specialist_name_query
+            )
+        return qs
 
 
 @register_snippet
@@ -68,6 +79,21 @@ class Specialty(MultilingualModelMixin, models.Model):
         )
         super().save(*args, **kwargs)
 
+    objects = SpecialtyManager()
+
+
+class LabelManager(models.Manager):
+
+    def search(self, **kwargs):
+        qs = self.get_queryset()
+        if kwargs.get('name', ''):
+            name_query = Q(name__icontains=kwargs['name'])
+            description_query = Q(description__icontains=kwargs['name'])
+            qs = qs.filter(
+                name_query | description_query
+            )
+        return qs
+
 
 @register_snippet
 class Label(MultilingualModelMixin, models.Model):
@@ -97,6 +123,8 @@ class Label(MultilingualModelMixin, models.Model):
             ['name', 'description']
         )
         super().save(*args, **kwargs)
+
+    objects = LabelManager()
 
 
 @register_snippet
@@ -203,6 +231,30 @@ PLACES = 'doctorhub/more/images/places/'
 HOSPITAL_ICON = PLACES + 'hospital.png'
 
 
+class WorkPlaceManager(models.Manager):
+
+    def search(self, **kwargs):
+        qs = self.get_queryset()
+        if kwargs.get('name', ''):
+            medical_center_query = Q(
+                medical_center__name=kwargs['name']
+            ) | Q(
+                medical_center__plural_name=kwargs['name']
+            )
+            city_query = Q(city__name__icontains=kwargs['name'])
+            owner_query = Q(
+                owner__first_name__icontains=kwargs['name']
+            ) | Q(
+                owner__last_name__icontains=kwargs['name']
+            )
+            name_query = Q(name__icontains=kwargs['name'])
+            address_query = Q(address__icontains=kwargs['name'])
+            qs = qs.filter(
+                medical_center_query | city_query | owner_query | name_query | address_query
+            )
+        return qs
+
+
 @register_snippet
 class WorkPlace(MultilingualModelMixin, models.Model):
     medical_center = models.ForeignKey(
@@ -253,6 +305,8 @@ class WorkPlace(MultilingualModelMixin, models.Model):
     def compress_image(self):
         if self.logo_image:
             images.compress_image(self.logo_image.path)
+
+    objects = WorkPlaceManager()
 
 
 @register_snippet

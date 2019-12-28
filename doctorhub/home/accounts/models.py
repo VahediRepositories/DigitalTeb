@@ -1,11 +1,12 @@
 from django.contrib.auth.models import User
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.db import models
-from django.db.models import DateField
+from django.db.models import DateField, Q
 from django.utils import translation
 from wagtail.snippets.models import register_snippet
 
 from ..modules import images
+from ..modules import specialties
 
 MALE = 'M'
 FEMALE = 'F'
@@ -41,6 +42,23 @@ FEMALE_AVATAR = AVATARS + 'female.png'
 NONE_AVATAR = AVATARS + 'none.png'
 
 
+class SpecialistsManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(
+            user__groups=specialties.get_specialists_group()
+        )
+
+    def search(self, **kwargs):
+        qs = self.get_queryset()
+        if kwargs.get('name', ''):
+            first_name_query = Q(user__first_name__icontains=kwargs['name'])
+            last_name_query = Q(user__last_name__icontains=kwargs['name'])
+            qs = qs.filter(
+                first_name_query | last_name_query
+            )
+        return qs
+
+
 @register_snippet
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -52,6 +70,9 @@ class Profile(models.Model):
         choices=GENDER_CHOICES,
         default=NOT_BINARY,
     )
+
+    objects = models.Manager()
+    specialists = SpecialistsManager()
 
     @property
     def image_url(self):
