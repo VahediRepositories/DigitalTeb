@@ -439,7 +439,10 @@ class SpecialistsPage(
         return translation.gettext('Specialists')
 
     parent_page_types = ['home.HomePage']
-    subpage_types = ['home.SpecialistPage']
+    subpage_types = [
+        'home.SpecialistPage',
+        'home.SpecialtyPage',
+    ]
 
     @property
     def template(self):
