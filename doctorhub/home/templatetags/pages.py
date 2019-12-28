@@ -36,5 +36,10 @@ def profile_edit_url(user):
 
 
 @register.simple_tag
+def specialty_page_url(specialty):
+    return pages.get_specialty_page(specialty).get_url()
+
+
+@register.simple_tag
 def in_rows(objects, row_size):
     return list_processing.list_to_sublists_of_size_n(objects, row_size)

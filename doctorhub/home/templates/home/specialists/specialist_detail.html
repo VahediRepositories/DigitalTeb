@@ -1,4 +1,5 @@
 {% load specialties %}
+{% load pages %}
 
 <a href="{{ specialist.get_url }}">
     <h3 class="box-title m-b-0">
@@ -8,9 +9,9 @@
 
 {% get_specialties specialist.user as specialties %}
 {% for specialty in specialties %}
-    <small class="badge badge-primary">
+    <a href="{% specialty_page_url specialty %}" class="badge badge-primary">
         {{ specialty.specialist_name }}
-    </small>
+    </a>
 {% endfor %}
 <br>
 <br>

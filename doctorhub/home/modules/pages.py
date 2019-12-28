@@ -19,6 +19,10 @@ def get_specialist_page(user):
     return get_object_or_404(SpecialistPage, user=user)
 
 
+def get_specialty_page(specialty):
+    return get_object_or_404(SpecialtyPage, specialty=specialty)
+
+
 def create_specialist_page(user):
     parent = DigitalTebPageMixin.get_specialists_page()
     page = SpecialistPage(user=user)
