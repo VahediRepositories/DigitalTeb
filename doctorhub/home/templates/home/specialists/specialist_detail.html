@@ -5,6 +5,8 @@
         {{ specialist.user.first_name }} {{ specialist.user.last_name }}
     </h3>
 </a>
+<br>
+<br>
 
 {% get_specialties specialist.user as specialties %}
 {% for specialty in specialties %}
@@ -12,7 +14,6 @@
         {{ specialty.name }}
     </small>
 {% endfor %}
-<br>
 <br>
 <p>
     {% user_labels_str specialist.user as labels %}
