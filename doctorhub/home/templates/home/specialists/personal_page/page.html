@@ -15,9 +15,9 @@
                 </h4>
                 {% get_specialties page.user as specialties %}
                 {% for specialty in specialties %}
-                    <div class="badge badge-primary m-t-10">
+                    <a href="{% specialty_page_url specialty %}" class="badge badge-primary m-t-10">
                         {{ specialty.specialist_name }}
-                    </div>
+                    </a>
                 {% endfor %}
                 <br>
                 <br>

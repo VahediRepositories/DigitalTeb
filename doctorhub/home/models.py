@@ -472,7 +472,7 @@ class SpecialtyPage(
                 specialist.user
             )
         ]
-    
+
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         context['specialists'] = pagination.get_paginated_objects(
