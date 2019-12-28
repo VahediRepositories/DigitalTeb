@@ -472,6 +472,13 @@ class SpecialtyPage(
                 specialist.user
             )
         ]
+    
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        context['specialists'] = pagination.get_paginated_objects(
+            request, self.specialists
+        )
+        return context
 
     def serve(self, request, *args, **kwargs):
         self.search_description = translation.gettext(
