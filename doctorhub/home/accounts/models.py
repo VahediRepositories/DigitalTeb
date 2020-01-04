@@ -75,6 +75,10 @@ class Profile(models.Model):
     specialists = SpecialistsManager()
 
     @property
+    def name(self):
+        return f'{self.user.first_name} {self.user.last_name}'
+
+    @property
     def image_url(self):
         if self.profile_image:
             return self.profile_image.url

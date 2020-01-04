@@ -1,6 +1,9 @@
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 
 from .models import *
+from ..accounts.serializers import ProfileSerializer
+from ..modules import pages
 
 
 class WorkPlaceSerializer(serializers.ModelSerializer):
@@ -12,17 +15,16 @@ class WorkPlaceSerializer(serializers.ModelSerializer):
             'city', 'name', 'website', 'address'
         ]
 
-    def validate(self, data):
-        return super().validate(data)
-        # parent = data['parent']
-        # if parent:
-        #     if parent.article != data['article']:
-        #         raise serializers.ValidationError(
-        #             translation.gettext("Comment's article and it's parent's article are different")
-        #         )
-        # if self.instance:
-        #     if self.instance.article != data['article']:
-        #         raise serializers.ValidationError(
-        #             translation.gettext("Comment's article can not be changed")
-        #         )
-        # return data
+
+class SpecialistProfileSerializer(ProfileSerializer):
+
+    page_url = SerializerMethodField()
+
+    def get_page_url(self, profile):
+        return pages.get_specialist_page(profile.user).get_url()
+
+    class Meta(ProfileSerializer.Meta):
+        fields = ProfileSerializer.Meta.fields + [
+            'page_url'
+        ]
+

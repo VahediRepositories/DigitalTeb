@@ -7,6 +7,9 @@ router = DefaultRouter()
 router.register(
     r'specialists-work-places', views.WorkPlaceViewSet, base_name='specialists-work-places'
 )
+router.register(
+    r'specialists-profiles', views.SpecialistViewSet, base_name='specialists-profiles'
+)
 
 urlpatterns = [
     path(
@@ -59,6 +62,6 @@ urlpatterns = [
         views.SpecialistWorkPlaceUpdateView.as_view(),
         name='edit_work_place'
     ),
-    path('api/', include(router.urls))
+    path('specialists/api/', include(router.urls))
 
 ]

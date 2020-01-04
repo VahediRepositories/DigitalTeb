@@ -6,7 +6,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils import translation
 from django.utils.functional import lazy
-from ..modules import sms
+from ..modules import sms, languages
 
 reCaptchaField = ReCaptchaField(
     label=translation.gettext_lazy(
@@ -18,7 +18,7 @@ reCaptchaField = ReCaptchaField(
         },
         api_params={
             'hl': lazy(
-                translation.get_language
+                languages.get_language_code
             )()
         }
     )

@@ -25,7 +25,7 @@ class ArticleCategory(MultilingualModelMixin, Category):
 
     @property
     def default_name(self):
-        current = translation.get_language()
+        current = languages.get_language_code()
         translation.activate(settings.LANGUAGE_CODE)
         name = self.name
         translation.activate(current)

@@ -3,17 +3,18 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import inlineformset_factory
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, UpdateView, FormView, CreateView
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets
 
-from ..permissions import IsOwnerOrReadOnly
-from .permissions import IsSpecialistOrReadOnly
 from .forms import *
-from .serializers import *
 from .mixins import NonSpecialistForbiddenMixin
+from .permissions import IsSpecialistOrReadOnly
+from .serializers import *
+from ..accounts.models import Profile
 from ..accounts.views import RegistrationView, LoginRequiredMixin, ProfileUpdateView
 from ..models import *
 from ..modules import pages, places
 from ..multilingual.mixins import MultilingualViewMixin
+from ..permissions import *
 
 
 class SpecialistSignUpView(RegistrationView):
@@ -290,11 +291,25 @@ class WorkPlaceViewSet(viewsets.ModelViewSet):
     serializer_class = WorkPlaceSerializer
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
-        IsOwnerOrReadOnly,
         IsSpecialistOrReadOnly,
+        IsOwnerOrReadOnly,
     ]
 
     def perform_create(self, serializer):
         serializer.save(
             owner=self.request.user,
         )
+
+
+class SpecialistViewSet(viewsets.ModelViewSet):
+    serializer_class = SpecialistProfileSerializer
+    permission_classes = [
+        ReadOnly
+    ]
+
+    def get_queryset(self):
+        name = self.request.query_params.get('search', None)
+        queryset = Profile.specialists.search(name=name)
+        return queryset
+
+

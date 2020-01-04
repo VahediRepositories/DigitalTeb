@@ -15,6 +15,6 @@ urlpatterns = [
         views.ArticlePageCommentCreateView.as_view(),
         name='article_page_create_comment'
     ),
-    path('api/', include(router.urls))
+    path('articles/api/', include(router.urls))
 
 ]

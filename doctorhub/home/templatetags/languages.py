@@ -22,9 +22,7 @@ def get_current_url(request, language):
 
 @register.simple_tag
 def is_rtl():
-    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
     language = languages.get_language()
-    print('@@@@@@@@@@@@@@@@@@@@@@@@@@@@', language.direction, type(language.direction))
     return language.direction == languages.RTL
 
 
