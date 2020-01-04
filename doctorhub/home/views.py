@@ -5,7 +5,7 @@ from .specialties.serializers import SpecialistProfileSerializer
 
 
 class SearchPagination(MultipleModelLimitOffsetPagination):
-    default_limit = 10
+    default_limit = 2
 
 
 class SearchView(FlatMultipleModelAPIView):
