@@ -5,3 +5,6 @@ BASIC_RICHTEXT_FEATURES = [
 RICHTEXT_FEATURES = [
     'link', 'bold', 'italic', 'ol', 'ul',
 ]
+
+
+SEARCH_LIMIT = 2

@@ -19,12 +19,16 @@ class WorkPlaceSerializer(serializers.ModelSerializer):
 class SpecialistProfileSerializer(ProfileSerializer):
 
     page_url = SerializerMethodField()
+    id = SerializerMethodField()
 
     def get_page_url(self, profile):
         return pages.get_specialist_page(profile.user).get_url()
 
+    def get_id(self, profile):
+        return f'profile-{profile.pk}'
+
     class Meta(ProfileSerializer.Meta):
         fields = ProfileSerializer.Meta.fields + [
-            'page_url'
+            'page_url', 'id'
         ]
 
