@@ -1,7 +1,9 @@
 from drf_multiple_model.pagination import MultipleModelLimitOffsetPagination
 from drf_multiple_model.views import FlatMultipleModelAPIView
 from .accounts.models import Profile
+from .specialties.models import Specialty
 from .accounts.serializers import SpecialistProfileSerializer
+from .specialties.serializers import SpecialtySerializer
 from . import configurations
 
 
@@ -18,6 +20,9 @@ class SearchView(FlatMultipleModelAPIView):
             {
                 'queryset': Profile.specialists.search(name=query),
                 'serializer_class': SpecialistProfileSerializer
+            }, {
+                'queryset': Specialty.objects.search(name=query),
+                'serializer_class': SpecialtySerializer
             }
         ]
         return querylist

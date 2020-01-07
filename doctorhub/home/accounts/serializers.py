@@ -22,7 +22,7 @@ class SpecialistProfileSerializer(ProfileSerializer):
 
     def get_services(self, profile):
         services = specialties.get_user_labels_str(profile.user)
-        return text_processing.truncatechars(services, 400)
+        return text_processing.truncatechars(services, 300)
 
     def get_page_url(self, profile):
         return pages.get_specialist_page(profile.user).get_url()
@@ -32,6 +32,5 @@ class SpecialistProfileSerializer(ProfileSerializer):
 
     class Meta(ProfileSerializer.Meta):
         fields = ProfileSerializer.Meta.fields + [
-            'page_url', 'id', 'services'
+            'id', 'page_url', 'services'
         ]
-

@@ -4,6 +4,7 @@ from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.db import models
 from django.forms import TextInput
 from wagtail.admin.edit_handlers import MultiFieldPanel, FieldRowPanel, FieldPanel
+from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtail.snippets.models import register_snippet
 
@@ -30,8 +31,18 @@ class Specialty(MultilingualModelMixin, models.Model):
     group = models.OneToOneField(
         Group, on_delete=models.SET_NULL, blank=False, null=True
     )
+    image = models.ForeignKey(
+        'wagtailimages.Image',
+        help_text='high quality square image',
+        null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
+    )
 
     panels = [
+        MultiFieldPanel(
+            [
+                ImageChooserPanel('image')
+            ], heading='Image', classname="collapsible collapsed"
+        ),
         MultiFieldPanel(
             [
                 FieldRowPanel(
