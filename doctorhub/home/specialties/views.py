@@ -301,15 +301,3 @@ class WorkPlaceViewSet(viewsets.ModelViewSet):
         )
 
 
-class SpecialistViewSet(viewsets.ModelViewSet):
-    serializer_class = SpecialistProfileSerializer
-    permission_classes = [
-        ReadOnly
-    ]
-
-    def get_queryset(self):
-        name = self.request.query_params.get('search', None)
-        queryset = Profile.specialists.search(name=name)
-        return queryset
-
-

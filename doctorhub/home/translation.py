@@ -3,7 +3,12 @@ from modeltranslation.translator import TranslationOptions
 
 from .articles.models import *
 from .specialties.models import *
+from .accounts.models import *
 
+
+@register(Profile)
+class ProfileTranslationOptions(TranslationOptions):
+    fields = ('first_name', 'last_name',)
 
 @register(Label)
 class LabelTranslationOptions(TranslationOptions):

@@ -1,6 +1,7 @@
 from django.http import Http404
 
 from ..specialties.models import *
+from . import text_processing
 
 
 def make_user_specialist(user, specialty_default_name):
@@ -48,3 +49,12 @@ def get_user_labels(user):
 
 def get_user_education_records(user):
     return Education.objects.filter(user=user)
+
+
+def get_user_labels_str(user):
+    labels = get_user_labels(user)
+    return text_processing.str_list_to_comma_separated(
+        [
+            label.name for label in labels
+        ]
+    )

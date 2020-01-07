@@ -1,4 +1,5 @@
 from django.urls import reverse
+from django.utils import translation
 
 from .phones import create_phone
 from ..accounts.models import Profile
@@ -10,7 +11,8 @@ def create_profile(user, form):
     profile = Profile.objects.create(
         user=user,
         gender=form.cleaned_data['gender'],
-        # birthdate=form.cleaned_data['birthdate'],
+        first_name=form.cleaned_data['first_name'],
+        last_name=form.cleaned_data['last_name'],
     )
     create_phone(profile, form.cleaned_data['phone'])
     return profile
@@ -37,7 +39,8 @@ def use_password_change_code(user, code):
 
 def get_profile_url(user):
     path_name = 'specialist_profile' if specialties.is_specialist(user) else 'profile'
-    return reverse(path_name)
+    url = reverse(path_name)
+    return url
 
 
 def get_profile_edit_url(user):

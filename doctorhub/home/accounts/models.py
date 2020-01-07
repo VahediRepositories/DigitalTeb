@@ -7,6 +7,7 @@ from wagtail.snippets.models import register_snippet
 
 from ..modules import images
 from ..modules import specialties
+from ..multilingual.mixins import MultilingualModelMixin
 
 MALE = 'M'
 FEMALE = 'F'
@@ -51,8 +52,8 @@ class SpecialistsManager(models.Manager):
     def search(self, **kwargs):
         qs = self.get_queryset()
         if kwargs.get('name', ''):
-            first_name_query = Q(user__first_name__icontains=kwargs['name'])
-            last_name_query = Q(user__last_name__icontains=kwargs['name'])
+            first_name_query = Q(first_name__icontains=kwargs['name'])
+            last_name_query = Q(last_name__icontains=kwargs['name'])
             qs = qs.filter(
                 first_name_query | last_name_query
             )
@@ -60,8 +61,10 @@ class SpecialistsManager(models.Manager):
 
 
 @register_snippet
-class Profile(models.Model):
+class Profile(MultilingualModelMixin, models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=50, blank=False, null=False, default='')
+    last_name = models.CharField(max_length=50, blank=False, null=False, default='')
     profile_image = models.ImageField(
         upload_to='profile_pics', null=True, blank=True
     )
@@ -76,7 +79,7 @@ class Profile(models.Model):
 
     @property
     def name(self):
-        return f'{self.user.first_name} {self.user.last_name}'
+        return f'{self.first_name} {self.last_name}'
 
     @property
     def image_url(self):
@@ -91,6 +94,9 @@ class Profile(models.Model):
                 return static(NONE_AVATAR)
 
     def save(self, *args, **kwargs):
+        self.set_multilingual_fields(
+            ['first_name', 'last_name']
+        )
         super().save(*args, **kwargs)
         self.make_square_image()
         self.compress_image()

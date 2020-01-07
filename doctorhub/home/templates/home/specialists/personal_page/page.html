@@ -10,8 +10,8 @@
             <div class="card-body text-center">
                 <img src="{{ page.user.profile.image_url }}" class="img-circle" width="150"/>
                 <h4 class="card-title m-t-10">
-                    {{ page.user.first_name }}
-                    {{ page.user.last_name }}
+                    {{ page.user.profile.first_name }}
+                    {{ page.user.profile.last_name }}
                 </h4>
                 {% get_specialties page.user as specialties %}
                 {% for specialty in specialties %}

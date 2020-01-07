@@ -1,6 +1,8 @@
 from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 
 from .models import *
+from ..modules import pages, text_processing
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -10,3 +12,26 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = [
             'name', 'image_url'
         ]
+
+
+class SpecialistProfileSerializer(ProfileSerializer):
+
+    page_url = SerializerMethodField()
+    id = SerializerMethodField()
+    services = SerializerMethodField()
+
+    def get_services(self, profile):
+        services = specialties.get_user_labels_str(profile.user)
+        return text_processing.truncatechars(services, 400)
+
+    def get_page_url(self, profile):
+        return pages.get_specialist_page(profile.user).get_url()
+
+    def get_id(self, profile):
+        return f'profile-{profile.pk}'
+
+    class Meta(ProfileSerializer.Meta):
+        fields = ProfileSerializer.Meta.fields + [
+            'page_url', 'id', 'services'
+        ]
+

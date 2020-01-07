@@ -243,9 +243,9 @@ class WorkPlaceManager(models.Manager):
             )
             city_query = Q(city__name__icontains=kwargs['name'])
             owner_query = Q(
-                owner__first_name__icontains=kwargs['name']
+                owner__profile__first_name__icontains=kwargs['name']
             ) | Q(
-                owner__last_name__icontains=kwargs['name']
+                owner__profile__last_name__icontains=kwargs['name']
             )
             name_query = Q(name__icontains=kwargs['name'])
             address_query = Q(address__icontains=kwargs['name'])

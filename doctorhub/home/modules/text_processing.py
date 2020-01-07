@@ -27,3 +27,7 @@ def str_list_to_comma_separated(str_list):
             comma_separated += str_list[i] + ', '
         i += 1
     return comma_separated
+
+
+def truncatechars(s, length):
+    return (s[:length] + '...') if len(s) > length else s

@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load search %}
+{% load specialties %}
 {% load staticfiles %}
 
 
@@ -12,14 +13,15 @@
         <div class="col-md-12">
             <div class="row align-items-center">
                 <div class="col-md-2 text-center">
-                    <img src="{{ image_url }}" alt="{{ name }}" class="img-circle img-fluid" style="width: 100%; height: 100%;">
+                    <img src="{{ image_url }}" alt="{{ name }}" class="img-circle img-fluid"
+                         style="width: 100%; height: 100%;">
                     <br>
                     <h3 class="box-title m-b-0">
                         {{ name }}
                     </h3>
                 </div>
                 <div class="col-md-10 text-center">
-
+                    {{ services }}
                 </div>
             </div>
         </div>
@@ -47,15 +49,10 @@
                             };
                         },
                         processResults: function (data, params) {
-                            // parse the results into the format expected by Select2
-                            // since we are using custom formatting functions we do not need to
-                            // alter the remote JSON data, except to indicate that infinite
-                            // scrolling can be used
                             var has_more = false;
                             if (data['next']) {
                                 has_more = true;
                             }
-
                             return {
                                 results: data.results,
                                 pagination: {
@@ -85,7 +82,8 @@
         var templateScript = Handlebars.compile(resultTemplate);
         var context = {
             "name": result.name,
-            "image_url": result.image_url
+            "image_url": result.image_url,
+            "services": result.services
         };
         var resultHtml = templateScript(context);
         return $(resultHtml);

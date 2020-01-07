@@ -56,9 +56,9 @@ class RegistrationView(AuthenticatedForbiddenMixin, MultilingualViewMixin, FormV
     def form_valid(self, form):
         self.forbid_authenticated()
         user = form.save()
-        user.first_name = form.cleaned_data['first_name']
-        user.last_name = form.cleaned_data['last_name']
-        user.save()
+        # user.first_name = form.cleaned_data['first_name']
+        # user.last_name = form.cleaned_data['last_name']
+        # user.save()
         profile = authentication.create_profile(user, form)
 
         self.set_user_properties(user, form)

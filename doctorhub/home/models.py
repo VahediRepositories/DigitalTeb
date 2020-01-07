@@ -526,7 +526,7 @@ class SpecialistPage(
 
     def serve(self, request, *args, **kwargs):
         user_specialties = specialties.get_user_specialties(self.user)
-        specialist_name = f'{self.user.first_name} {self.user.last_name}'
+        specialist_name = f'{self.user.profile.first_name} {self.user.profile.last_name}'
         self.seo_title = translation.gettext(
             'Specialists - %(specialties)s - %(specialist_name)s'
         ) % {

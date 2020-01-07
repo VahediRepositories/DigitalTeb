@@ -7,9 +7,7 @@ router = DefaultRouter()
 router.register(
     r'specialists-work-places', views.WorkPlaceViewSet, base_name='specialists-work-places'
 )
-router.register(
-    r'specialists-profiles', views.SpecialistViewSet, base_name='specialists-profiles'
-)
+
 
 urlpatterns = [
     path(

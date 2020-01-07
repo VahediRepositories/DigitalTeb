@@ -41,16 +41,6 @@ class UserCreationForm(RegistrationForm):
         )
     )
 
-    # def clean_birthdate(self):
-    #     birthdate = self.cleaned_data['birthdate']
-    #     today = datetime.date.today()
-    #     if birthdate >= today:
-    #         raise ValidationError(
-    #             forms.DateField.default_error_messages['invalid'], code='invalid'
-    #         )
-    #     else:
-    #         return birthdate
-
     class Meta:
         model = User
         fields = [
@@ -93,33 +83,26 @@ class UserUpdateForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['first_name'].required = True
-        self.fields['last_name'].required = True
+        # self.fields['first_name'].required = True
+        # self.fields['last_name'].required = True
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name']
+        fields = [
+            'username',
+            # 'first_name', 'last_name'
+        ]
 
 
 class ProfileUpdateForm(forms.ModelForm):
-    # birthdate = forms.DateField(
-    #     label=translation.gettext_lazy('Birthdate'),
-    #     widget=forms.DateInput(
-    #         attrs={
-    #             'class': 'persian-datepicker'
-    #         }
-    #     )
-    # )
 
     class Meta:
         model = Profile
         fields = [
-            'gender',
-            # 'birthdate'
+            'gender', 'first_name', 'last_name'
         ]
         labels = {
             'gender': translation.gettext_lazy('Sex'),
-            # 'birthdate': translation.gettext_lazy('Birthdate')
         }
 
 
@@ -135,10 +118,3 @@ class BirthdateUpdateForm(forms.ModelForm):
     class Meta:
         model = BirthDate
         fields = ['birthdate']
-        # widgets = {
-        #     'birthdate': forms.DateInput(
-        #         attrs={
-        #             'class': 'persian-datepicker'
-        #         }
-        #     )
-        # }
