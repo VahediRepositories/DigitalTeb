@@ -1,6 +1,7 @@
 from django.http import Http404
 
 from ..specialties.models import *
+from ..specialties.services.models import *
 from . import text_processing
 
 

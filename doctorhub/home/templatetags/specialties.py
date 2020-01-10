@@ -1,6 +1,6 @@
 from django import template
 
-from ..modules import specialties, text_processing
+from ..modules import specialties
 
 register = template.Library()
 

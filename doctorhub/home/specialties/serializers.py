@@ -2,6 +2,7 @@ from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
 from .models import *
+from .work_places.models import *
 from ..modules import pages
 
 

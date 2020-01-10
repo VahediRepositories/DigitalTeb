@@ -14,6 +14,7 @@ from ..models import *
 from ..modules import pages, places
 from ..multilingual.mixins import MultilingualViewMixin
 from ..permissions import *
+from .services.models import *
 
 
 class SpecialistSignUpView(RegistrationView):
