@@ -103,10 +103,9 @@ class WorkPlaceManager(models.Manager):
         return qs
 
 
-@register_snippet
 class WorkPlace(MultilingualModelMixin, models.Model):
     medical_center = models.ForeignKey(
-        MedicalCenter, on_delete=models.SET_NULL, blank=True, null=True,
+        MedicalCenter, on_delete=models.SET_NULL, blank=False, null=True,
         verbose_name=translation.gettext_lazy('Medical Center'),
     )
     city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=False)
