@@ -8,6 +8,7 @@ from taggit.models import TaggedItemBase
 from wagtail.admin.edit_handlers import StreamFieldPanel, RichTextFieldPanel
 from wagtail.core.fields import StreamField, RichTextField
 from wagtail.core.models import Page
+from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtailmetadata.models import MetadataPageMixin
 
 from .accounts.phone.mixins import CheckPhoneVerifiedMixin
