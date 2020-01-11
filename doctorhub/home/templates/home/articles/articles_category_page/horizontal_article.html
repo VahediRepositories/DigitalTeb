@@ -19,16 +19,28 @@
                     <br>
                     <br>
                     {% if editable_article %}
-                        <a href="{{ article_page.get_edit_url }}"
-                           style="width: 100%;"
-                           target="_blank"
-                           class="btn btn-lg btn-outline-primary large-text">
-                            {% trans "Edit" %}
-                        </a>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <a href="{{ article_page.get_edit_url }}"
+                                   style="width: 100%;"
+                                   target="_blank"
+                                   class="btn btn-lg btn-outline-primary">
+                                    {% trans "Edit" %}
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <button data-detail-url="{% url 'specialists-articles-detail' article_page.pk %}"
+                                        style="width: 100%;"
+                                        class="btn btn-danger btn-lg delete-article">
+                                    {% trans 'Delete' %}
+                                    <i class="ti-eraser"></i>
+                                </button>
+                            </div>
+                        </div>
                     {% else %}
                         <a href="{{ article_page.get_url }}"
                            style="width: 100%;"
-                           class="btn btn-lg btn-outline-success large-text">
+                           class="btn btn-lg btn-outline-success">
                             {% trans "Read Article" %}
                         </a>
                     {% endif %}

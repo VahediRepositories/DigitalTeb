@@ -1,9 +1,10 @@
 {% load i18n %}
+{% load pages %}
 
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 <script>
-    $('.delete-place').click(
+    $('.delete-service').click(
         function (event) {
             swal(
                 {
@@ -27,7 +28,7 @@
                         success: function () {
                             swal("{% trans 'The Service has been deleted!' %}", {
                                 icon: "success",
-                            }).then(() => {window.location.href = "{% url 'edit_services' %}";})
+                            }).then(() => {window.location.href = "{% profile_url request.user %}";})
                         },
                     });
                 }

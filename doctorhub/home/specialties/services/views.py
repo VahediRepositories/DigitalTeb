@@ -13,6 +13,7 @@ from ...multilingual.mixins import MultilingualViewMixin
 from ...permissions import *
 from ...specialties.mixins import NonSpecialistForbiddenMixin
 from ...specialties.permissions import *
+from ...modules import authentication
 
 
 class ServiceViewSet(viewsets.ModelViewSet):
@@ -40,9 +41,7 @@ class SpecialistServicesView(
 
     def get_context_data(self, **kwargs):
         self.forbid_non_specialist()
-        context = super().get_context_data(**kwargs)
-        context['services'] = Label.objects.filter(owner=self.request.user)
-        return context
+        return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
         self.forbid_non_specialist()
@@ -57,9 +56,7 @@ class SpecialistServicesView(
             translation.gettext('Your service was saved.'),
         )
         return HttpResponseRedirect(
-            reverse(
-                'edit_services'
-            )
+            authentication.get_profile_url(self.request.user)
         )
 
     @property
@@ -95,7 +92,7 @@ class ServiceUpdateView(
             'successful-updated-service'
         )
         return HttpResponseRedirect(
-            reverse('edit_services')
+            authentication.get_profile_url(self.request.user)
         )
 
     @property

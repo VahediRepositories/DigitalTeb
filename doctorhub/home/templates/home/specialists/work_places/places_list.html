@@ -2,7 +2,7 @@
 
 <div class="row-flex">
     {% for place in places %}
-        <div class="col-lg-6 mb-3">
+        <div class="{% if complete_mode %}col-lg-12{% else %}col-lg-6{% endif %} mb-3">
             <div class="card card-body {{ bg_color }}" style="height: 100%;">
                 <div class="row align-items-center">
                     <div class="col-md-4 col-lg-3 text-center">
@@ -11,15 +11,24 @@
                     </div>
                     <div class="col-md-8 col-lg-9">
                         <a href="">
-                            <h3 class="box-title m-b-0" style="height: 60px;">
-                                {{ place.name|truncatechars:50 }}
+                            <h3 class="box-title m-b-0">
+                                {% if complete_mode %}
+                                    {{ place.name }}
+                                {% else %}
+                                    {{ place.name|truncatechars:50 }}
+                                {% endif %}
                             </h3>
                         </a>
+                        <br>
                         <small class="badge badge-primary">{{ place.medical_center.name }}</small>
                         <br>
                         <br>
                         <address>
-                            {{ place.address|truncatechars:100 }}
+                            {% if complete_mode %}
+                                {{ place.address }}
+                            {% else %}
+                                {{ place.address|truncatechars:100 }}
+                            {% endif %}
                         </address>
                         {% if edit_mode %}
                             <div class="text-center">

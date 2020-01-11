@@ -3,7 +3,7 @@
 
 <div class="row-flex">
     {% for education in education_records %}
-        <div class="col-lg-6 mb-3">
+        <div class="{% if complete_mode %}col-lg-12{% else %}col-lg-6{% endif %} mb-3">
             <div class="card card-body {{ bg_color }}" style="height: 100%;">
                 <div class="row align-items-center">
                     <div class="col-md-4 col-lg-3 text-center">
@@ -11,16 +11,28 @@
                                         class="img-fluid img-thumbnail">
                     </div>
                     <div class="col-md-8 col-lg-9">
-                        <h3 class="box-title m-b-0" style="height: 60px;">
-                            {{ education.field|truncatechars:50 }}
+                        <h3 class="box-title m-b-0">
+                            {% if complete_mode %}
+                                {{ education.field }}
+                            {% else %}
+                                {{ education.field|truncatechars:50 }}
+                            {% endif %}
                         </h3>
                         <br>
                         <p>
-                            {{ education.level|truncatechars:100 }}
+                            {% if complete_mode %}
+                                {{ education.level }}
+                            {% else %}
+                                {{ education.level|truncatechars:100 }}
+                            {% endif %}
                         </p>
                         <p>
                             <b>
-                                {{ education.institution|truncatechars:100 }}
+                                {% if complete_mode %}
+                                    {{ education.institution }}
+                                {% else %}
+                                    {{ education.institution|truncatechars:100 }}
+                                {% endif %}
                             </b>
                         </p>
                         {% if edit_mode %}
@@ -35,7 +47,7 @@
                                     </div>
                                     <div class="col-md-6">
                                         <button data-detail-url="{% url 'specialists-education-detail' education.pk %}"
-                                           class="btn btn-danger btn-lg delete-place"
+                                           class="btn btn-danger btn-lg delete-education"
                                            style="width: 100%;">
                                             {% trans 'Delete' %}
                                             <i class="ti-eraser"></i>

@@ -13,6 +13,7 @@ class ConfirmedForbiddenMixin:
 class CheckPhoneVerifiedMixin:
     @staticmethod
     def check_phone_verified(request):
+        return
         if request.user.is_authenticated:
             phone = request.user.profile.phone
             if not phone.verified:

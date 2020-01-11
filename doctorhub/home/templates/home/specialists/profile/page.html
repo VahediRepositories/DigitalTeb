@@ -1,85 +1,192 @@
 {% load i18n %}
 {% load pages %}
+{% load specialties %}
+{% load services %}
+{% load education %}
 
 <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-10">
-
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                            <h4 class="card-title text-center">
-                                {% trans 'Technical Information' %}
-                            </h4>
-                        <hr>
-                        <div class="text-center" style="height: 200px; overflow-y: scroll;">
-                            <h6 class="text-center">
-                                {% trans "Please enter your technical information so that patients would find you easier." %}
-                            </h6>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-md-12 text-center" style="padding-left: 5%; padding-right: 5%;">
-                                <a href="{% url 'edit_technical_info' %}" style="width: 100%;" class="btn btn-outline-success">
-                                    {% trans 'Technical Information' %}
-                                    <i class="ti-support"></i>
-                                </a>
-                            </div>
-                        </div>
+        <div class="row-flex mb-4">
+            <div class="col-lg-4 col-xlg-3 col-md-5 mt-2">
+                <div class="card" style="height: 100%;">
+                    <div class="card-body text-center">
+                        <img src="{{ request.user.profile.image_url }}" class="img-circle" width="150"/>
+                        <h4 class="card-title m-t-10">
+                            {{ request.user.profile.first_name }}
+                            {{ request.user.profile.last_name }}
+                        </h4>
+                        {% get_specialties request.user as specialties %}
+                        {% for specialty in specialties %}
+                            <a href="{% specialty_page_url specialty %}" class="badge badge-primary m-t-10">
+                                {{ specialty.specialist_name }}
+                            </a>
+                        {% endfor %}
+                        <br>
+                        <br>
+                        <a href="{% url 'edit_specialist_account' %}"
+                           style="width: 100%;"
+                           class="btn btn-success btn-lg">
+                            <small>
+                                {% trans 'Account Information' %}
+                            </small>
+                            <i class="ti-settings"></i>
+                        </a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                            <h4 class="card-title text-center">
+            {% user_services request.user as labels %}
+            {% user_education_records request.user as education_records %}
+            <div class="col-lg-8 col-xlg-9 col-md-7 mt-2">
+                <!-- Nav tabs -->
+                <div class="card" style="height: 100%;">
+                    <ul class="nav nav-tabs profile-tab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#skills" role="tab">
+                                {% trans 'Services' %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#work-places" role="tab">
                                 {% trans 'Work Places' %}
-                            </h4>
-                        <hr>
-                        <div class="text-center" style="height: 200px; overflow-y: scroll;">
-                            <h6 class="text-center">
-                                {% trans "Where can your patients find you? Add information about your working schedule during the week." %}
-                            </h6>
-                        </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-md-12 text-center" style="padding-left: 5%; padding-right: 5%;">
-                                <a href="{% url 'edit_work_places' %}" style="width: 100%;" class="btn btn-outline-success">
-                                    {% trans 'Edit Your Work Places' %}
-                                    <i class="ti-settings"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card">
-                    <div class="card-body">
-                            <h4 class="card-title text-center">
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#education" role="tab">
+                                {% trans 'Education' %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#biography" role="tab">
                                 {% trans 'Biography' %}
-                            </h4>
-                        <hr>
-                        <div class="text-center" style="height: 200px; overflow-y: scroll;">
-                            <h6 class="text-center">
-                                {% trans "Adding biography helps your patients feel more comfortable with you." %}
-                            </h6>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#articles" role="tab">
+                                {% trans 'Articles' %}
+                            </a>
+                        </li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="skills" role="tabpanel">
+                            <div class="card-body" style="height: 400px; overflow-y: scroll;">
+                                {% if labels %}
+                                    {% with edit_mode=True %}
+                                        {% with bg_color='bg-dark' %}
+                                            {% with services=labels %}
+                                                {% with complete_mode=True %}
+                                                    {% include 'home/specialists/services/services_list.html' %}
+                                                {% endwith %}
+                                            {% endwith %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                {% else %}
+                                    <p class="text-danger text-center">
+                                        {% trans "Please enter every services you can provide to patients."  %}
+                                    </p>
+                                {% endif %}
+                                <br>
+                                <div class="text-center">
+                                    <a href="{% url 'edit_services' %}"
+                                       class="btn btn-success btn-lg">
+                                        {% trans 'Add New Service' %}
+                                        <i class="ti-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
-                        <hr>
-                        <div class="row">
-                            <div class="col-md-12 text-center" style="padding-left: 5%; padding-right: 5%;">
-                                <a href="{% url 'edit_biography' request.user.biography.pk %}" style="width: 100%;" class="btn btn-outline-success">
-                                    {% trans 'Edit Biography' %}
-                                    <i class="ti-settings"></i>
-                                </a>
+                        <div class="tab-pane" id="work-places" role="tabpanel">
+                            <div class="card-body" style="height: 400px; overflow-y: scroll;">
+                                {% if request.user.workplace_set.all %}
+                                    {% with places=request.user.workplace_set.all %}
+                                        {% with edit_mode=True %}
+                                            {% with bg_color='bg-dark' %}
+                                                {% with complete_mode=True %}
+                                                    {% include 'home/specialists/work_places/places_list.html' %}
+                                                {% endwith %}
+                                            {% endwith %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                {% else %}
+                                    <p class="text-danger text-center">
+                                        {% trans "Where can your patients find you? Add information about your working schedule during the week." %}
+                                    </p>
+                                {% endif %}
+                                <br>
+                                <div class="text-center">
+                                    <a href="{% url 'edit_work_places' %}"
+                                       class="btn btn-success btn-lg">
+                                        {% trans 'Add New Work Place' %}
+                                        <i class="ti-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="education" role="tabpanel">
+                            <div class="card-body" style="height: 400px; overflow-y: scroll;">
+                                {% if education_records %}
+                                    {% with edit_mode=True %}
+                                        {% with bg_color='bg-dark' %}
+                                            {% with complete_mode=True %}
+                                                {% include 'home/specialists/education/education_list.html' %}
+                                            {% endwith %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                {% else %}
+                                    <p class="text-danger text-center">
+                                        {% trans "Let your patients know about your educational history." %}
+                                    </p>
+                                {% endif %}
+                                <br>
+                                <div class="text-center">
+                                    <a href="{% url 'edit_educations' %}"
+                                       class="btn btn-success btn-lg">
+                                        {% trans 'Add New Education Record' %}
+                                        <i class="ti-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="biography" role="tabpanel">
+                            <div class="card-body" style="height: 400px; overflow-y: scroll;">
+                                {% if request.user.biography.biography %}
+                                    {{ request.user.biography.biography|safe }}
+                                {% else %}
+                                    <p class="text-danger text-center">
+                                        {% trans "Adding biography helps your patients feel more comfortable with you." %}
+                                    </p>
+                                {% endif %}
+                                <br>
+                                <div class="text-center">
+                                    <a href="{% url 'edit_biography' request.user.biography.pk %}"
+                                       class="btn btn-success btn-lg">
+                                        {% trans 'Edit Biography' %}
+                                        <i class="ti-settings"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="articles" role="tabpanel">
+                            <div class="card-body" style="height: 400px; overflow-y: scroll;">
+                                <p class="text-danger text-center">
+                                    {% trans 'Share your knowledge with others by creating posts.' %}
+                                </p>
+                                <br>
+                                <div class="text-center">
+                                    <a href="{% url 'edit_articles' %}"
+                                       class="btn btn-success btn-lg">
+                                        {% trans 'My Articles' %}
+                                        <i class="ti-settings"></i>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
-
     </div>
     <div class="col-md-1"></div>
 </div>

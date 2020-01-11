@@ -14,6 +14,7 @@ from ...specialties.mixins import NonSpecialistForbiddenMixin
 from ...specialties.permissions import *
 from ...permissions import *
 from .permissions import *
+from ...modules import authentication
 
 
 class WorkPlaceViewSet(viewsets.ModelViewSet):
@@ -60,9 +61,7 @@ class SpecialistWorkPlacesView(
 
     def get_context_data(self, **kwargs):
         self.forbid_non_specialist()
-        context = super().get_context_data(**kwargs)
-        context['places'] = WorkPlace.objects.filter(owner=self.request.user)
-        return context
+        return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
         self.forbid_non_specialist()
@@ -72,12 +71,11 @@ class SpecialistWorkPlacesView(
         image_data = self.request.POST.get('logo_image')
         if image_data:
             work_places.save_place_logo_image(place, image_data)
+        messages.success(
+            self.request, translation.gettext('Work Place was saved')
+        )
         return HttpResponseRedirect(
-            reverse(
-                'edit_work_place', kwargs={
-                    'pk': place.pk
-                }
-            )
+            authentication.get_profile_url(self.request.user)
         )
 
     @property
@@ -113,7 +111,7 @@ class SpecialistWorkPlaceUpdateView(
             'successful-updated-work-place'
         )
         return HttpResponseRedirect(
-            reverse('edit_work_places')
+            authentication.get_profile_url(self.request.user)
         )
 
     @property

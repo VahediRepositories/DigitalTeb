@@ -12,6 +12,7 @@ from ...multilingual.mixins import MultilingualViewMixin
 from ...permissions import *
 from ...specialties.mixins import NonSpecialistForbiddenMixin
 from ...specialties.permissions import *
+from ...modules import authentication
 
 
 class EducationViewSet(viewsets.ModelViewSet):
@@ -39,9 +40,7 @@ class SpecialistEducationView(
 
     def get_context_data(self, **kwargs):
         self.forbid_non_specialist()
-        context = super().get_context_data(**kwargs)
-        context['education_records'] = Education.objects.filter(owner=self.request.user)
-        return context
+        return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
         self.forbid_non_specialist()
@@ -53,9 +52,7 @@ class SpecialistEducationView(
             translation.gettext('Education record was saved.'),
         )
         return HttpResponseRedirect(
-            reverse(
-                'edit_educations'
-            )
+            authentication.get_profile_url(self.request.user)
         )
 
     @property
@@ -88,7 +85,7 @@ class EducationUpdateView(
             'successful-updated-education'
         )
         return HttpResponseRedirect(
-            reverse('edit_educations')
+            authentication.get_profile_url(self.request.user)
         )
 
     @property

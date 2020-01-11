@@ -53,6 +53,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#work-places" role="tab">
+                        {% trans 'Work Places' %}
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#education" role="tab">
                         {% trans 'Education' %}
                     </a>
@@ -62,29 +67,40 @@
                         {% trans 'Biography' %}
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#work-places" role="tab">
-                        {% trans 'Work Places' %}
-                    </a>
-                </li>
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
                 <div class="tab-pane active" id="skills" role="tabpanel">
                     <div class="card-body" style="height: 400px; overflow-y: scroll;">
                         {% if labels %}
-                            <ul>
-                                {% for label in labels %}
-                                    <li>
-                                        {{ label.name }}
-                                        {% if label.description %}
-                                            :
-                                            <br>
-                                            {{ label.description }}
-                                        {% endif %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                            {% with edit_mode=False %}
+                                {% with bg_color='bg-dark' %}
+                                    {% with services=labels %}
+                                        {% with complete_mode=True %}
+                                            {% include 'home/specialists/services/services_list.html' %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                {% endwith %}
+                            {% endwith %}
+                        {% else %}
+                            <p class="text-danger text-center">
+                                {% trans 'Nothing Submitted yet.' %}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="tab-pane" id="work-places" role="tabpanel">
+                    <div class="card-body" style="height: 400px; overflow-y: scroll;">
+                        {% if page.user.workplace_set.all %}
+                            {% with places=page.user.workplace_set.all %}
+                                {% with edit_mode=False %}
+                                    {% with bg_color='bg-dark' %}
+                                        {% with complete_mode=True %}
+                                            {% include 'home/specialists/work_places/places_list.html' %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                {% endwith %}
+                            {% endwith %}
                         {% else %}
                             <p class="text-danger text-center">
                                 {% trans 'Nothing Submitted yet.' %}
@@ -122,23 +138,6 @@
                         {% endif %}
                     </div>
                 </div>
-                <div class="tab-pane" id="work-places" role="tabpanel">
-                    <div class="card-body" style="height: 400px; overflow-y: scroll;">
-                        {% if page.user.workplace_set.all %}
-                            {% with places=page.user.workplace_set.all %}
-                                {% with edit_mode=False %}
-                                    {% with bg_color='bg-dark' %}
-                                        {% include 'home/specialists/work_places/places_list.html' %}
-                                    {% endwith %}
-                                {% endwith %}
-                            {% endwith %}
-                        {% else %}
-                            <p class="text-danger text-center">
-                                {% trans 'Nothing Submitted yet.' %}
-                            </p>
-                        {% endif %}
-                    </div>
-                </div>
             </div>
         </div>
 
@@ -148,12 +147,7 @@
 <div class="row-flex">
     {% if articles %}
         <div class="col-lg-12 col-xlg-12 col-md-7">
-            <div class="card">
-                <div class="card-header bg-transparent">
-                    <h3>
-                        {% trans "Articles" %}
-                    </h3>
-                </div>
+            <div class="card bg-transparent">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-lg-12">

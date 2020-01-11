@@ -2,7 +2,8 @@
 
 {% if messages %}
     <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
             {% for message in messages %}
                 {% if 'successful-registration' in message.tags %}
                     <div class="alert alert-success">
@@ -46,4 +47,5 @@
             {% endfor %}
         </div>
     </div>
+    <div class="col-md-1"></div>
 {% endif %}

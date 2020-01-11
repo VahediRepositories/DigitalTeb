@@ -46,12 +46,19 @@
                             {% if editable_article %}
                                 <a href="{{ article_page.get_edit_url }}"
                                    target="_blank"
-                                   class="btn btn-lg btn-outline-primary large-text">
+                                   class="btn btn-lg btn-outline-primary">
                                     {% trans "Edit" %}
                                 </a>
+                                <br>
+                                <br>
+                                <button data-detail-url="{% url 'specialists-articles-detail' article_page.pk %}"
+                                        class="btn btn-danger btn-lg delete-article">
+                                    {% trans 'Delete' %}
+                                    <i class="ti-eraser"></i>
+                                </button>
                             {% else %}
                                 <a href="{{ article_page.get_url }}"
-                                   class="btn btn-lg btn-outline-success large-text">
+                                   class="btn btn-lg btn-outline-success">
                                     {% trans "Read Article" %}
                                 </a>
                             {% endif %}
