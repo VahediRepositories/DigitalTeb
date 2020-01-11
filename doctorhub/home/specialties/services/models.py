@@ -1,12 +1,19 @@
 from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import Q
+from wagtail.snippets.models import register_snippet
 
 from ...multilingual.mixins import MultilingualModelMixin
 from ...modules import images
+from ...images.models import SquareIcon
 
 
-class LabelManager(models.Manager):
+@register_snippet
+class ServiceIcon(SquareIcon):
+    pass
+
+
+class ServiceManager(models.Manager):
 
     def search(self, **kwargs):
         qs = self.get_queryset()
@@ -32,7 +39,11 @@ class Label(MultilingualModelMixin, models.Model):
         if self.image:
             return self.image.url
         else:
-            return static(HOSPITAL_ICON)
+            return self.get_default_icon().image_url
+
+    @staticmethod
+    def get_default_icon():
+        return ServiceIcon.objects.last()
 
     def __str__(self):
         return self.name
@@ -53,4 +64,4 @@ class Label(MultilingualModelMixin, models.Model):
         if self.image:
             images.compress_image(self.image.path)
 
-    objects = LabelManager()
+    objects = ServiceManager()

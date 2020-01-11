@@ -1,6 +1,6 @@
 from django.core.exceptions import PermissionDenied
 
-from ..modules import specialties
+from ..modules.specialties import specialties
 
 
 class NonSpecialistForbiddenMixin:

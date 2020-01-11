@@ -1,11 +1,10 @@
 {% load static %}
-{% load work_places %}
 
 <script src="{% static 'doctorhub/more/js/croppie.min.js' %}"></script>
 <script>
 
     // Start upload preview image
-    $(".gambar").attr("src", "{% work_place_default_image_url %}");
+    $(".gambar").attr("src", "{{ object.image_url }}");
     var $uploadCrop,
         tempFilename,
         rawImg,
@@ -70,7 +69,7 @@
         var image_element = $('#item-img-output');
         var img_data = image_element.attr('src');
         if (image_element.attr('data-status') === 'base64') {
-            $('#id_logo_image').val(img_data)
+            $('#id_image').val(img_data)
         }
     }
 </script>

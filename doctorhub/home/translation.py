@@ -5,6 +5,7 @@ from .articles.models import *
 from .specialties.models import *
 from .specialties.work_places.models import *
 from .specialties.services.models import *
+from .specialties.education.models import *
 from .accounts.models import *
 
 

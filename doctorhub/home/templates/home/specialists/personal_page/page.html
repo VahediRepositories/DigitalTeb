@@ -1,4 +1,6 @@
 {% load specialties %}
+{% load services %}
+{% load education %}
 {% load i18n %}
 {% load hitcount_tags %}
 {% load pages %}
@@ -39,7 +41,7 @@
             </div>
         </div>
     </div>
-    {% user_labels page.user as labels %}
+    {% user_services page.user as labels %}
     {% user_education_records page.user as education_records %}
     <div class="col-lg-8 col-xlg-9 col-md-7 mt-2">
         <!-- Nav tabs -->

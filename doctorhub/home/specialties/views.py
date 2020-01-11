@@ -1,20 +1,16 @@
-from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import inlineformset_factory
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, UpdateView, FormView, CreateView
-from rest_framework import viewsets
+from django.views.generic import TemplateView, UpdateView, FormView
 
 from .forms import *
 from .mixins import NonSpecialistForbiddenMixin
-from .permissions import IsSpecialistOrReadOnly
-from .serializers import *
 from ..accounts.views import RegistrationView, LoginRequiredMixin, ProfileUpdateView
 from ..models import *
-from ..modules import pages, places
+from ..modules import pages
 from ..multilingual.mixins import MultilingualViewMixin
-from ..permissions import *
-from .services.models import *
+from .education.models import *
+from ..modules.specialties import services
 
 
 class SpecialistSignUpView(RegistrationView):
@@ -79,7 +75,7 @@ class TechnicalInformationView(
 ):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['labels'] = specialties.get_user_labels(
+        context['labels'] = services.get_user_services(
             self.request.user
         )
         return context
@@ -149,35 +145,6 @@ class SpecialistInlineFormsetView(
             return self.render_to_response(context)
 
 
-class SpecialistLabelsView(SpecialistInlineFormsetView):
-    formset_class = inlineformset_factory(
-        User, Label, fields=('name', 'description'), extra=1, labels={
-            'name': translation.gettext_lazy('name'),
-            'description': translation.gettext_lazy('description')
-        },
-    )
-    redirect_url = reverse_lazy('edit_labels')
-
-    @property
-    def template_name(self):
-        return f'home/specialists/{self.language_direction}/labels_edit.html'
-
-
-class SpecialistEducationView(SpecialistInlineFormsetView):
-    formset_class = inlineformset_factory(
-        User, Education, fields=('level', 'field', 'institution'), extra=1, labels={
-            'level': translation.gettext_lazy('level'),
-            'field': translation.gettext_lazy('field'),
-            'institution': translation.gettext_lazy('institution'),
-        },
-    )
-    redirect_url = reverse_lazy('edit_education')
-
-    @property
-    def template_name(self):
-        return f'home/specialists/{self.language_direction}/education_edit.html'
-
-
 class SpecialistArticlesView(
     LoginRequiredMixin,
     NonSpecialistForbiddenMixin,
@@ -208,94 +175,3 @@ class SpecialistArticlesView(
         self.forbid_non_specialist()
         self.check_phone_verified(request)
         return super().get(request, *args, **kwargs)
-
-
-class SpecialistWorkPlacesView(
-    LoginRequiredMixin,
-    MultilingualViewMixin, NonSpecialistForbiddenMixin,
-    CheckPhoneVerifiedMixin, CreateView
-):
-    model = WorkPlace
-    fields = [
-        'medical_center', 'name', 'address', 'city'
-    ]
-
-    def get_context_data(self, **kwargs):
-        self.forbid_non_specialist()
-        context = super().get_context_data(**kwargs)
-        context['places'] = WorkPlace.objects.filter(owner=self.request.user)
-        return context
-
-    def form_valid(self, form):
-        self.forbid_non_specialist()
-        place = form.save(commit=False)
-        place.owner = self.request.user
-        place.save()
-        image_data = self.request.POST.get('logo_image')
-        if image_data:
-            places.save_place_logo_image(place, image_data)
-        messages.success(
-            self.request,
-            translation.gettext(
-                'Work Place was added.'
-            ),
-            'successful-added-work-place'
-        )
-        return HttpResponseRedirect(
-            reverse('edit_work_places')
-        )
-
-    @property
-    def template_name(self):
-        return f'home/specialists/{self.language_direction}/work_places.html'
-
-
-class SpecialistWorkPlaceUpdateView(
-    LoginRequiredMixin,
-    MultilingualViewMixin, NonSpecialistForbiddenMixin,
-    CheckPhoneVerifiedMixin, UpdateView
-):
-    model = WorkPlace
-    fields = [
-        'medical_center', 'name', 'address', 'city'
-    ]
-
-    def get_context_data(self, **kwargs):
-        self.forbid_non_specialist()
-        return super().get_context_data(**kwargs)
-
-    def form_valid(self, form):
-        self.forbid_non_specialist()
-        place = form.save()
-        image_data = self.request.POST.get('logo_image')
-        if image_data:
-            places.save_place_logo_image(place, image_data)
-        messages.success(
-            self.request,
-            translation.gettext(
-                'Work Place was updated.'
-            ),
-            'successful-updated-work-place'
-        )
-        return HttpResponseRedirect(
-            reverse('edit_work_places')
-        )
-
-    @property
-    def template_name(self):
-        return f'home/specialists/{self.language_direction}/work_place_edit.html'
-
-
-class WorkPlaceViewSet(viewsets.ModelViewSet):
-    queryset = WorkPlace.objects.all()
-    serializer_class = WorkPlaceSerializer
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsSpecialistOrReadOnly,
-        IsOwnerOrReadOnly,
-    ]
-
-    def perform_create(self, serializer):
-        serializer.save(
-            owner=self.request.user,
-        )

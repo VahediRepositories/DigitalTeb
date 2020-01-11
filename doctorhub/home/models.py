@@ -17,7 +17,8 @@ from .articles.forms import *
 from .articles.models import *
 from .articles.serializers import *
 from .mixins import *
-from .modules import text_processing, pagination, specialties
+from .modules import text_processing, pagination
+from .modules.specialties import specialties
 from .multilingual.pages.models import MultilingualPage, MonolingualPage
 from .specialties.models import *
 

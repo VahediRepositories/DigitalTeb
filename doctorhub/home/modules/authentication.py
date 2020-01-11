@@ -1,10 +1,9 @@
 from django.urls import reverse
-from django.utils import translation
 
+from .specialties import specialties
 from .phones import create_phone
 from ..accounts.models import Profile
 from ..accounts.phone.models import PasswordChangeCode
-from . import specialties
 
 
 def create_profile(user, form):

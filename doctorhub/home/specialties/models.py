@@ -106,17 +106,3 @@ class Biography(MultilingualModelMixin, models.Model):
             ['biography']
         )
         super().save(*args, **kwargs)
-
-
-@register_snippet
-class Education(MultilingualModelMixin, models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    level = models.CharField(max_length=200)
-    field = models.CharField(max_length=500)
-    institution = models.CharField(max_length=200)
-
-    def save(self, *args, **kwargs):
-        self.set_multilingual_fields(
-            ['level', 'field', 'institution']
-        )
-        super().save(*args, **kwargs)

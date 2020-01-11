@@ -7,6 +7,8 @@
 
 {% block additional_css %}
 
+    {% include 'home/croppie/image_upload_css.html' %}
+
 {% endblock %}
 
 {% block page_title %}
@@ -22,8 +24,8 @@
     </li>
 
     <li class="breadcrumb-item">
-        <a href="{% url 'edit_educations' %}">
-            {% trans 'Education' %}
+        <a href="{% url 'edit_services' %}">
+            {% trans 'Services' %}
         </a>
     </li>
 
@@ -31,10 +33,12 @@
 
 {% block main_content %}
 
-    {% include 'home/specialists/education/edit/page.html' %}
+    {% include 'home/specialists/services/edit/page.html' %}
 
 {% endblock %}
 
 {% block additional_js %}
+
+    {% include 'home/specialists/services/edit/image_upload_js.html' %}
 
 {% endblock %}

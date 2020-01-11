@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-from ..modules import specialties
+from ..modules.specialties import specialties
 
 
 class IsSpecialistOrReadOnly(permissions.BasePermission):

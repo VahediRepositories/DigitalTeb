@@ -146,7 +146,7 @@ class WorkPlace(MultilingualModelMixin, models.Model):
     objects = WorkPlaceManager()
 
 
-@register_snippet
 class WorkPlacePhone(models.Model):
     place = models.ForeignKey(WorkPlace, on_delete=models.CASCADE)
     phone = models.CharField(max_length=30)
+

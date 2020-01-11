@@ -1,4 +1,4 @@
-from . import images
+from ...specialties.work_places.models import *
 
 
 def save_place_logo_image(place, image_data):
@@ -14,3 +14,7 @@ def save_place_logo_image(place, image_data):
     except Exception as e:
         import traceback
         traceback.print_exc()
+
+
+def get_default_work_place():
+    return WorkPlace.objects.first()

@@ -1,38 +1,40 @@
 {% load i18n %}
+{% load education %}
 
 <div class="row-flex">
-    {% for place in places %}
+    {% for education in education_records %}
         <div class="col-lg-6 mb-3">
             <div class="card card-body {{ bg_color }}" style="height: 100%;">
                 <div class="row align-items-center">
                     <div class="col-md-4 col-lg-3 text-center">
-                        <a href=""><img src="{{ place.image_url }}" alt="{{ place.name }}"
-                                        class="img-fluid img-thumbnail"></a>
+                        <img src="{% education_default_image_url %}" alt="{{ education.field }}"
+                                        class="img-fluid img-thumbnail">
                     </div>
                     <div class="col-md-8 col-lg-9">
-                        <a href="">
-                            <h3 class="box-title m-b-0" style="height: 60px;">
-                                {{ place.name|truncatechars:50 }}
-                            </h3>
-                        </a>
-                        <small class="badge badge-primary">{{ place.medical_center.name }}</small>
+                        <h3 class="box-title m-b-0" style="height: 60px;">
+                            {{ education.field|truncatechars:50 }}
+                        </h3>
                         <br>
-                        <br>
-                        <address>
-                            {{ place.address|truncatechars:100 }}
-                        </address>
+                        <p>
+                            {{ education.level|truncatechars:100 }}
+                        </p>
+                        <p>
+                            <b>
+                                {{ education.institution|truncatechars:100 }}
+                            </b>
+                        </p>
                         {% if edit_mode %}
                             <div class="text-center">
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <a href="{% url 'edit_work_place' place.pk %}"
+                                        <a href="{% url 'edit_education' education.pk %}"
                                            class="btn btn-outline-success btn-lg" style="width: 100%;">
                                             {% trans 'Edit' %}
                                             <i class="ti-settings"></i>
                                         </a>
                                     </div>
                                     <div class="col-md-6">
-                                        <button data-detail-url="{% url 'specialists-work-places-detail' place.pk %}"
+                                        <button data-detail-url="{% url 'specialists-education-detail' education.pk %}"
                                            class="btn btn-danger btn-lg delete-place"
                                            style="width: 100%;">
                                             {% trans 'Delete' %}
@@ -40,7 +42,6 @@
                                         </button>
                                     </div>
                                 </div>
-
                             </div>
                         {% endif %}
                     </div>

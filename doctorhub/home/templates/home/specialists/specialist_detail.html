@@ -1,4 +1,5 @@
 {% load specialties %}
+{% load services %}
 {% load pages %}
 
 <a href="{{ specialist.get_url }}">
@@ -16,6 +17,6 @@
 <br>
 <br>
 <p>
-    {% user_labels_str specialist.user as labels %}
+    {% user_services_str specialist.user as labels %}
     {{ labels|truncatechars:100 }}
 </p>

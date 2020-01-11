@@ -1,65 +1,50 @@
 from django.urls import path, include
-from rest_framework.routers import DefaultRouter
 
 from . import views
-
-router = DefaultRouter()
-router.register(
-    r'specialists-work-places', views.WorkPlaceViewSet, base_name='specialists-work-places'
-)
-
+from .work_places import urls as work_place_urls
+from .services import urls as service_urls
+from .education import urls as education_urls
 
 urlpatterns = [
     path(
-        'specialists/profile/',
+        'profile/',
         views.SpecialistProfileView.as_view(),
         name='specialist_profile'
     ),
     path(
-        'specialists/signup/',
+        'signup/',
         views.SpecialistSignUpView.as_view(),
         name='specialist_signup'
     ),
     path(
-        'specialists/edit/',
+        'edit/',
         views.SpecialistProfileUpdateView.as_view(),
         name='edit_specialist_account'
     ),
     path(
-        'specialists/technical-info/edit/',
+        'technical-info/edit/',
         views.TechnicalInformationView.as_view(),
         name='edit_technical_info'
     ),
     path(
-        'specialists/services/',
-        views.SpecialistLabelsView.as_view(),
-        name='edit_labels'
-    ),
-    path(
-        'specialists/education/',
-        views.SpecialistEducationView.as_view(),
-        name='edit_education'
-    ),
-    path(
-        'specialists/articles/',
+        'articles/',
         views.SpecialistArticlesView.as_view(),
         name='specialist_articles'
     ),
     path(
-        'specialists/biography/<pk>/',
+        'biography/<pk>/',
         views.BiographyView.as_view(),
         name='edit_biography'
     ),
     path(
-        'specialists/work-places/',
-        views.SpecialistWorkPlacesView.as_view(),
-        name='edit_work_places'
+        'work-places/',
+        include(work_place_urls)
     ),
     path(
-        'specialists/work-places/<pk>/',
-        views.SpecialistWorkPlaceUpdateView.as_view(),
-        name='edit_work_place'
+        'services/', include(service_urls)
     ),
-    path('specialists/api/', include(router.urls))
+    path(
+        'education/', include(education_urls)
+    )
 
 ]

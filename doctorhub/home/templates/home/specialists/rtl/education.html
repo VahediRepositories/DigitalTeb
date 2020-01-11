@@ -15,10 +15,8 @@
 
 {% block breadcrumb %}
 
-    <li class="breadcrumb-item">
-        <a href="{% url 'edit_educations' %}">
-            {% trans 'Education' %}
-        </a>
+    <li class="breadcrumb-item active">
+        {% trans 'Education' %}
     </li>
 
     <li class="breadcrumb-item">
@@ -31,10 +29,12 @@
 
 {% block main_content %}
 
-    {% include 'home/specialists/education/edit/page.html' %}
+    {% include 'home/specialists/education/page.html' %}
 
 {% endblock %}
 
 {% block additional_js %}
+
+    {% include 'home/specialists/education/remove_education_js.html' %}
 
 {% endblock %}

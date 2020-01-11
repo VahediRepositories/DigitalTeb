@@ -25,9 +25,9 @@
                         type: 'DELETE',
                         headers: {"X-CSRFToken": token},
                         success: function () {
-                            swal("{% trans 'The place has been deleted!' %}", {
+                            swal("{% trans 'Education Record has been deleted!' %}", {
                                 icon: "success",
-                            }).then(() => {window.location.href = "{% url 'edit_work_places' %}";})
+                            }).then(() => {window.location.href = "{% url 'edit_educations' %}";})
                         },
                     });
                 }
