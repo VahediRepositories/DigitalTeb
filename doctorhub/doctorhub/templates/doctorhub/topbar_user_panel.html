@@ -29,12 +29,6 @@
                 class="ti-comment-alt m-r-5 m-l-5"></i>
             {% trans 'Account Information' %}
         </a>
-        {% if user_is_specialist %}
-            <a class="dropdown-item" href="{% url 'edit_technical_info' %}" dir="ltr"><i
-                    class="ti-support m-r-5 m-l-5"></i>
-                {% trans 'Technical Information' %}
-            </a>
-        {% endif %}
         <a class="dropdown-item" href="{% url 'logout' %}" dir="ltr"><i
                 class="fa fa-power-off m-r-5 m-l-5"></i>{% trans 'Logout' %}</a>
         {% if user_is_specialist %}
@@ -42,8 +36,8 @@
                 {% specialist_url request.user as personal_page_url %}
                 <a href="{{ personal_page_url }}" dir="ltr"
                    target="_blank"
-                   class="btn btn-sm btn-success btn-rounded">
-                    {% trans 'Personal Page' %}
+                   class="btn btn-success btn-rounded">
+                        {% trans 'Personal Page' %}
                 </a>
             </div>
         {% endif %}

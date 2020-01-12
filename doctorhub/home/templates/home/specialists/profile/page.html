@@ -52,6 +52,11 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#symptoms" role="tab">
+                                {% trans 'Symptoms' %}
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#education" role="tab">
                                 {% trans 'Education' %}
                             </a>
@@ -118,6 +123,33 @@
                                     <a href="{% url 'edit_work_places' %}"
                                        class="btn btn-success btn-lg">
                                         {% trans 'Add New Work Place' %}
+                                        <i class="ti-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="symptoms" role="tabpanel">
+                            <div class="card-body" style="height: 400px; overflow-y: scroll;">
+                                {% if request.user.symptom_set.all %}
+                                    {% with symptoms=request.user.symptom_set.all %}
+                                        {% with edit_mode=True %}
+                                            {% with bg_color='bg-dark' %}
+                                                {% with complete_mode=True %}
+                                                    {% include 'home/specialists/symptoms/symptoms_list.html' %}
+                                                {% endwith %}
+                                            {% endwith %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                {% else %}
+                                    <p class="text-danger text-center">
+                                        {% trans "Add Symptoms you can help to improve." %}
+                                    </p>
+                                {% endif %}
+                                <br>
+                                <div class="text-center">
+                                    <a href="{% url 'edit_symptoms' %}"
+                                       class="btn btn-success btn-lg">
+                                        {% trans 'Add New Symptom' %}
                                         <i class="ti-plus"></i>
                                     </a>
                                 </div>

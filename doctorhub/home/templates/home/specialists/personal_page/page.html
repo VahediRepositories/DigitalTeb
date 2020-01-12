@@ -58,6 +58,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#symptoms" role="tab">
+                        {% trans 'Symptoms' %}
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#education" role="tab">
                         {% trans 'Education' %}
                     </a>
@@ -97,6 +102,25 @@
                                     {% with bg_color='bg-dark' %}
                                         {% with complete_mode=True %}
                                             {% include 'home/specialists/work_places/places_list.html' %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                {% endwith %}
+                            {% endwith %}
+                        {% else %}
+                            <p class="text-danger text-center">
+                                {% trans 'Nothing Submitted yet.' %}
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="tab-pane" id="symptoms" role="tabpanel">
+                    <div class="card-body" style="height: 400px; overflow-y: scroll;">
+                        {% if page.user.symptom_set.all %}
+                            {% with symptoms=page.user.symptom_set.all %}
+                                {% with edit_mode=False %}
+                                    {% with bg_color='bg-dark' %}
+                                        {% with complete_mode=True %}
+                                            {% include 'home/specialists/symptoms/symptoms_list.html' %}
                                         {% endwith %}
                                     {% endwith %}
                                 {% endwith %}

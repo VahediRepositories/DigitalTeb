@@ -7,7 +7,7 @@
 
 {% block additional_css %}
 
-    <link href="{% static 'doctorhub/rtl/dist/css/pages/widget-page.css' %}" rel="stylesheet">
+    {% include 'home/croppie/image_upload_css.html' %}
 
 {% endblock %}
 
@@ -17,8 +17,10 @@
 
 {% block breadcrumb %}
 
-    <li class="breadcrumb-item active">
-        {% trans 'Technical Information' %}
+    <li class="breadcrumb-item">
+        <a href="{% url 'edit_symptoms' %}">
+            {% trans 'Symptoms' %}
+        </a>
     </li>
 
     <li class="breadcrumb-item">
@@ -31,10 +33,12 @@
 
 {% block main_content %}
 
-    {% include 'home/specialists/career_edit/page.html' %}
+    {% include 'home/specialists/symptoms/edit/page.html' %}
 
 {% endblock %}
 
 {% block additional_js %}
+
+    {% include 'home/specialists/symptoms/edit/image_upload_js.html' %}
 
 {% endblock %}

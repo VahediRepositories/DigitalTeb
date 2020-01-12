@@ -5,6 +5,7 @@ from .work_places import urls as work_place_urls
 from .services import urls as service_urls
 from .education import urls as education_urls
 from .articles import urls as article_urls
+from .symptoms import urls as symptom_urls
 
 urlpatterns = [
     path(
@@ -23,11 +24,6 @@ urlpatterns = [
         name='edit_specialist_account'
     ),
     path(
-        'technical-info/edit/',
-        views.TechnicalInformationView.as_view(),
-        name='edit_technical_info'
-    ),
-    path(
         'biography/<pk>/',
         views.BiographyView.as_view(),
         name='edit_biography'
@@ -44,6 +40,9 @@ urlpatterns = [
     ),
     path(
         'articles/', include(article_urls)
+    ),
+    path(
+        'symptoms/', include(symptom_urls)
     )
 
 ]

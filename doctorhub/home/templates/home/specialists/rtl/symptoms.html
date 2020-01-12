@@ -1,4 +1,4 @@
-{% extends 'doctorhub/layouts/ltr/light/green/master.html' %}
+{% extends 'doctorhub/layouts/rtl/light/green/master.html' %}
 
 {% load staticfiles %}
 {% load pages %}
@@ -7,7 +7,7 @@
 
 {% block additional_css %}
 
-    <link href="{% static 'doctorhub/main/dist/css/pages/widget-page.css' %}" rel="stylesheet">
+    {% include 'home/croppie/image_upload_css.html' %}
 
 {% endblock %}
 
@@ -17,24 +17,26 @@
 
 {% block breadcrumb %}
 
+    <li class="breadcrumb-item active">
+        {% trans 'Symptoms' %}
+    </li>
+
     <li class="breadcrumb-item">
         <a href="{% profile_url request.user %}">
             {% trans 'Profile' %}
         </a>
     </li>
 
-    <li class="breadcrumb-item active">
-        {% trans 'Technical Information' %}
-    </li>
-
 {% endblock %}
 
 {% block main_content %}
 
-    {% include 'home/specialists/career_edit/page.html' %}
+    {% include 'home/specialists/symptoms/page.html' %}
 
 {% endblock %}
 
 {% block additional_js %}
+
+    {% include 'home/specialists/symptoms/image_upload_js.html' %}
 
 {% endblock %}

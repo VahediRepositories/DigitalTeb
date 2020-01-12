@@ -15,9 +15,9 @@ from ...specialties.mixins import NonSpecialistForbiddenMixin
 from ...specialties.permissions import *
 
 
-class ServiceViewSet(viewsets.ModelViewSet):
-    queryset = Label.objects.all()
-    serializer_class = ServiceSerializer
+class SymptomViewSet(viewsets.ModelViewSet):
+    queryset = Symptom.objects.all()
+    serializer_class = SymptomSerializer
     permission_classes = [
         permissions.IsAuthenticatedOrReadOnly,
         IsSpecialistOrReadOnly,
@@ -30,12 +30,12 @@ class ServiceViewSet(viewsets.ModelViewSet):
         )
 
 
-class SpecialistServicesView(
+class SpecialistSymptomsView(
     LoginRequiredMixin,
     MultilingualViewMixin, NonSpecialistForbiddenMixin,
     CheckPhoneVerifiedMixin, CreateView
 ):
-    model = Label
+    model = Symptom
     fields = ['name', 'description']
 
     def get_context_data(self, **kwargs):
@@ -52,7 +52,7 @@ class SpecialistServicesView(
             services.save_service_image(service, image_data)
         messages.success(
             self.request,
-            translation.gettext('Your service was saved.'),
+            translation.gettext('Symptom was saved.'),
         )
         return HttpResponseRedirect(
             authentication.get_profile_url(self.request.user)
@@ -60,15 +60,15 @@ class SpecialistServicesView(
 
     @property
     def template_name(self):
-        return f'home/specialists/{self.language_direction}/services.html'
+        return f'home/specialists/{self.language_direction}/symptoms.html'
 
 
-class ServiceUpdateView(
+class SymptomUpdateView(
     LoginRequiredMixin,
     MultilingualViewMixin, NonSpecialistForbiddenMixin,
     CheckPhoneVerifiedMixin, UpdateView
 ):
-    model = Label
+    model = Symptom
     fields = [
         'name', 'description'
     ]
@@ -86,7 +86,7 @@ class ServiceUpdateView(
         messages.success(
             self.request,
             translation.gettext(
-                'Service was updated.'
+                'Symptom was updated.'
             ),
             'successful-updated-service'
         )
@@ -96,4 +96,4 @@ class ServiceUpdateView(
 
     @property
     def template_name(self):
-        return f'home/specialists/{self.language_direction}/service_edit.html'
+        return f'home/specialists/{self.language_direction}/symptom_edit.html'

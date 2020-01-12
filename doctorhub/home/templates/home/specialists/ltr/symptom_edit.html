@@ -23,20 +23,22 @@
         </a>
     </li>
 
-    <li class="breadcrumb-item active">
-        {% trans 'Services' %}
+    <li class="breadcrumb-item">
+        <a href="{% url 'edit_symptoms' %}">
+            {% trans 'Symptoms' %}
+        </a>
     </li>
 
 {% endblock %}
 
 {% block main_content %}
 
-    {% include 'home/specialists/services/page.html' %}
+    {% include 'home/specialists/symptoms/edit/page.html' %}
 
 {% endblock %}
 
 {% block additional_js %}
 
-    {% include 'home/specialists/services/image_upload_js.html' %}
+    {% include 'home/specialists/symptoms/edit/image_upload_js.html' %}
 
 {% endblock %}

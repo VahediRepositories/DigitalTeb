@@ -6,6 +6,7 @@ from .specialties.models import *
 from .specialties.work_places.models import *
 from .specialties.services.models import *
 from .specialties.education.models import *
+from .specialties.symptoms.models import *
 from .accounts.models import *
 
 
@@ -16,6 +17,11 @@ class ProfileTranslationOptions(TranslationOptions):
 
 @register(Label)
 class LabelTranslationOptions(TranslationOptions):
+    fields = ('name', 'description',)
+
+
+@register(Symptom)
+class SymptomTranslationOptions(TranslationOptions):
     fields = ('name', 'description',)
 
 

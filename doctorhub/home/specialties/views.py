@@ -66,28 +66,6 @@ class SpecialistProfileUpdateView(
                 page.save()
 
 
-class TechnicalInformationView(
-    LoginRequiredMixin,
-    NonSpecialistForbiddenMixin,
-    MultilingualViewMixin, CheckPhoneVerifiedMixin, TemplateView
-):
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['labels'] = services.get_user_services(
-            self.request.user
-        )
-        return context
-
-    @property
-    def template_name(self):
-        return f'home/specialists/{self.language_direction}/career_edit.html'
-
-    def get(self, request, *args, **kwargs):
-        self.forbid_non_specialist()
-        self.check_phone_verified(request)
-        return super().get(request, *args, **kwargs)
-
-
 class BiographyView(
     LoginRequiredMixin,
     SuccessMessageMixin,
