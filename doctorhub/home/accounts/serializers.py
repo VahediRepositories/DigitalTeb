@@ -3,6 +3,7 @@ from rest_framework.fields import SerializerMethodField
 
 from .models import *
 from ..modules import pages, text_processing
+from ..modules.specialties import services as services_module
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -21,7 +22,7 @@ class SpecialistProfileSerializer(ProfileSerializer):
     services = SerializerMethodField()
 
     def get_services(self, profile):
-        services = specialties.get_user_labels_str(profile.user)
+        services = services_module.get_user_services_str(profile.user)
         return text_processing.truncatechars(services, 300)
 
     def get_page_url(self, profile):

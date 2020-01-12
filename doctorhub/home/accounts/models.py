@@ -1,13 +1,9 @@
-from django.contrib.auth.models import User
 from django.contrib.staticfiles.templatetags.staticfiles import static
-from django.db import models
-from django.db.models import DateField, Q
+from django.db.models import DateField
 from django.utils import translation
-from wagtail.snippets.models import register_snippet
 
-from ..modules import images
-from ..modules import specialties
-from ..multilingual.mixins import MultilingualModelMixin
+from ..modules.specialties import specialties
+from ..specialties.symptoms.models import *
 
 MALE = 'M'
 FEMALE = 'F'
@@ -54,8 +50,19 @@ class SpecialistsManager(models.Manager):
         if kwargs.get('name', ''):
             first_name_query = Q(first_name__icontains=kwargs['name'])
             last_name_query = Q(last_name__icontains=kwargs['name'])
+            symptom_name_query = Q(
+                user__in=[
+                    symptom.owner for symptom in Symptom.objects.search(name=kwargs['name'])
+                ]
+            )
+            symptom_description_query = Q(
+                user__in=[
+                    symptom.owner for symptom in Symptom.objects.search(name=kwargs['name'])
+                ]
+            )
             qs = qs.filter(
                 first_name_query | last_name_query
+                | symptom_name_query | symptom_description_query
             )
         return qs
 

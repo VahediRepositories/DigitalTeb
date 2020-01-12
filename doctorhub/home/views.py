@@ -1,10 +1,9 @@
 from drf_multiple_model.pagination import MultipleModelLimitOffsetPagination
 from drf_multiple_model.views import FlatMultipleModelAPIView
-from .accounts.models import Profile
-from .specialties.models import Specialty
-from .accounts.serializers import SpecialistProfileSerializer
-from .specialties.serializers import SpecialtySerializer
+
 from . import configurations
+from .accounts.serializers import *
+from .specialties.serializers import *
 
 
 class SearchPagination(MultipleModelLimitOffsetPagination):
