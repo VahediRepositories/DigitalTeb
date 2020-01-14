@@ -1,13 +1,12 @@
 from modeltranslation.decorators import register
 from modeltranslation.translator import TranslationOptions
 
-from .articles.models import *
-from .specialties.models import *
-from .specialties.work_places.models import *
-from .specialties.services.models import *
-from .specialties.education.models import *
-from .specialties.symptoms.models import *
 from .accounts.models import *
+from .articles.models import *
+from .specialties.education.models import *
+from .specialties.models import *
+from .specialties.services.models import *
+from .specialties.work_places.models import *
 
 
 @register(Profile)
@@ -53,8 +52,3 @@ class WorkPlaceTranslationOptions(TranslationOptions):
 @register(Education)
 class EducationTranslationOptions(TranslationOptions):
     fields = ('level', 'field', 'institution')
-
-
-@register(Biography)
-class BiographyTranslationOptions(TranslationOptions):
-    fields = ('biography',)

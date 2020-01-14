@@ -47,3 +47,4 @@ class Language(models.Model):
 
     class Meta:
         ordering = ('language_code',)
+

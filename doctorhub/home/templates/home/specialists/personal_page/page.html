@@ -67,11 +67,6 @@
                         {% trans 'Education' %}
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#biography" role="tab">
-                        {% trans 'Biography' %}
-                    </a>
-                </li>
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
@@ -144,17 +139,6 @@
                                     </li>
                                 {% endfor %}
                             </ul>
-                        {% else %}
-                            <p class="text-danger text-center">
-                                {% trans 'Nothing Submitted yet.' %}
-                            </p>
-                        {% endif %}
-                    </div>
-                </div>
-                <div class="tab-pane" id="biography" role="tabpanel">
-                    <div class="card-body" style="height: 400px; overflow-y: scroll;">
-                        {% if page.user.biography.biography %}
-                            {{ page.user.biography.biography|safe }}
                         {% else %}
                             <p class="text-danger text-center">
                                 {% trans 'Nothing Submitted yet.' %}

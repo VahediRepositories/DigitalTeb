@@ -1,11 +1,10 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import Q
 from wagtail.snippets.models import register_snippet
 
-from ...multilingual.mixins import MultilingualModelMixin
-from ...modules import images
 from ...images.models import SquareIcon
+from ...modules import images
+from ...multilingual.mixins import *
 
 
 @register_snippet
@@ -18,8 +17,8 @@ class SymptomManager(models.Manager):
     def search(self, **kwargs):
         qs = self.get_queryset()
         if kwargs.get('name', ''):
-            name_query = Q(name__icontains=kwargs['name'])
-            description_query = Q(description__icontains=kwargs['name'])
+            name_query = languages.multilingual_field_search('name', kwargs['name'])
+            description_query = languages.multilingual_field_search('description', kwargs['name'])
             qs = qs.filter(
                 name_query | description_query
             )

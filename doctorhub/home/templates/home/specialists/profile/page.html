@@ -62,11 +62,6 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#biography" role="tab">
-                                {% trans 'Biography' %}
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#articles" role="tab">
                                 {% trans 'Articles' %}
                             </a>
@@ -176,25 +171,6 @@
                                        class="btn btn-success btn-lg">
                                         {% trans 'Add New Education Record' %}
                                         <i class="ti-plus"></i>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane" id="biography" role="tabpanel">
-                            <div class="card-body" style="height: 400px; overflow-y: scroll;">
-                                {% if request.user.biography.biography %}
-                                    {{ request.user.biography.biography|safe }}
-                                {% else %}
-                                    <p class="text-danger text-center">
-                                        {% trans "Adding biography helps your patients feel more comfortable with you." %}
-                                    </p>
-                                {% endif %}
-                                <br>
-                                <div class="text-center">
-                                    <a href="{% url 'edit_biography' request.user.biography.pk %}"
-                                       class="btn btn-success btn-lg">
-                                        {% trans 'Edit Biography' %}
-                                        <i class="ti-settings"></i>
                                     </a>
                                 </div>
                             </div>

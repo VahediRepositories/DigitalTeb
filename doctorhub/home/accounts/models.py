@@ -1,9 +1,10 @@
 from django.contrib.staticfiles.templatetags.staticfiles import static
-from django.db.models import DateField
+from django.db.models import DateField, Q
 from django.utils import translation
 
 from ..modules.specialties import specialties
 from ..specialties.symptoms.models import *
+from ..specialties.services.models import *
 
 MALE = 'M'
 FEMALE = 'F'
@@ -48,21 +49,20 @@ class SpecialistsManager(models.Manager):
     def search(self, **kwargs):
         qs = self.get_queryset()
         if kwargs.get('name', ''):
-            first_name_query = Q(first_name__icontains=kwargs['name'])
-            last_name_query = Q(last_name__icontains=kwargs['name'])
-            symptom_name_query = Q(
+            first_name_query = languages.multilingual_field_search('first_name', kwargs['name'])
+            last_name_query = languages.multilingual_field_search('last_name', kwargs['name'])
+            symptom_query = Q(
                 user__in=[
                     symptom.owner for symptom in Symptom.objects.search(name=kwargs['name'])
                 ]
             )
-            symptom_description_query = Q(
+            services_query = Q(
                 user__in=[
-                    symptom.owner for symptom in Symptom.objects.search(name=kwargs['name'])
+                    service.owner for service in Label.objects.search(name=kwargs['name'])
                 ]
             )
             qs = qs.filter(
-                first_name_query | last_name_query
-                | symptom_name_query | symptom_description_query
+                first_name_query | last_name_query | symptom_query | services_query
             )
         return qs
 

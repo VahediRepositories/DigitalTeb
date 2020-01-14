@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.contrib.auth.models import Group, User
 from django.db import models
+from django.db.models import Q
 from django.forms import TextInput
+from django.utils import translation
 from wagtail.admin.edit_handlers import MultiFieldPanel, FieldRowPanel, FieldPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
@@ -88,21 +90,3 @@ class Specialty(MultilingualModelMixin, models.Model):
         super().save(*args, **kwargs)
 
     objects = SpecialtyManager()
-
-
-@register_snippet
-class Biography(MultilingualModelMixin, models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=False)
-    biography = models.TextField()
-
-    def __str__(self):
-        return self.user.username
-
-    class Meta:
-        verbose_name_plural = 'Biographies'
-
-    def save(self, *args, **kwargs):
-        self.set_multilingual_fields(
-            ['biography']
-        )
-        super().save(*args, **kwargs)

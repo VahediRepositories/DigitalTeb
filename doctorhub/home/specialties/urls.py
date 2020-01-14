@@ -24,11 +24,6 @@ urlpatterns = [
         name='edit_specialist_account'
     ),
     path(
-        'biography/<pk>/',
-        views.BiographyView.as_view(),
-        name='edit_biography'
-    ),
-    path(
         'work-places/',
         include(work_place_urls)
     ),

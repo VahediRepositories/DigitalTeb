@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.conf import settings
@@ -51,3 +52,13 @@ def get_all_translated_field_postfixes():
         get_translated_field_postfix(language)
         for language in languages
     ]
+
+
+def multilingual_field_search(field, value):
+    query = Q()
+    for postfix in get_all_translated_field_postfixes():
+        kwargs = {
+            f'{field}_{postfix}__icontains': value
+        }
+        query |= Q(**kwargs)
+    return query

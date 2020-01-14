@@ -1,14 +1,13 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import Q
 from django.forms import TextInput
 from django.utils import translation
 from wagtail.admin.edit_handlers import MultiFieldPanel, FieldRowPanel, FieldPanel
 from wagtail.snippets.models import register_snippet
 
 from ...images.models import SquareIcon
-from ...multilingual.mixins import MultilingualModelMixin
 from ...modules import languages, images
+from ...multilingual.mixins import *
 
 
 @register_snippet
@@ -84,19 +83,23 @@ class WorkPlaceManager(models.Manager):
     def search(self, **kwargs):
         qs = self.get_queryset()
         if kwargs.get('name', ''):
-            medical_center_query = Q(
-                medical_center__name=kwargs['name']
-            ) | Q(
-                medical_center__plural_name=kwargs['name']
+            medical_center_query = languages.multilingual_field_search(
+                'medical_center__name', kwargs['name']
+            ) | languages.multilingual_field_search(
+                'medical_center__plural_name', kwargs['name']
             )
-            city_query = Q(city__name__icontains=kwargs['name'])
-            owner_query = Q(
-                owner__profile__first_name__icontains=kwargs['name']
-            ) | Q(
-                owner__profile__last_name__icontains=kwargs['name']
+            city_query = languages.multilingual_field_search(
+                'city__name', kwargs['name']
             )
-            name_query = Q(name__icontains=kwargs['name'])
-            address_query = Q(address__icontains=kwargs['name'])
+            owner_query = languages.multilingual_field_search(
+                'owner__profile__first_name', kwargs['name']
+            ) | languages.multilingual_field_search(
+                'owner__profile__last_name', kwargs['name']
+            )
+            name_query = languages.multilingual_field_search('name', kwargs['name'])
+            address_query = languages.multilingual_field_search(
+                'address', kwargs['name']
+            )
             qs = qs.filter(
                 medical_center_query | city_query | owner_query | name_query | address_query
             )

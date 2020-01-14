@@ -1,13 +1,12 @@
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, UpdateView, FormView
+from django.views.generic import TemplateView, UpdateView
 
 from .forms import *
 from .mixins import NonSpecialistForbiddenMixin
 from ..accounts.views import RegistrationView, LoginRequiredMixin, ProfileUpdateView
 from ..models import *
 from ..modules import pages
-from ..modules.specialties import services
 from ..multilingual.mixins import MultilingualViewMixin
 
 
@@ -64,27 +63,3 @@ class SpecialistProfileUpdateView(
         if 'username' in self.user_form.changed_data:
             for page in SpecialistPage.objects.filter(user=self.request.user):
                 page.save()
-
-
-class BiographyView(
-    LoginRequiredMixin,
-    SuccessMessageMixin,
-    NonSpecialistForbiddenMixin,
-    MultilingualViewMixin, CheckPhoneVerifiedMixin, UpdateView
-):
-    model = Biography
-    fields = ('biography',)
-    success_url = reverse_lazy('specialist_profile')
-    success_message = translation.gettext_lazy(
-        'Your biography was updated.'
-    )
-
-    @property
-    def template_name(self):
-        return f'home/specialists/{self.language_direction}/bio.html'
-
-    def get(self, request, *args, **kwargs):
-        self.forbid_non_specialist()
-        self.check_phone_verified(request)
-        return super().get(request, *args, **kwargs)
-
