@@ -83,6 +83,9 @@ class SpecialistWorkPlacesView(
         return f'home/specialists/{self.language_direction}/work_places.html'
 
 
+
+
+
 class SpecialistWorkPlaceUpdateView(
     LoginRequiredMixin,
     MultilingualViewMixin, NonSpecialistForbiddenMixin,

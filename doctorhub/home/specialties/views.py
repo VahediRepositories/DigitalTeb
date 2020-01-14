@@ -21,8 +21,6 @@ class SpecialistSignUpView(RegistrationView):
         specialty = form.cleaned_data['specialty']
         specialties.make_user_specialist(user, specialty)
         pages.create_specialist_page(user)
-        bio = Biography(user=user)
-        bio.save()
 
 
 class SpecialistProfileView(
