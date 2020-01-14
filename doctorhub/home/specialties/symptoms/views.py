@@ -30,7 +30,7 @@ class SymptomViewSet(viewsets.ModelViewSet):
         )
 
 
-class SpecialistSymptomsView(
+class SymptomCreateView(
     LoginRequiredMixin,
     MultilingualViewMixin, NonSpecialistForbiddenMixin,
     CheckPhoneVerifiedMixin, CreateView
@@ -60,7 +60,7 @@ class SpecialistSymptomsView(
 
     @property
     def template_name(self):
-        return f'home/specialists/{self.language_direction}/symptoms.html'
+        return f'home/specialists/{self.language_direction}/symptom_create.html'
 
 
 class SymptomUpdateView(

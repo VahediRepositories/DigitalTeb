@@ -13,8 +13,8 @@ urlpatterns = [
 
     path(
         '',
-        views.SpecialistServicesView.as_view(),
-        name='edit_services'
+        views.ServiceCreateView.as_view(),
+        name='create_service'
     ),
     path(
         'update/<pk>/',

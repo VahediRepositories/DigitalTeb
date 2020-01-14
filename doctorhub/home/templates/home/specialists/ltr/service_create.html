@@ -7,6 +7,8 @@
 
 {% block additional_css %}
 
+    {% include 'home/croppie/image_upload_css.html' %}
+
 {% endblock %}
 
 {% block page_title %}
@@ -22,17 +24,19 @@
     </li>
 
     <li class="breadcrumb-item active">
-        {% trans 'Education' %}
+        {% trans 'Services' %}
     </li>
 
 {% endblock %}
 
 {% block main_content %}
 
-    {% include 'home/specialists/education/page.html' %}
+    {% include 'home/specialists/services/create/page.html' %}
 
 {% endblock %}
 
 {% block additional_js %}
+
+    {% include 'home/specialists/services/image_upload_js.html' %}
 
 {% endblock %}

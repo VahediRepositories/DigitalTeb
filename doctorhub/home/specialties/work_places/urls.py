@@ -14,9 +14,14 @@ router.register(
 
 urlpatterns = [
     path(
-        '',
-        views.SpecialistWorkPlacesView.as_view(),
-        name='edit_work_places'
+        'create/',
+        views.WorkPlaceCreateView.as_view(),
+        name='create_work_place'
+    ),
+    path(
+        'profile/<pk>/',
+        views.WorkPlaceView.as_view(),
+        name='work_place_profile'
     ),
     path(
         'update/<pk>/',

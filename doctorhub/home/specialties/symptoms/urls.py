@@ -13,8 +13,8 @@ urlpatterns = [
 
     path(
         '',
-        views.SpecialistSymptomsView.as_view(),
-        name='edit_symptoms'
+        views.SymptomCreateView.as_view(),
+        name='create_symptom'
     ),
     path(
         'update/<pk>/',

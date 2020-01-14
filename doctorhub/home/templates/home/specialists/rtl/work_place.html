@@ -7,6 +7,8 @@
 
 {% block additional_css %}
 
+    <link href="{% static 'doctorhub/main/dist/css/pages/widget-page.css' %}" rel="stylesheet">
+
 {% endblock %}
 
 {% block page_title %}
@@ -15,26 +17,16 @@
 
 {% block breadcrumb %}
 
-    <li class="breadcrumb-item">
-        <a href="{% url 'create_education' %}">
-            {% trans 'Education' %}
-        </a>
-    </li>
-
-    <li class="breadcrumb-item">
-        <a href="{% profile_url request.user %}">
-            {% trans 'Profile' %}
-        </a>
-    </li>
-
 {% endblock %}
 
 {% block main_content %}
 
-    {% include 'home/specialists/education/edit/page.html' %}
+    {% include 'home/specialists/work_places/page.html' %}
 
 {% endblock %}
 
 {% block additional_js %}
+
+{#    {% include 'home/specialists/work_places/remove_js.html' %}#}
 
 {% endblock %}

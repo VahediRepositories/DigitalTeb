@@ -13,8 +13,8 @@ urlpatterns = [
 
     path(
         '',
-        views.SpecialistEducationView.as_view(),
-        name='edit_educations'
+        views.EducationCreateView.as_view(),
+        name='create_education'
     ),
     path(
         'update/<pk>/',

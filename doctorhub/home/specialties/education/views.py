@@ -1,6 +1,5 @@
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.urls import reverse
 from django.utils import translation
 from django.views.generic import CreateView, UpdateView
 from rest_framework import viewsets
@@ -8,11 +7,11 @@ from rest_framework import viewsets
 from .serializers import *
 from ...accounts.mixins import LoginRequiredMixin
 from ...accounts.phone.mixins import CheckPhoneVerifiedMixin
+from ...modules import authentication
 from ...multilingual.mixins import MultilingualViewMixin
 from ...permissions import *
 from ...specialties.mixins import NonSpecialistForbiddenMixin
 from ...specialties.permissions import *
-from ...modules import authentication
 
 
 class EducationViewSet(viewsets.ModelViewSet):
@@ -30,7 +29,7 @@ class EducationViewSet(viewsets.ModelViewSet):
         )
 
 
-class SpecialistEducationView(
+class EducationCreateView(
     LoginRequiredMixin,
     MultilingualViewMixin, NonSpecialistForbiddenMixin,
     CheckPhoneVerifiedMixin, CreateView
@@ -57,7 +56,7 @@ class SpecialistEducationView(
 
     @property
     def template_name(self):
-        return f'home/specialists/{self.language_direction}/education.html'
+        return f'home/specialists/{self.language_direction}/education_create.html'
 
 
 class EducationUpdateView(

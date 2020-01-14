@@ -17,10 +17,8 @@
 
 {% block breadcrumb %}
 
-    <li class="breadcrumb-item">
-        <a href="{% url 'create_work_place' %}">
-            {% trans 'Work Places' %}
-        </a>
+    <li class="breadcrumb-item active">
+        {% trans 'Work Places' %}
     </li>
 
     <li class="breadcrumb-item">
@@ -33,12 +31,13 @@
 
 {% block main_content %}
 
-    {% include 'home/specialists/work_places/edit/page.html' %}
+    {% include 'home/specialists/work_places/create/page.html' %}
 
 {% endblock %}
 
 {% block additional_js %}
 
-    {% include 'home/specialists/work_places/edit/image_upload_js.html' %}
+    {% include 'home/specialists/work_places/image_upload_js.html' %}
+    {% include 'home/specialists/work_places/remove_place_js.html' %}
 
 {% endblock %}

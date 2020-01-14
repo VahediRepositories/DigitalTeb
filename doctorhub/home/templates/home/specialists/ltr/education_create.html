@@ -1,4 +1,4 @@
-{% extends 'doctorhub/layouts/rtl/light/green/master.html' %}
+{% extends 'doctorhub/layouts/ltr/light/green/master.html' %}
 
 {% load staticfiles %}
 {% load pages %}
@@ -6,8 +6,6 @@
 {% load crispy_forms_tags %}
 
 {% block additional_css %}
-
-    {% include 'home/croppie/image_upload_css.html' %}
 
 {% endblock %}
 
@@ -17,27 +15,24 @@
 
 {% block breadcrumb %}
 
-    <li class="breadcrumb-item active">
-        {% trans 'Services' %}
-    </li>
-
     <li class="breadcrumb-item">
         <a href="{% profile_url request.user %}">
             {% trans 'Profile' %}
         </a>
     </li>
 
+    <li class="breadcrumb-item active">
+        {% trans 'Education' %}
+    </li>
+
 {% endblock %}
 
 {% block main_content %}
 
-    {% include 'home/specialists/services/page.html' %}
+    {% include 'home/specialists/education/create/page.html' %}
 
 {% endblock %}
 
 {% block additional_js %}
-
-    {% include 'home/specialists/services/image_upload_js.html' %}
-    {% include 'home/specialists/services/remove_service_js.html' %}
 
 {% endblock %}

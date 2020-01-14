@@ -18,7 +18,7 @@
 {% block breadcrumb %}
 
     <li class="breadcrumb-item active">
-        {% trans 'Work Places' %}
+        {% trans 'Services' %}
     </li>
 
     <li class="breadcrumb-item">
@@ -31,13 +31,13 @@
 
 {% block main_content %}
 
-    {% include 'home/specialists/work_places/page.html' %}
+    {% include 'home/specialists/services/create/page.html' %}
 
 {% endblock %}
 
 {% block additional_js %}
 
-    {% include 'home/specialists/work_places/image_upload_js.html' %}
-    {% include 'home/specialists/work_places/remove_place_js.html' %}
+    {% include 'home/specialists/services/image_upload_js.html' %}
+    {% include 'home/specialists/services/remove_service_js.html' %}
 
 {% endblock %}

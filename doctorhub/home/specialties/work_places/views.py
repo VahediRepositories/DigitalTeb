@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, UpdateView, TemplateView, DetailView
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 
@@ -49,7 +49,7 @@ class WorkPlacePhoneViewSet(viewsets.ModelViewSet):
             raise ValidationError(translation.gettext('Non-staff users cannot add phone'))
 
 
-class SpecialistWorkPlacesView(
+class WorkPlaceCreateView(
     LoginRequiredMixin,
     MultilingualViewMixin, NonSpecialistForbiddenMixin,
     CheckPhoneVerifiedMixin, CreateView
@@ -75,15 +75,30 @@ class SpecialistWorkPlacesView(
             self.request, translation.gettext('Work Place was saved')
         )
         return HttpResponseRedirect(
-            authentication.get_profile_url(self.request.user)
+            reverse('work_place_profile', kwargs={'pk': place.pk})
         )
 
     @property
     def template_name(self):
-        return f'home/specialists/{self.language_direction}/work_places.html'
+        return f'home/specialists/{self.language_direction}/work_place_create.html'
 
 
+class WorkPlaceView(
+    LoginRequiredMixin,
+    NonSpecialistForbiddenMixin,
+    MultilingualViewMixin, CheckPhoneVerifiedMixin, DetailView
+):
 
+    model = WorkPlace
+
+    @property
+    def template_name(self):
+        return f'home/specialists/{self.language_direction}/work_place.html'
+
+    def get(self, request, *args, **kwargs):
+        self.forbid_non_specialist()
+        self.check_phone_verified(request)
+        return super().get(request, *args, **kwargs)
 
 
 class SpecialistWorkPlaceUpdateView(

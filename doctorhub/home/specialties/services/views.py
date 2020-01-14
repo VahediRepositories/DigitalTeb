@@ -30,7 +30,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
         )
 
 
-class SpecialistServicesView(
+class ServiceCreateView(
     LoginRequiredMixin,
     MultilingualViewMixin, NonSpecialistForbiddenMixin,
     CheckPhoneVerifiedMixin, CreateView
@@ -60,7 +60,7 @@ class SpecialistServicesView(
 
     @property
     def template_name(self):
-        return f'home/specialists/{self.language_direction}/services.html'
+        return f'home/specialists/{self.language_direction}/service_create.html'
 
 
 class ServiceUpdateView(

@@ -7,7 +7,7 @@
 
 {% block additional_css %}
 
-    {% include 'home/croppie/image_upload_css.html' %}
+    <link href="{% static 'doctorhub/main/dist/css/pages/widget-page.css' %}" rel="stylesheet">
 
 {% endblock %}
 
@@ -16,16 +16,6 @@
 {% endblock %}
 
 {% block breadcrumb %}
-
-    <li class="breadcrumb-item">
-        <a href="{% profile_url request.user %}">
-            {% trans 'Profile' %}
-        </a>
-    </li>
-
-    <li class="breadcrumb-item active">
-        {% trans 'Work Places' %}
-    </li>
 
 {% endblock %}
 
@@ -37,6 +27,6 @@
 
 {% block additional_js %}
 
-    {% include 'home/specialists/work_places/image_upload_js.html' %}
+{#    {% include 'home/specialists/work_places/remove_js.html' %}#}
 
 {% endblock %}
