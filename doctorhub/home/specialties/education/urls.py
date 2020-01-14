@@ -12,7 +12,7 @@ router.register(
 urlpatterns = [
 
     path(
-        '',
+        'create/',
         views.EducationCreateView.as_view(),
         name='create_education'
     ),

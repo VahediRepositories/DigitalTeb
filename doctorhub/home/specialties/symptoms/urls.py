@@ -12,7 +12,7 @@ router.register(
 urlpatterns = [
 
     path(
-        '',
+        'create/',
         views.SymptomCreateView.as_view(),
         name='create_symptom'
     ),

@@ -12,7 +12,7 @@ router.register(
 urlpatterns = [
 
     path(
-        '',
+        'create/',
         views.ServiceCreateView.as_view(),
         name='create_service'
     ),
