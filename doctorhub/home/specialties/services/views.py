@@ -19,9 +19,7 @@ class ServiceViewSet(viewsets.ModelViewSet):
     queryset = Label.objects.all()
     serializer_class = ServiceSerializer
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsSpecialistOrReadOnly,
-        IsOwnerOrReadOnly,
+        IsSpecialistOrReadOnly & IsOwnerOrReadOnly,
     ]
 
     def perform_create(self, serializer):

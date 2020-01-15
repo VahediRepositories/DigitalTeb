@@ -38,6 +38,6 @@ urlpatterns = [
     ),
     path(
         'symptoms/', include(symptom_urls)
-    )
+    ),
 
 ]

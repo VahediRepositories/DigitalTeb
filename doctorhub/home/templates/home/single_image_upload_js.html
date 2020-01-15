@@ -1,11 +1,10 @@
 {% load static %}
-{% load symptoms %}
 
 <script src="{% static 'doctorhub/more/js/croppie.min.js' %}"></script>
 <script>
 
     // Start upload preview image
-    $(".gambar").attr("src", "{% symptom_default_image_url %}");
+    $(".gambar").attr("src", "{{ initial_image_url }}");
     var $uploadCrop,
         tempFilename,
         rawImg,

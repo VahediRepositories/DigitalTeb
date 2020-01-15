@@ -3,33 +3,14 @@
 {% load crispy_forms_tags %}
 {% load pages %}
 
-<div class="row">
-    <div class="col-lg-1">
-
-    </div>
-    <div class="col-lg-10">
-        {% with edit_mode=True %}
-            {% with bg_color='bg-light' %}
-                {% include 'home/specialists/work_places/places_list.html' %}
-            {% endwith %}
-        {% endwith %}
-
-    </div>
-    <div class="col-lg-1">
-
-    </div>
-</div>
-
 
 <div class="row">
     <div class="col-md-1"></div>
     <div class="col-md-10">
         <div class="card border-success">
             <div class="card-header bg-success text-center">
-{#                <img src="{% static 'doctorhub/assets/images/logo-light-text.png' %}"#}
-{#                     alt="{{ request.site.site_name }}" class="dark-logo"/>#}
                 <h3>
-                    {% trans 'Create New Work Place' %}
+                    {% trans 'New Work Place' %}
                 </h3>
             </div>
             <div class="card-body bg-dark" style="padding-left: 10%; padding-right: 10%;">
@@ -92,7 +73,7 @@
 
                 <form method="POST" onsubmit="setImageInput()">
                     {% csrf_token %}
-                    <input type="hidden" id="id_logo_image" name="logo_image">
+                    <input type="hidden" id="id_image" name="image">
                     {{ form|crispy }}
                     <br>
                     <br>
@@ -103,7 +84,7 @@
                                 <button type="submit"
                                         style="width: 100%; height: 100%;"
                                         class="btn btn-success btn-lg">
-                                    {% trans 'Submit New Work Place' %}
+                                    {% trans 'Create' %}
                                     <i class="ti-save"></i>
                                 </button>
                             </div>

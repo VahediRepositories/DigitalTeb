@@ -116,16 +116,19 @@ class WorkPlace(MultilingualModelMixin, models.Model):
     name = models.CharField(max_length=100, blank=False)
     website = models.URLField(blank=True)
     address = models.CharField(max_length=400, blank=False)
-    logo_image = models.ImageField(
+    image = models.ImageField(
         upload_to='workplace_images', null=True, blank=True
     )
 
     @property
     def image_url(self):
-        if self.logo_image:
-            return self.logo_image.url
+        if self.image:
+            return self.image.url
         else:
             return self.medical_center.image_url
+
+    def has_staff(self, user):
+        return self.owner == user
 
     def __str__(self):
         return self.name
@@ -139,17 +142,11 @@ class WorkPlace(MultilingualModelMixin, models.Model):
         self.compress_image()
 
     def make_square_image(self):
-        if self.logo_image:
-            images.make_square_image(self.logo_image.path)
+        if self.image:
+            images.make_square_image(self.image.path)
 
     def compress_image(self):
-        if self.logo_image:
-            images.compress_image(self.logo_image.path)
+        if self.image:
+            images.compress_image(self.image.path)
 
     objects = WorkPlaceManager()
-
-
-class WorkPlacePhone(models.Model):
-    place = models.ForeignKey(WorkPlace, on_delete=models.CASCADE)
-    phone = models.CharField(max_length=30)
-

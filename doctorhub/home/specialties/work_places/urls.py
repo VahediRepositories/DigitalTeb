@@ -2,11 +2,9 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 
 from . import views
+from .phones import urls as phone_urls
 
 router = DefaultRouter()
-router.register(
-    'work-places/phones', views.WorkPlacePhoneViewSet, base_name='work-place-phones'
-)
 router.register(
     'work-places', views.WorkPlaceViewSet, base_name='specialists-work-places'
 )
@@ -25,8 +23,12 @@ urlpatterns = [
     ),
     path(
         'update/<pk>/',
-        views.SpecialistWorkPlaceUpdateView.as_view(),
+        views.WorkPlaceUpdateView.as_view(),
         name='edit_work_place'
     ),
+    path(
+        'phones/', include(phone_urls)
+    ),
+
     path('api/', include(router.urls))
 ]

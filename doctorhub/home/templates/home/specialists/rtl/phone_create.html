@@ -1,0 +1,38 @@
+{% extends 'doctorhub/layouts/rtl/light/green/master.html' %}
+
+{% load staticfiles %}
+{% load pages %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block additional_css %}
+
+{% endblock %}
+
+{% block page_title %}
+
+{% endblock %}
+
+{% block breadcrumb %}
+
+    <li class="breadcrumb-item active">
+        {% trans 'New Phone' %}
+    </li>
+
+    <li class="breadcrumb-item">
+        <a href="{% url 'work_place_profile' place.pk %}">
+            {% trans 'Work Place' %}
+        </a>
+    </li>
+
+{% endblock %}
+
+{% block main_content %}
+
+    {% include 'home/specialists/work_places/phone/create/page.html' %}
+
+{% endblock %}
+
+{% block additional_js %}
+
+{% endblock %}

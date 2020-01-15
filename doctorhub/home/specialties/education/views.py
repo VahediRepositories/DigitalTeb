@@ -18,9 +18,7 @@ class EducationViewSet(viewsets.ModelViewSet):
     queryset = Education.objects.all()
     serializer_class = EducationSerializer
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsSpecialistOrReadOnly,
-        IsOwnerOrReadOnly,
+        IsSpecialistOrReadOnly & IsOwnerOrReadOnly,
     ]
 
     def perform_create(self, serializer):

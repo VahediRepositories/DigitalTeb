@@ -1,52 +1,33 @@
 from django.contrib import messages
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from django.views.generic import CreateView, UpdateView, TemplateView, DetailView
+from django.views.generic import CreateView, UpdateView, DetailView, FormView
 from rest_framework import viewsets
-from rest_framework.exceptions import ValidationError
 
+from .mixins import NonStaffForbiddenMixin
+from .permissions import *
+from ...permissions import *
 from .serializers import *
+from ..mixins import NonSpecialistForbiddenMixin
 from ...accounts.phone.mixins import CheckPhoneVerifiedMixin
 from ...accounts.views import LoginRequiredMixin
+from ...modules import authentication
 from ...modules.specialties import work_places
 from ...multilingual.mixins import MultilingualViewMixin
-from ...specialties.mixins import NonSpecialistForbiddenMixin
-from ...specialties.permissions import *
-from ...permissions import *
-from .permissions import *
-from ...modules import authentication
 
 
 class WorkPlaceViewSet(viewsets.ModelViewSet):
     queryset = WorkPlace.objects.all()
     serializer_class = WorkPlaceSerializer
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsSpecialistOrReadOnly,
-        IsOwnerOrReadOnly,
+        IsPlaceStaffOrReadOnly & (IsOwnerOrReadOnly | ~IsDelete),
     ]
 
     def perform_create(self, serializer):
         serializer.save(
             owner=self.request.user,
         )
-
-
-class WorkPlacePhoneViewSet(viewsets.ModelViewSet):
-    queryset = WorkPlacePhone.objects.all()
-    serializer_class = WorkPlacePhoneSerializer
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsSpecialistOrReadOnly,
-        IsWorkPlaceStaffOrReadOnly,
-    ]
-
-    def perform_create(self, serializer):
-        place = serializer.validated_data['place']
-        if place.owner == self.request.user:
-            return super().perform_create(serializer)
-        else:
-            raise ValidationError(translation.gettext('Non-staff users cannot add phone'))
 
 
 class WorkPlaceCreateView(
@@ -60,17 +41,19 @@ class WorkPlaceCreateView(
     ]
 
     def get_context_data(self, **kwargs):
+        self.check_phone_verified(self.request)
         self.forbid_non_specialist()
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
+        self.check_phone_verified(self.request)
         self.forbid_non_specialist()
         place = form.save(commit=False)
         place.owner = self.request.user
         place.save()
-        image_data = self.request.POST.get('logo_image')
+        image_data = self.request.POST.get('image')
         if image_data:
-            work_places.save_place_logo_image(place, image_data)
+            work_places.save_place_image(place, image_data)
         messages.success(
             self.request, translation.gettext('Work Place was saved')
         )
@@ -85,10 +68,9 @@ class WorkPlaceCreateView(
 
 class WorkPlaceView(
     LoginRequiredMixin,
-    NonSpecialistForbiddenMixin,
+    NonStaffForbiddenMixin,
     MultilingualViewMixin, CheckPhoneVerifiedMixin, DetailView
 ):
-
     model = WorkPlace
 
     @property
@@ -96,14 +78,14 @@ class WorkPlaceView(
         return f'home/specialists/{self.language_direction}/work_place.html'
 
     def get(self, request, *args, **kwargs):
-        self.forbid_non_specialist()
         self.check_phone_verified(request)
+        self.forbid_non_staff(self.get_object())
         return super().get(request, *args, **kwargs)
 
 
-class SpecialistWorkPlaceUpdateView(
+class WorkPlaceUpdateView(
     LoginRequiredMixin,
-    MultilingualViewMixin, NonSpecialistForbiddenMixin,
+    MultilingualViewMixin, NonStaffForbiddenMixin,
     CheckPhoneVerifiedMixin, UpdateView
 ):
     model = WorkPlace
@@ -112,15 +94,18 @@ class SpecialistWorkPlaceUpdateView(
     ]
 
     def get_context_data(self, **kwargs):
-        self.forbid_non_specialist()
+        self.check_phone_verified(self.request)
+        self.forbid_non_staff(self.object)
         return super().get_context_data(**kwargs)
 
     def form_valid(self, form):
         self.forbid_non_specialist()
         place = form.save()
-        image_data = self.request.POST.get('logo_image')
+        image_data = self.request.POST.get('image')
+        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%', image_data)
         if image_data:
-            work_places.save_place_logo_image(place, image_data)
+            print('@@@@@@@@@@@@@@@@@@@@@@@@@@@', 'image sent')
+            work_places.save_place_image(place, image_data)
         messages.success(
             self.request,
             translation.gettext(
@@ -129,9 +114,11 @@ class SpecialistWorkPlaceUpdateView(
             'successful-updated-work-place'
         )
         return HttpResponseRedirect(
-            authentication.get_profile_url(self.request.user)
+            reverse('work_place_profile', kwargs={'pk': place.pk})
         )
 
     @property
     def template_name(self):
         return f'home/specialists/{self.language_direction}/work_place_edit.html'
+
+

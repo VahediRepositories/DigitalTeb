@@ -18,8 +18,8 @@
 {% block breadcrumb %}
 
     <li class="breadcrumb-item">
-        <a href="{% url 'create_work_place' %}">
-            {% trans 'Work Places' %}
+        <a href="{% url 'work_place_profile' object.pk %}">
+            {% trans 'Work Place' %}
         </a>
     </li>
 

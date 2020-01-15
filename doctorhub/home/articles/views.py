@@ -55,7 +55,6 @@ class ArticlePageCommentViewSet(viewsets.ModelViewSet):
     queryset = ArticlePageComment.objects.all()
     serializer_class = ArticlePageCommentSerializer
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
         IsOwnerOrReadOnly,
     ]
 

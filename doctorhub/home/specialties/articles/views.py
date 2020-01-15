@@ -1,7 +1,6 @@
 from django.views.generic import FormView
 from rest_framework import viewsets
 
-from .permissions import *
 from .serializers import *
 from ...accounts.mixins import LoginRequiredMixin
 from ...permissions import *
@@ -13,10 +12,7 @@ class ArticleViewSet(viewsets.ModelViewSet):
     queryset = ArticlePage.objects.all()
     serializer_class = ArticlePageSerializer
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsSpecialistOrReadOnly,
-        IsOwnerOrReadOnly,
-        IsDeleteOrReadOnly,
+        IsSpecialistOrReadOnly & IsOwnerOrReadOnly & (ReadOnly | IsDelete),
     ]
 
 

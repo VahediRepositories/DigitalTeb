@@ -1,38 +1,8 @@
 {% load i18n %}
 {% load pages %}
 
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
-<script>
-    $('.delete-education').click(
-        function (event) {
-            swal(
-                {
-                    title: "{% trans 'Are you sure?' %}",
-                    text: "{% trans 'Once deleted, you will not be able to recover it!' %}",
-                    icon: 'warning',
-                    buttons: [
-                        "{% trans 'Cancel' %}",
-                        "{% trans 'Ok' %}"
-                    ],
-                    dangerMode: true,
-                }
-            ).then((willDelete) => {
-                var token = '{{ csrf_token }}';
-                if (willDelete) {
-                    var detailUrl = $(event.target).attr('data-detail-url');
-                    $.ajax({
-                        url: detailUrl,
-                        type: 'DELETE',
-                        headers: {"X-CSRFToken": token},
-                        success: function () {
-                            swal("{% trans 'Education Record has been deleted!' %}", {
-                                icon: "success",
-                            }).then(() => {window.location.href = "{% profile_url request.user %}";})
-                        },
-                    });
-                }
-            });
-        }
-    );
-</script>
+{% trans 'Education Record Deleted!' as success_message %}
+{% profile_url request.user as success_redirect_url %}
+{% with remove_button_class="delete-education" %}
+    {% include 'home/sweet_alert_remove_js.html' %}
+{% endwith %}

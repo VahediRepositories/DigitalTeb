@@ -19,9 +19,7 @@ class SymptomViewSet(viewsets.ModelViewSet):
     queryset = Symptom.objects.all()
     serializer_class = SymptomSerializer
     permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsSpecialistOrReadOnly,
-        IsOwnerOrReadOnly,
+        IsSpecialistOrReadOnly & IsOwnerOrReadOnly,
     ]
 
     def perform_create(self, serializer):

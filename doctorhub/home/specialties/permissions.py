@@ -3,11 +3,17 @@ from rest_framework import permissions
 from ..modules.specialties import specialties
 
 
-class IsSpecialistOrReadOnly(permissions.BasePermission):
+class IsSpecialistOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
 
     def has_permission(self, request, view):
-        return bool(
-            request.method in permissions.SAFE_METHODS or
-            request.user and specialties.is_specialist(request.user)
-        )
+        if super().has_permission(request, view):
+            if request.method in permissions.SAFE_METHODS:
+                return True
+            elif specialties.is_specialist(request.user):
+                return True
+            else:
+                return False
+        else:
+            return False
+
 
