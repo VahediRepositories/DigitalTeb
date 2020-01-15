@@ -5,6 +5,7 @@ from django.utils import translation
 from ..modules.specialties import specialties
 from ..specialties.symptoms.models import *
 from ..specialties.services.models import *
+from ..images.mixins import SquareIconMixin
 
 MALE = 'M'
 FEMALE = 'F'
@@ -68,11 +69,11 @@ class SpecialistsManager(models.Manager):
 
 
 @register_snippet
-class Profile(MultilingualModelMixin, models.Model):
+class Profile(MultilingualModelMixin, SquareIconMixin, models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=50, blank=False, null=False, default='')
     last_name = models.CharField(max_length=50, blank=False, null=False, default='')
-    profile_image = models.ImageField(
+    image = models.ImageField(
         upload_to='profile_pics', null=True, blank=True
     )
     gender = models.CharField(
@@ -90,8 +91,8 @@ class Profile(MultilingualModelMixin, models.Model):
 
     @property
     def image_url(self):
-        if self.profile_image:
-            return self.profile_image.url
+        if self.image:
+            return self.image.url
         else:
             if self.gender == MALE:
                 return static(MALE_AVATAR)
@@ -107,14 +108,6 @@ class Profile(MultilingualModelMixin, models.Model):
         super().save(*args, **kwargs)
         self.make_square_image()
         self.compress_image()
-
-    def make_square_image(self):
-        if self.profile_image:
-            images.make_square_image(self.profile_image.path)
-
-    def compress_image(self):
-        if self.profile_image:
-            images.compress_image(self.profile_image.path)
 
     def __str__(self):
         return self.user.username

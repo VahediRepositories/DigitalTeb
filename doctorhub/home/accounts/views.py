@@ -310,13 +310,13 @@ class ProfileUpdateView(
             phone.verified = False
             phone.save()
             sms.send_confirmation_code(phone)
-        image_data = self.request.POST.get('profile_image')
+        image_data = self.request.POST.get('image')
         if image_data:
             try:
                 file_name = f'{self.request.user.username}'
 
                 def save_profile_image(file_path, content_file):
-                    self.request.user.profile.profile_image.save(
+                    self.request.user.profile.image.save(
                         file_path, content_file, save=True
                     )
 

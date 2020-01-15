@@ -74,7 +74,7 @@
                       onsubmit="onSubmitFunction()"
                       method="POST">
                     {% csrf_token %}
-                    <input type="hidden" id="id_profile_image" name="profile_image">
+                    <input type="hidden" id="id_image" name="image">
                     <div class="form-row">
                         <div class="form-group col-md-4 mb-0">
                             {{ user_form.username|as_crispy_field }}

@@ -1,7 +1,6 @@
 from django.conf import settings
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 from django.db import models
-from django.db.models import Q
 from django.forms import TextInput
 from django.utils import translation
 from wagtail.admin.edit_handlers import MultiFieldPanel, FieldRowPanel, FieldPanel
@@ -15,8 +14,8 @@ class SpecialtyManager(models.Manager):
     def search(self, **kwargs):
         qs = self.get_queryset()
         if kwargs.get('name', ''):
-            name_query = Q(name__icontains=kwargs['name'])
-            specialist_name_query = Q(specialist_name__icontains=kwargs['name'])
+            name_query = languages.multilingual_field_search('name', kwargs['name'])
+            specialist_name_query = languages.multilingual_field_search('specialist_name', kwargs['name'])
             qs = qs.filter(
                 name_query | specialist_name_query
             )

@@ -12,3 +12,5 @@ class IsPlaceStaffOrReadOnly(IsSpecialistOrReadOnly):
                 return obj.has_staff(request.user)
             else:
                 return obj.place.has_staff(request.user)
+        else:
+            return False

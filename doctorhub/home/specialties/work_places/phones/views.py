@@ -24,15 +24,16 @@ class WorkPlacePhoneViewSet(viewsets.ModelViewSet):
     ]
 
     def perform_create(self, serializer):
-        return self.perform_save(serializer)
-
-    def perform_update(self, serializer):
-        return self.perform_save(serializer)
-
-    def perform_save(self, serializer):
         place = serializer.validated_data['place']
         if place.has_staff(self.request.user):
             return super().perform_create(serializer)
+        else:
+            raise ValidationError(translation.gettext('Non-staff users cannot add phone'))
+
+    def perform_update(self, serializer):
+        place = serializer.validated_data['place']
+        if place.has_staff(self.request.user):
+            return super().perform_update(serializer)
         else:
             raise ValidationError(translation.gettext('Non-staff users cannot add phone'))
 

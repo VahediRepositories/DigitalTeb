@@ -1,12 +1,13 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import Q
 from django.forms import TextInput
 from django.utils import translation
 from wagtail.admin.edit_handlers import MultiFieldPanel, FieldRowPanel, FieldPanel
 from wagtail.snippets.models import register_snippet
 
 from ...images.models import SquareIcon
-from ...modules import languages, images
+from ...images.mixins import SquareIconMixin
 from ...multilingual.mixins import *
 
 
@@ -100,13 +101,18 @@ class WorkPlaceManager(models.Manager):
             address_query = languages.multilingual_field_search(
                 'address', kwargs['name']
             )
+            equipment_query = languages.multilingual_field_search(
+                'equipment__name', kwargs['name']
+            ) | languages.multilingual_field_search(
+                'equipment__description', kwargs['name']
+            )
             qs = qs.filter(
-                medical_center_query | city_query | owner_query | name_query | address_query
+                medical_center_query | city_query | owner_query | name_query | address_query | equipment_query
             )
         return qs
 
 
-class WorkPlace(MultilingualModelMixin, models.Model):
+class WorkPlace(MultilingualModelMixin, SquareIconMixin, models.Model):
     medical_center = models.ForeignKey(
         MedicalCenter, on_delete=models.SET_NULL, blank=False, null=True,
         verbose_name=translation.gettext_lazy('Medical Center'),
@@ -140,13 +146,5 @@ class WorkPlace(MultilingualModelMixin, models.Model):
         super().save(*args, **kwargs)
         self.make_square_image()
         self.compress_image()
-
-    def make_square_image(self):
-        if self.image:
-            images.make_square_image(self.image.path)
-
-    def compress_image(self):
-        if self.image:
-            images.compress_image(self.image.path)
 
     objects = WorkPlaceManager()

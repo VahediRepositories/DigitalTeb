@@ -19,9 +19,20 @@ def make_square_image(image_path):
         img.save(image_path)
 
 
+# def compress_image(image_path):
+#     img = Image.open(image_path)
+#     if img.height > 512 or img.width > 512:
+#         output_size = (512, 512)
+#         img = img.resize(output_size)
+#         img.save(image_path)
+
+
 def compress_image(image_path):
     img = Image.open(image_path)
-    if img.height > 512 or img.width > 512:
-        output_size = (512, 512)
+    if img.height > 1024 or img.width > 1024:
+        output_size = (
+            img.width / 2, img.height / 2
+        )
         img = img.resize(output_size)
         img.save(image_path)
+        compress_image(image_path)

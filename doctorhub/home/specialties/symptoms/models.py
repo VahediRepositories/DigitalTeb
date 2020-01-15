@@ -5,6 +5,7 @@ from wagtail.snippets.models import register_snippet
 from ...images.models import SquareIcon
 from ...modules import images
 from ...multilingual.mixins import *
+from ...images.mixins import SquareIconMixin
 
 
 @register_snippet
@@ -25,7 +26,7 @@ class SymptomManager(models.Manager):
         return qs
 
 
-class Symptom(MultilingualModelMixin, models.Model):
+class Symptom(MultilingualModelMixin, SquareIconMixin, models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=False)
     description = models.CharField(max_length=500, blank=True)
@@ -54,13 +55,5 @@ class Symptom(MultilingualModelMixin, models.Model):
         super().save(*args, **kwargs)
         self.make_square_image()
         self.compress_image()
-
-    def make_square_image(self):
-        if self.image:
-            images.make_square_image(self.image.path)
-
-    def compress_image(self):
-        if self.image:
-            images.compress_image(self.image.path)
 
     objects = SymptomManager()

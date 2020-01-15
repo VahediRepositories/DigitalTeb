@@ -7,6 +7,7 @@ from .specialties.education.models import *
 from .specialties.models import *
 from .specialties.services.models import *
 from .specialties.work_places.models import *
+from .specialties.work_places.equipments.models import *
 
 
 @register(Profile)
@@ -52,3 +53,8 @@ class WorkPlaceTranslationOptions(TranslationOptions):
 @register(Education)
 class EducationTranslationOptions(TranslationOptions):
     fields = ('level', 'field', 'institution')
+
+
+@register(Equipment)
+class EquipmentTranslationOptions(TranslationOptions):
+    fields = ('name', 'description')
