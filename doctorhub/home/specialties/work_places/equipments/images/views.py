@@ -6,6 +6,7 @@ from ...permissions import IsPlaceStaffOrReadOnly
 
 
 class EquipmentImageViewSet(viewsets.ModelViewSet):
+
     queryset = EquipmentImage.objects.all()
     serializer_class = EquipmentImageSerializer
     permission_classes = [

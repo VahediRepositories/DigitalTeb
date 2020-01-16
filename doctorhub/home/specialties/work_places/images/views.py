@@ -2,23 +2,20 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from django.utils import translation
 from django.views.generic import CreateView, UpdateView
 from rest_framework import viewsets
 from rest_framework.exceptions import ValidationError
 
-
 from .serializers import *
-from ..permissions import *
+from ..permissions import IsPlaceStaffOrReadOnly
 from ....accounts.mixins import LoginRequiredMixin
-from ....multilingual.mixins import MultilingualViewMixin
 from ..mixins import NonStaffForbiddenMixin
 from ....accounts.phone.mixins import CheckPhoneVerifiedMixin
 
 
-class WorkPlacePhoneViewSet(viewsets.ModelViewSet):
-    queryset = WorkPlacePhone.objects.all()
-    serializer_class = WorkPlacePhoneSerializer
+class PlaceImageViewSet(viewsets.ModelViewSet):
+    queryset = WorkPlaceImage.objects.all()
+    serializer_class = PlaceImageSerializer
     permission_classes = [
         IsPlaceStaffOrReadOnly,
     ]
@@ -28,23 +25,23 @@ class WorkPlacePhoneViewSet(viewsets.ModelViewSet):
         if place.has_staff(self.request.user):
             return super().perform_create(serializer)
         else:
-            raise ValidationError(translation.gettext('Non-staff users cannot add phone'))
+            raise ValidationError(translation.gettext('Non-staff users cannot add image'))
 
     def perform_update(self, serializer):
         place = serializer.validated_data['place']
         if place.has_staff(self.request.user):
             return super().perform_update(serializer)
         else:
-            raise ValidationError(translation.gettext('Non-staff users cannot add phone'))
+            raise ValidationError(translation.gettext('Non-staff users cannot add image'))
 
 
-class PlacePhoneCreateView(
+class PlaceImageCreateView(
     LoginRequiredMixin, MultilingualViewMixin,
     NonStaffForbiddenMixin, CheckPhoneVerifiedMixin, CreateView
 ):
-    model = WorkPlacePhone
+    model = WorkPlaceImage
     fields = [
-        'phone_number'
+        'image'
     ]
 
     def get_place(self):
@@ -64,11 +61,11 @@ class PlacePhoneCreateView(
         self.check_phone_verified(self.request)
         place = self.get_place()
         self.forbid_non_staff(place)
-        phone = form.save(commit=False)
-        phone.place = place
-        phone.save()
+        place_image = form.save(commit=False)
+        place_image.place = place
+        place_image.save()
         messages.success(
-            self.request, translation.gettext('Phone Number Created.')
+            self.request, translation.gettext('Place Image Created.')
         )
         return HttpResponseRedirect(
             reverse(
@@ -80,16 +77,15 @@ class PlacePhoneCreateView(
 
     @property
     def template_name(self):
-        return f'home/specialists/{self.language_direction}/phone_create.html'
+        return f'home/specialists/{self.language_direction}/place_image_create.html'
 
 
-class PlacePhoneUpdateView(
+class PlaceImageUpdateView(
     LoginRequiredMixin, MultilingualViewMixin,
     NonStaffForbiddenMixin, CheckPhoneVerifiedMixin, UpdateView
 ):
-
-    model = WorkPlacePhone
-    fields = ['phone_number']
+    model = WorkPlaceImage
+    fields = ['image']
 
     def get_context_data(self, **kwargs):
         self.check_phone_verified(self.request)
@@ -101,7 +97,7 @@ class PlacePhoneUpdateView(
         self.forbid_non_staff(self.object.place)
         form.save()
         messages.success(
-            self.request, translation.gettext('Phone Number Updated.')
+            self.request, translation.gettext('Image Updated.')
         )
         return HttpResponseRedirect(
             reverse(
@@ -113,4 +109,4 @@ class PlacePhoneUpdateView(
 
     @property
     def template_name(self):
-        return f'home/specialists/{self.language_direction}/phone_edit.html'
+        return f'home/specialists/{self.language_direction}/place_image_edit.html'

@@ -1,20 +1,18 @@
 from django.contrib import messages
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from django.views.generic import CreateView, UpdateView, DetailView, FormView
+from django.views.generic import CreateView, UpdateView, DetailView
 from rest_framework import viewsets
 
 from .mixins import NonStaffForbiddenMixin
 from .permissions import *
-from ...permissions import *
 from .serializers import *
 from ..mixins import NonSpecialistForbiddenMixin
 from ...accounts.phone.mixins import CheckPhoneVerifiedMixin
 from ...accounts.views import LoginRequiredMixin
-from ...modules import authentication
 from ...modules.specialties import work_places
 from ...multilingual.mixins import MultilingualViewMixin
+from ...permissions import *
 
 
 class WorkPlaceViewSet(viewsets.ModelViewSet):

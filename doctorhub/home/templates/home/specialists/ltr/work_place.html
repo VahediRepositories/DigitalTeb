@@ -8,6 +8,7 @@
 {% block additional_css %}
 
     <link href="{% static 'doctorhub/main/dist/css/pages/widget-page.css' %}" rel="stylesheet">
+    <link href="{% static 'doctorhub/assets/node_modules/Magnific-Popup-master/dist/magnific-popup.css' %}" rel="stylesheet">
 
 {% endblock %}
 
@@ -28,5 +29,7 @@
 {% block additional_js %}
 
     {% include 'home/specialists/work_places/remove_js.html' %}
+    <script src="{% static 'doctorhub/assets/node_modules/Magnific-Popup-master/dist/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'doctorhub/assets/node_modules/Magnific-Popup-master/dist/jquery.magnific-popup-init.js' %}"></script>
 
 {% endblock %}

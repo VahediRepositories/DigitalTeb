@@ -1,4 +1,6 @@
 from ...specialties.work_places.phones.models import *
+from ...specialties.work_places.images.models import *
+from .. import images
 
 
 def save_place_image(place, image_data):
@@ -22,3 +24,7 @@ def get_default_work_place():
 
 def get_place_phones(place):
     return WorkPlacePhone.objects.filter(place=place)
+
+
+def get_place_images(place):
+    return WorkPlaceImage.objects.filter(place=place)

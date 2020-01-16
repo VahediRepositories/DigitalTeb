@@ -13,3 +13,8 @@ def work_place_default_image_url():
 @register.simple_tag
 def place_phones(place):
     return work_places.get_place_phones(place)
+
+
+@register.simple_tag
+def place_images(place):
+    return work_places.get_place_images(place)

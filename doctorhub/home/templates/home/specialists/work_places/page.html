@@ -51,6 +51,11 @@
                                 {% trans 'Phone' %}
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#images" role="tab">
+                                {% trans 'Images' %}
+                            </a>
+                        </li>
                     </ul>
                     <!-- Tab panes -->
                     <div class="tab-content">
@@ -80,6 +85,30 @@
                                     <a href="{% url 'create_place_phone' object.pk %}"
                                        class="btn btn-success btn-lg">
                                         {% trans 'Add New Phone' %}
+                                        <i class="ti-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="images" role="tabpanel">
+                            <div class="card-body" style="height: 400px; overflow-y: scroll;">
+                                {% place_images object as images %}
+                                {% if images %}
+                                    {% with edit_mode=True %}
+                                        {% with bg_color='bg-dark' %}
+                                            {% include 'home/specialists/work_places/images/gallery.html' %}
+                                        {% endwith %}
+                                    {% endwith %}
+                                {% else %}
+                                    <p class="text-danger text-center">
+                                        {% trans "Upload images of your work place." %}
+                                    </p>
+                                {% endif %}
+                                <br>
+                                <div class="text-center">
+                                    <a href="{% url 'create_place_image' object.pk %}"
+                                       class="btn btn-success btn-lg">
+                                        {% trans 'Add New Image' %}
                                         <i class="ti-plus"></i>
                                     </a>
                                 </div>

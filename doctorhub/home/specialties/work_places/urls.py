@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 
 from . import views
 from .phones import urls as phone_urls
+from .images import urls as image_urls
 
 router = DefaultRouter()
 router.register(
@@ -28,6 +29,9 @@ urlpatterns = [
     ),
     path(
         'phones/', include(phone_urls)
+    ),
+    path(
+        'images/', include(image_urls)
     ),
 
     path('api/', include(router.urls))
