@@ -71,6 +71,10 @@ class MedicalCenter(SquareIcon, MultilingualModelMixin, models.Model):
         ),
     ]
 
+    @property
+    def default_plural_name(self):
+        return self.get_default_field('plural_name')
+
     def save(self, *args, **kwargs):
         self.set_multilingual_fields(
             ['name', 'plural_name']

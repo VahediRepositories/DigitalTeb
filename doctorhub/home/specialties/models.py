@@ -70,11 +70,7 @@ class Specialty(MultilingualModelMixin, models.Model):
 
     @property
     def default_name(self):
-        current = languages.get_language_code()
-        translation.activate(settings.LANGUAGE_CODE)
-        name = self.name
-        translation.activate(current)
-        return name
+        return self.get_default_field('name')
 
     def __str__(self):
         return self.name

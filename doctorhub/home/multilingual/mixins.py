@@ -25,3 +25,8 @@ class MultilingualModelMixin:
                         self, f'{field_name}_{languages.get_translated_field_postfix(current_language)}'
                     )
                     setattr(self, translated_field_name, current_field)
+
+    def get_default_field(self, field_name):
+        default_language = languages.get_default_language()
+        default_field_name = f'{field_name}_{languages.get_translated_field_postfix(default_language)}'
+        return getattr(self, default_field_name)
