@@ -1,39 +1,39 @@
 {% load i18n %}
+{% load wagtailimages_tags %}
 
-<div class="row">
-    <div class="card-columns el-element-overlay">
-        {% for image in images %}
-            <div class="card {{ bg_color }}">
+<div class="row el-element-overlay">
+    {% for image in images %}
+        <div class="col-md-6">
+            <div class="card bg-transparent">
                 <div class="el-card-item">
                     <div class="el-card-avatar el-overlay-1">
-                        <a class="image-popup-vertical-fit" href="{{ image.image_url }}"> 
-                            <img src="{{ image.image_url }}" alt="{{ image.place.name }}">
-                        </a>
-                    </div>
-                </div>
-                {% if edit_mode %}
-                    <div class="el-card-content">
-                        <div class="row">
-                            <div class="col-md-6 col-sm-12 col-xs-12">
-                                <a class="btn btn-lg btn-outline-success"
-                                   href="{% url 'edit_place_image' image.pk %}"
-                                   style="width: 100%;">
-                                    {% trans 'Edit' %}
-                                    <i class="ti-settings"></i>
-                                </a>
-                            </div>
-                            <div class="col-md-6 col-sm-12 col-xs-12">
-                                <button data-detail-url="{% url 'work-place-images-detail' image.pk %}"
-                                        class="btn btn-danger btn-lg delete-image"
-                                        style="width: 100%;">
-                                    {% trans 'Delete' %}
-                                    <i class="ti-eraser"></i>
-                                </button>
-                            </div>
+                        {% image image.wagtail_image fill-512x300 as image_preview %}
+                        <img src="{{ image_preview.url }}" alt="{{ image_preview.alt }}"/>
+                        <div class="el-overlay">
+                            <ul class="el-info">
+                                <li><a class="btn default btn-outline image-popup-vertical-fit"
+                                       href="{{ image.image_url }}"><i class="icon-magnifier"></i></a></li>
+                            </ul>
                         </div>
                     </div>
-                {% endif %}
+                    <div class="el-card-content">
+                        {% if edit_mode %}
+                            <div class="row">
+                                <div class="col-md-2 col-sm-12 col-xs-12"></div>
+                                <div class="col-md-8 col-sm-12 col-xs-12">
+                                    <button data-detail-url="{% url 'work-place-images-detail' image.pk %}"
+                                            class="btn btn-danger btn-lg delete-image"
+                                            style="width: 100%;">
+                                        {% trans 'Delete' %}
+                                        <i class="ti-eraser"></i>
+                                    </button>
+                                </div>
+                                <div class="col-md-2 col-sm-12 col-xs-12"></div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-        {% endfor %}
-    </div>
+        </div>
+    {% endfor %}
 </div>

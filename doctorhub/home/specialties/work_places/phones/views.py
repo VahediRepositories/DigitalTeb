@@ -61,7 +61,6 @@ class PlacePhoneCreateView(
         return context
 
     def form_valid(self, form):
-        self.check_phone_verified(self.request)
         place = self.get_place()
         self.forbid_non_staff(place)
         phone = form.save(commit=False)

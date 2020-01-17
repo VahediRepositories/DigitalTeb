@@ -20,7 +20,11 @@ class Equipment(MultilingualModelMixin, SquareIconMixin, models.Model):
         if self.image:
             return self.image.url
         else:
-            return EquipmentDefaultIcon.objects.last().image_url
+            return self.get_default_icon().image_url
+
+    @staticmethod
+    def get_default_icon():
+        return EquipmentDefaultIcon.objects.last()
 
     def save(self, *args, **kwargs):
         self.set_multilingual_fields(

@@ -1,13 +1,12 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models import Q
 from django.forms import TextInput
 from django.utils import translation
 from wagtail.admin.edit_handlers import MultiFieldPanel, FieldRowPanel, FieldPanel
 from wagtail.snippets.models import register_snippet
 
-from ...images.models import SquareIcon
 from ...images.mixins import SquareIconMixin
+from ...images.models import SquareIcon
 from ...multilingual.mixins import *
 
 
@@ -114,10 +113,10 @@ class WorkPlaceManager(models.Manager):
 
 class WorkPlace(MultilingualModelMixin, SquareIconMixin, models.Model):
     medical_center = models.ForeignKey(
-        MedicalCenter, on_delete=models.SET_NULL, blank=False, null=True,
+        MedicalCenter, on_delete=models.PROTECT, blank=False, null=True,
         verbose_name=translation.gettext_lazy('Medical Center'),
     )
-    city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True, blank=False)
+    city = models.ForeignKey(City, on_delete=models.PROTECT, null=True, blank=False)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=False)
     website = models.URLField(blank=True)

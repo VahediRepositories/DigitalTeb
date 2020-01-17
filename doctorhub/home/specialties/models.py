@@ -27,12 +27,12 @@ class Specialty(MultilingualModelMixin, models.Model):
     name = models.TextField()
     specialist_name = models.TextField(default='')
     group = models.OneToOneField(
-        Group, on_delete=models.SET_NULL, blank=False, null=True
+        Group, on_delete=models.PROTECT, blank=False, null=True
     )
     image = models.ForeignKey(
         'wagtailimages.Image',
         help_text='high quality square image',
-        null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
+        null=True, blank=False, on_delete=models.PROTECT, related_name='+'
     )
 
     panels = [

@@ -18,3 +18,8 @@ def place_phones(place):
 @register.simple_tag
 def place_images(place):
     return work_places.get_place_images(place)
+
+
+@register.simple_tag
+def place_equipments(place):
+    return work_places.get_place_equipments(place)

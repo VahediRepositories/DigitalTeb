@@ -7,7 +7,7 @@ class SquareIcon(models.Model):
     image = models.ForeignKey(
         'wagtailimages.Image',
         help_text='high quality square image',
-        null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
+        null=True, blank=False, on_delete=models.PROTECT, related_name='+'
     )
 
     @property

@@ -31,7 +31,7 @@ def compress_image(image_path):
     img = Image.open(image_path)
     if img.height > 1024 or img.width > 1024:
         output_size = (
-            img.width / 2, img.height / 2
+            int(img.width / 2), int(img.height / 2)
         )
         img = img.resize(output_size)
         img.save(image_path)

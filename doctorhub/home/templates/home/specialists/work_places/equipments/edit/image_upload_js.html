@@ -1,0 +1,5 @@
+{% load static %}
+
+{% with initial_image_url=object.image_url %}
+    {% include 'home/croppie/single_image_upload_js.html' %}
+{% endwith %}

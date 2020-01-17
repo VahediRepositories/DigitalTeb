@@ -1,0 +1,7 @@
+{% load i18n %}
+
+{% trans 'Equipment Deleted!' as success_message %}
+{% url 'work_place_profile' object.pk as success_redirect_url %}
+{% with remove_button_class="delete-equipment" %}
+    {% include 'home/sweet_alert_remove_js.html' %}
+{% endwith %}

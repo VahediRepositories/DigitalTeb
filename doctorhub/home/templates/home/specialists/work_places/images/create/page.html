@@ -14,7 +14,7 @@
             </div>
             <div class="card-body bg-dark" style="padding-left: 10%; padding-right: 10%;">
 
-                <form method="POST">
+                <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form|crispy }}
                     <br>

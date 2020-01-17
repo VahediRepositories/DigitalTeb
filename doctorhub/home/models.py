@@ -21,6 +21,7 @@ from .modules import text_processing, pagination
 from .modules.specialties import specialties
 from .multilingual.pages.models import MultilingualPage, MonolingualPage
 from .specialties.models import *
+from .specialties.work_places.models import *
 
 
 class DigitalTebPageMixin:
@@ -100,7 +101,7 @@ class ArticlesCategoryPage(
 ):
     category = models.OneToOneField(
         ArticleCategory, blank=False,
-        on_delete=models.SET_NULL, null=True
+        on_delete=models.PROTECT, null=True
     )
 
     content_panels = [
@@ -361,7 +362,7 @@ class ArticlePage(Article):
     image = models.ForeignKey(
         'wagtailimages.Image',
         help_text='high quality image',
-        null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
+        null=True, blank=False, on_delete=models.PROTECT, related_name='+'
     )
 
     def hit_count(self, request):
@@ -374,18 +375,6 @@ class ArticlePage(Article):
 
     promote_panels = []
     settings_panels = []
-
-    # api_fields = [
-    #     APIField('categories', serializer=ArticleCategoriesField()),
-    #     APIField('tags'),
-    #     APIField('image', serializer=ImageRenditionField(
-    #         'fill-2000x2000-c80|jpegquality-100')
-    #              ),
-    #     APIField('article_summary'),
-    #     APIField('article_introduction'),
-    #     APIField('article_conclusion'),
-    #     APIField('paragraphs', serializer=ParagraphsField()),
-    # ]
 
     @property
     def manager(self):
@@ -412,10 +401,11 @@ class SpecialistsPage(
     settings_panels = []
 
     def serve(self, request, *args, **kwargs):
-        # self.check_phone_verified(request)
-        self.seo_title = translation.gettext('Specialists')
+        self.check_phone_verified(request)
+        self.seo_title = translation.gettext('Medicare Specialists')
         self.search_description = translation.gettext(
-            'Talk to a specialist online, get your medication and health screening packages from wherever you are!'
+            # 'Talk to a specialist online, get your medication and health screening packages from wherever you are!'
+            'Find out everything about specialists, medical centers, equipments, ...'
         )
         return super().serve(request, *args, **kwargs)
 
@@ -451,12 +441,60 @@ class SpecialistsPage(
         return super().get_template_path(SpecialistsPage)
 
 
+class MedicalCentersPage(
+    DigitalTebPageMixin, MetadataPageMixin, ParentPageMixin, MultilingualViewMixin
+):
+    content_panels = []
+    promote_panels = []
+    settings_panels = []
+
+    def serve(self, request, *args, **kwargs):
+        self.check_phone_verified(request)
+        self.seo_title = translation.gettext('Medical Centers')
+        self.search_description = translation.gettext(
+            # 'Talk to a specialist online, get your medication and health screening packages from wherever you are!'
+            'Find out everything about medical centers, specialists, equipments, ...'
+        )
+        return super().serve(request, *args, **kwargs)
+
+    def get_context(self, request, *args, **kwargs):
+        context = super().get_context(request, *args, **kwargs)
+        context['places'] = pagination.get_paginated_objects(
+            request, self.places
+        )
+        return context
+
+    @property
+    def places(self):
+        return [
+            child_page for child_page in self.child_pages if isinstance(child_page, WorkPlacePage)
+        ]
+
+    def save(self, *args, **kwargs):
+        self.title = 'Medical Centers'
+        super().save(*args, **kwargs)
+
+    @property
+    def translated_title(self):
+        return translation.gettext('Medical Centers')
+
+    parent_page_types = ['home.HomePage']
+    subpage_types = [
+        'home.WorkPlacePage',
+        'home.MedicalCenterPage',
+    ]
+
+    @property
+    def template(self):
+        return super().get_template_path(SpecialistsPage)
+
+
 class SpecialtyPage(
     DigitalTebPageMixin, MetadataPageMixin, MultilingualPage
 ):
     specialty = models.OneToOneField(
         Specialty, blank=False,
-        on_delete=models.SET_NULL, null=True
+        on_delete=models.PROTECT, null=True
     )
 
     content_panels = [
@@ -483,16 +521,14 @@ class SpecialtyPage(
         return context
 
     def serve(self, request, *args, **kwargs):
-        self.search_description = translation.gettext(
-            '%(specialty)s specialists'
-        ) % {
-                                      'specialty': self.specialty.name
-                                  }
         self.seo_title = translation.gettext(
-            'Specialists - %(specialty)s'
+            'Medicare Specialists - %(specialty)s'
+        )
+        self.search_description = translation.gettext(
+            'Find out everything about %(specialty)s: specialists, medical centers, equipments, ...'
         ) % {
-                             'specialty': self.specialty.name
-                         }
+            'specialty': self.specialty.name
+        }
         return super().serve(request, *args, **kwargs)
 
     def save(self, *args, **kwargs):
@@ -507,12 +543,27 @@ class SpecialtyPage(
     subpage_types = []
 
 
+class MedicalCenterPage(
+    DigitalTebPageMixin, MetadataPageMixin, ParentPageMixin, MultilingualViewMixin
+):
+    medical_center = models.OneToOneField(
+        MedicalCenter, blank=False,
+        on_delete=models.PROTECT, null=True
+    )
+
+    content_panels = [
+        SnippetChooserPanel('specialty'),
+    ]
+    promote_panels = []
+    settings_panels = []
+
+
 class SpecialistPage(
     DigitalTebPageMixin, MetadataPageMixin,
     MultilingualPage
 ):
     user = models.OneToOneField(
-        User, blank=False, on_delete=models.SET_NULL, null=True
+        User, blank=False, on_delete=models.PROTECT, null=True
     )
 
     content_panels = []

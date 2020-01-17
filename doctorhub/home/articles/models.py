@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.utils import translation
 from modelcluster.fields import ParentalKey
 from wagtail.admin.edit_handlers import MultiFieldPanel, FieldRowPanel, FieldPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
@@ -14,12 +15,12 @@ class ArticleCategory(MultilingualModelMixin, Category):
     horizontal_image = models.ForeignKey(
         'wagtailimages.Image',
         help_text='high quality horizontal image',
-        null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
+        null=True, blank=False, on_delete=models.PROTECT, related_name='+'
     )
     square_image = models.ForeignKey(
         'wagtailimages.Image',
         help_text='high quality square image',
-        null=True, blank=False, on_delete=models.SET_NULL, related_name='+'
+        null=True, blank=False, on_delete=models.PROTECT, related_name='+'
     )
 
     @property

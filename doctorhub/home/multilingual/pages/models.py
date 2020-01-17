@@ -33,7 +33,7 @@ class MultilingualPage(Page):
 
 class MonolingualPage(MultilingualPage):
     language = models.ForeignKey(
-        Language, on_delete=models.SET_NULL,
+        Language, on_delete=models.PROTECT,
         null=True, blank=False
     )
 
