@@ -440,52 +440,52 @@ class SpecialistsPage(
         return super().get_template_path(SpecialistsPage)
 
 
-class MedicalCentersPage(
-    DigitalTebPageMixin, MetadataPageMixin, ParentPageMixin, MultilingualPage
-):
-    content_panels = []
-    promote_panels = []
-    settings_panels = []
-
-    def serve(self, request, *args, **kwargs):
-        self.check_phone_verified(request)
-        self.seo_title = translation.gettext('Medical Centers')
-        self.search_description = translation.gettext(
-            # 'Talk to a specialist online, get your medication and health screening packages from wherever you are!'
-            'Find out everything about medical centers, specialists, equipments, ...'
-        )
-        return super().serve(request, *args, **kwargs)
-
-    def get_context(self, request, *args, **kwargs):
-        context = super().get_context(request, *args, **kwargs)
-        context['places'] = pagination.get_paginated_objects(
-            request, self.places
-        )
-        return context
-
-    @property
-    def places(self):
-        return [
-            child_page for child_page in self.child_pages if isinstance(child_page, WorkPlacePage)
-        ]
-
-    def save(self, *args, **kwargs):
-        self.title = 'Medical Centers'
-        super().save(*args, **kwargs)
-
-    @property
-    def translated_title(self):
-        return translation.gettext('Medical Centers')
-
-    parent_page_types = ['home.HomePage']
-    subpage_types = [
-        'home.WorkPlacePage',
-        'home.MedicalCenterPage',
-    ]
-
-    @property
-    def template(self):
-        return super().get_template_path(SpecialistsPage)
+# class MedicalCentersPage(
+#     DigitalTebPageMixin, MetadataPageMixin, ParentPageMixin, MultilingualPage
+# ):
+#     content_panels = []
+#     promote_panels = []
+#     settings_panels = []
+#
+#     def serve(self, request, *args, **kwargs):
+#         self.check_phone_verified(request)
+#         self.seo_title = translation.gettext('Medical Centers')
+#         self.search_description = translation.gettext(
+#             # 'Talk to a specialist online, get your medication and health screening packages from wherever you are!'
+#             'Find out everything about medical centers, specialists, equipments, ...'
+#         )
+#         return super().serve(request, *args, **kwargs)
+#
+#     def get_context(self, request, *args, **kwargs):
+#         context = super().get_context(request, *args, **kwargs)
+#         context['places'] = pagination.get_paginated_objects(
+#             request, self.places
+#         )
+#         return context
+#
+#     @property
+#     def places(self):
+#         return [
+#             child_page for child_page in self.child_pages if isinstance(child_page, WorkPlacePage)
+#         ]
+#
+#     def save(self, *args, **kwargs):
+#         self.title = 'Medical Centers'
+#         super().save(*args, **kwargs)
+#
+#     @property
+#     def translated_title(self):
+#         return translation.gettext('Medical Centers')
+#
+#     parent_page_types = ['home.HomePage']
+#     subpage_types = [
+#         'home.WorkPlacePage',
+#         'home.MedicalCenterPage',
+#     ]
+#
+#     @property
+#     def template(self):
+#         return super().get_template_path(SpecialistsPage)
 
 
 class SpecialtyPage(
@@ -544,51 +544,51 @@ class SpecialtyPage(
     subpage_types = []
 
 
-class MedicalCenterPage(
-    DigitalTebPageMixin, MetadataPageMixin, ParentPageMixin, MultilingualPage
-):
-    medical_center = models.OneToOneField(
-        MedicalCenter, blank=False,
-        on_delete=models.PROTECT, null=True
-    )
-
-    content_panels = [
-        SnippetChooserPanel('medical_center'),
-    ]
-    promote_panels = []
-    settings_panels = []
-
-    @property
-    def places(self):
-        return [
-            place
-            for place in self.get_parent().specific.places
-            if self.medical_center == place.medical_center
-        ]
-
-    def get_context(self, request, *args, **kwargs):
-        context = super().get_context(request, *args, **kwargs)
-        context['places'] = pagination.get_paginated_objects(
-            request, self.places
-        )
-        return context
-
-    def serve(self, request, *args, **kwargs):
-        self.seo_title = translation.gettext(
-            'Medical Centers - %(medical_centers)s'
-        ) % {
-                             'medical_centers': self.medical_center.plural_name
-                         }
-        self.search_description = translation.gettext(
-            'Find out everything about %(medical_centers)s: specialists, equipments, ...'
-        ) % {
-                                      'medical_centers': self.medical_center.plural_name
-                                  }
-        return super().serve(request, *args, **kwargs)
-
-    def save(self, *args, **kwargs):
-        self.title = self.medical_center.default_plural_name
-        super().save(*args, **kwargs)
+# class MedicalCenterPage(
+#     DigitalTebPageMixin, MetadataPageMixin, ParentPageMixin, MultilingualPage
+# ):
+#     medical_center = models.OneToOneField(
+#         MedicalCenter, blank=False,
+#         on_delete=models.PROTECT, null=True
+#     )
+#
+#     content_panels = [
+#         SnippetChooserPanel('medical_center'),
+#     ]
+#     promote_panels = []
+#     settings_panels = []
+#
+#     @property
+#     def places(self):
+#         return [
+#             place
+#             for place in self.get_parent().specific.places
+#             if self.medical_center == place.medical_center
+#         ]
+#
+#     def get_context(self, request, *args, **kwargs):
+#         context = super().get_context(request, *args, **kwargs)
+#         context['places'] = pagination.get_paginated_objects(
+#             request, self.places
+#         )
+#         return context
+#
+#     def serve(self, request, *args, **kwargs):
+#         self.seo_title = translation.gettext(
+#             'Medical Centers - %(medical_centers)s'
+#         ) % {
+#                              'medical_centers': self.medical_center.plural_name
+#                          }
+#         self.search_description = translation.gettext(
+#             'Find out everything about %(medical_centers)s: specialists, equipments, ...'
+#         ) % {
+#                                       'medical_centers': self.medical_center.plural_name
+#                                   }
+#         return super().serve(request, *args, **kwargs)
+#
+#     def save(self, *args, **kwargs):
+#         self.title = self.medical_center.default_plural_name
+#         super().save(*args, **kwargs)
 
 
 class SpecialistPage(
@@ -658,28 +658,28 @@ class SpecialistPage(
     def template(self):
         return super().get_template_path(SpecialistPage)
 
-
-class WorkPlacePage(
-    DigitalTebPageMixin, MetadataPageMixin, MultilingualPage
-):
-    place = models.ForeignKey(WorkPlace, on_delete=models.SET_NULL, null=True, blank=False)
-
-    content_panels = []
-    promote_panels = []
-    settings_panels = []
-
-    parent_page_types = ['home.MedicalCentersPage']
-    subpage_types = []
-
-    def hit_count(self, request):
-        hit_count = HitCount.objects.get_for_object(self)
-        HitCountMixin.hit_count(request, hit_count)
-
-    def save(self, *args, **kwargs):
-        self.title = self.place.name
-        self.slug = self.place.pk
-        super().save(*args, **kwargs)
-
-    @property
-    def template(self):
-        return super().get_template_path(SpecialistPage)
+#
+# class WorkPlacePage(
+#     DigitalTebPageMixin, MetadataPageMixin, MultilingualPage
+# ):
+#     place = models.ForeignKey(WorkPlace, on_delete=models.SET_NULL, null=True, blank=False)
+#
+#     content_panels = []
+#     promote_panels = []
+#     settings_panels = []
+#
+#     parent_page_types = ['home.MedicalCentersPage']
+#     subpage_types = []
+#
+#     def hit_count(self, request):
+#         hit_count = HitCount.objects.get_for_object(self)
+#         HitCountMixin.hit_count(request, hit_count)
+#
+#     def save(self, *args, **kwargs):
+#         self.title = self.place.name
+#         self.slug = self.place.pk
+#         super().save(*args, **kwargs)
+#
+#     @property
+#     def template(self):
+#         return super().get_template_path(SpecialistPage)
