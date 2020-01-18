@@ -56,9 +56,7 @@ class SpecialistsManager(models.Manager):
             qs = qs.filter(
                 user__in=[
                     place.owner for place in WorkPlace.objects.filter(
-                        city__in=[
-                            City.objects.search(name=city)
-                        ]
+                        city__in=City.objects.search(name=city)
                     )
                 ]
             )
