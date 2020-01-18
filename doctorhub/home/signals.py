@@ -1,8 +1,9 @@
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_delete
 from django.dispatch import receiver
 
-from .models import SpecialtyPage
-from .specialties.models import Specialty
+from .models import *
+from .specialties.models import *
+from .specialties.work_places.models import *
 
 
 # @receiver(pre_delete, sender=User, dispatch_uid='delete_specialist_page')
@@ -12,6 +13,15 @@ from .specialties.models import Specialty
 #     )
 #     if specialist_pages:
 #         specialist_pages[0].delete()
+
+
+@receiver(pre_delete, sender=WorkPlace, dispatch_uid='delete_work_place_page')
+def delete_work_place_page(sender, instance, **kwargs):
+    work_place_pages = WorkPlacePage.objects.filter(
+        place=instance
+    )
+    if work_place_pages:
+        work_place_pages[0].delete()
 
 
 @receiver(post_save, sender=Specialty, dispatch_uid='create_specialty_page')

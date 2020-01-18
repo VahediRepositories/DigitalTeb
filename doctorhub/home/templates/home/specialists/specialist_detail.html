@@ -1,5 +1,6 @@
 {% load specialties %}
 {% load services %}
+{% load work_places %}
 {% load pages %}
 
 <a href="{{ specialist.get_url }}">
@@ -14,9 +15,17 @@
         {{ specialty.specialist_name }}
     </a>
 {% endfor %}
+{% active_cities specialist.user as cities %}
+{% for city in cities %}
+    <div class="badge badge-success">
+        {{ city.name }}
+    </div>
+{% endfor %}
 <br>
 <br>
 <p>
     {% user_services_str specialist.user as labels %}
     {{ labels|truncatechars:100 }}
 </p>
+<br>
+<br>

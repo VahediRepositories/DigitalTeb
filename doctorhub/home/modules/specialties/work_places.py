@@ -1,7 +1,10 @@
+from django.shortcuts import get_object_or_404
+
 from ...specialties.work_places.phones.models import *
 from ...specialties.work_places.images.models import *
 from ...specialties.work_places.equipments.models import *
 from .. import images
+from .. import text_processing
 
 
 def save_place_image(place, image_data):
@@ -33,3 +36,29 @@ def get_place_equipments(place):
 
 def get_place_images(place):
     return WorkPlaceImage.objects.filter(place=place)
+
+
+def get_user_work_places(user):
+    return WorkPlace.objects.filter(owner=user)
+
+
+def get_user_active_cities(user):
+    cities = []
+    for place in get_user_work_places(user):
+        if place.city not in cities:
+            cities.append(place.city)
+    return cities
+
+
+def get_user_active_cities_str(user):
+    cities = get_user_active_cities(user)
+    return text_processing.str_list_to_comma_separated(
+        [
+            city.name for city in cities
+        ]
+    )
+
+
+def is_in_city(user, city):
+    city = get_object_or_404(City, name=city)
+    return city in get_user_active_cities(user)

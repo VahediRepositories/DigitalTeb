@@ -35,7 +35,7 @@ class WorkPlaceCreateView(
 ):
     model = WorkPlace
     fields = [
-        'medical_center', 'name', 'address', 'city'
+        'medical_center', 'name', 'city', 'region', 'address'
     ]
 
     def get_context_data(self, **kwargs):
@@ -88,7 +88,7 @@ class WorkPlaceUpdateView(
 ):
     model = WorkPlace
     fields = [
-        'medical_center', 'name', 'address', 'city'
+        'medical_center', 'name', 'city', 'region', 'address'
     ]
 
     def get_context_data(self, **kwargs):

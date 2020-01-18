@@ -23,3 +23,8 @@ def place_images(place):
 @register.simple_tag
 def place_equipments(place):
     return work_places.get_place_equipments(place)
+
+
+@register.simple_tag
+def active_cities(user):
+    return work_places.get_user_active_cities(user)

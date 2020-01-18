@@ -18,7 +18,7 @@ from .articles.models import *
 from .articles.serializers import *
 from .mixins import *
 from .modules import text_processing, pagination
-from .modules.specialties import specialties
+from .modules.specialties import specialties, work_places
 from .multilingual.pages.models import MultilingualPage, MonolingualPage
 from .specialties.models import *
 from .specialties.work_places.models import *
@@ -411,15 +411,24 @@ class SpecialistsPage(
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         context['specialists'] = pagination.get_paginated_objects(
-            request, self.specialists
+            request, self.get_specialists_pages(request)
         )
         return context
 
-    @property
-    def specialists(self):
+    def get_specialists_pages(self, request):
         return [
-            child_page for child_page in self.child_pages if isinstance(child_page, SpecialistPage)
+            child_page
+            for child_page in self.child_pages
+            if isinstance(child_page, SpecialistPage) and self.is_specialist_in_location(child_page.user, request)
         ]
+
+    @staticmethod
+    def is_specialist_in_location(user, request):
+        city_name = request.GET.get('city', '')
+        if city_name:
+            return work_places.is_in_city(user, city_name)
+        else:
+            return True
 
     def save(self, *args, **kwargs):
         self.title = 'Specialists'
@@ -502,11 +511,10 @@ class SpecialtyPage(
     promote_panels = []
     settings_panels = []
 
-    @property
-    def specialists(self):
+    def get_specialists_pages(self, request):
         return [
             specialist
-            for specialist in self.get_parent().specific.specialists
+            for specialist in self.get_parent().specific.get_specialists_pages(request)
             if self.specialty in specialties.get_user_specialties(
                 specialist.user
             )
@@ -515,7 +523,7 @@ class SpecialtyPage(
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         context['specialists'] = pagination.get_paginated_objects(
-            request, self.specialists
+            request, self.get_specialists_pages(request)
         )
         return context
 

@@ -115,12 +115,30 @@ class WorkPlaceManager(models.Manager):
         return qs
 
 
+EAST = 'E'
+WEST = 'W'
+NORTH = 'N'
+SOUTH = 'S'
+
+REGION_CHOICES = [
+    (EAST, translation.gettext_lazy('East')),
+    (WEST, translation.gettext_lazy('West')),
+    (NORTH, translation.gettext_lazy('North')),
+    (SOUTH, translation.gettext_lazy('South'))
+]
+
+
 class WorkPlace(MultilingualModelMixin, SquareIconMixin, models.Model):
     medical_center = models.ForeignKey(
         MedicalCenter, on_delete=models.PROTECT, blank=False, null=True,
         verbose_name=translation.gettext_lazy('Medical Center'),
     )
     city = models.ForeignKey(City, on_delete=models.PROTECT, null=True, blank=False)
+    region = models.CharField(
+        max_length=1,
+        choices=REGION_CHOICES,
+        default=EAST,
+    )
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=False)
     website = models.URLField(blank=True)
