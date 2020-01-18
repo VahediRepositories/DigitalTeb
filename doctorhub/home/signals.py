@@ -33,6 +33,25 @@ def create_specialty_page(sender, instance, created, **kwargs):
         new_page.save()
 
 
+@receiver(post_save, sender=City, dispatch_uid='create_specialists_in_city_page')
+def create_specialists_in_city_page(sender, instance, created, **kwargs):
+    if not SpecialistsInCityPage.objects.filter(city=instance).exists():
+        new_page = SpecialistsInCityPage(city=instance)
+        parent_page = new_page.get_specialists_page()
+        parent_page.add_child(instance=new_page)
+        new_page.save()
+
+
+@receiver(post_save, sender=City, dispatch_uid='create_specialty_in_city_pages')
+def create_specialty_in_city_pages(sender, instance, created, **kwargs):
+    for specialty in Specialty.objects.all():
+        specialty_page = SpecialtyPage.objects.get(specialty=specialty)
+        if not specialty_page.get_children().type(SpecialtyInCityPage).exists():
+            new_page = SpecialtyInCityPage(city=instance)
+            specialty_page.add_child(instance=new_page)
+            new_page.save()
+
+
 @receiver(post_save, sender=ArticleCategory, dispatch_uid='create_articles_category_page')
 def create_articles_category_page(sender, instance, created, **kwargs):
     if not ArticlesCategoryPage.objects.filter(category=instance).exists():

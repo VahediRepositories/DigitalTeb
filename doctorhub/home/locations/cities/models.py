@@ -34,6 +34,10 @@ class City(MultilingualModelMixin, models.Model):
         )
     ]
 
+    @property
+    def default_name(self):
+        return self.get_default_field('name')
+
     class Meta:
         verbose_name_plural = 'Cities'
 

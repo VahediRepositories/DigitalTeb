@@ -1,8 +1,6 @@
-from django.conf import settings
 from django.contrib.auth.models import Group
 from django.db import models
 from django.forms import TextInput
-from django.utils import translation
 from wagtail.admin.edit_handlers import MultiFieldPanel, FieldRowPanel, FieldPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
