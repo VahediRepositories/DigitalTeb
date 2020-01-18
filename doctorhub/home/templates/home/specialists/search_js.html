@@ -144,8 +144,7 @@
 </script>
 
 <script>
-    var citiesPlaceHolder = "{% trans "Search cities" %}";
-    var citiesSearchLimit = {% search_limit %};
+    var citiesPlaceHolder = "{% trans "Filter by cities" %}";
     $(document).ready(
         function () {
             $('.cities-input').select2(
@@ -156,11 +155,8 @@
                         dataType: 'json',
                         delay: 250,
                         data: function (params) {
-                            var page = params.page || 1;
                             return {
                                 search: params.term, // search term
-                                limit: citiesSearchLimit,
-                                offset: (page - 1) * citiesSearchLimit,
                             };
                         },
                         processResults: function (data, params) {

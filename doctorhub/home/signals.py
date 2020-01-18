@@ -31,3 +31,13 @@ def create_specialty_page(sender, instance, created, **kwargs):
         parent_page = new_page.get_specialists_page()
         parent_page.add_child(instance=new_page)
         new_page.save()
+
+
+@receiver(post_save, sender=ArticleCategory, dispatch_uid='create_articles_category_page')
+def create_articles_category_page(sender, instance, created, **kwargs):
+    if not ArticlesCategoryPage.objects.filter(category=instance).exists():
+        new_page = ArticlesCategoryPage(category=instance)
+        parent_page = new_page.get_blogs_page()
+        parent_page.add_child(instance=new_page)
+        new_page.save()
+

@@ -5,11 +5,7 @@ class ParentPageMixin:
 
     @property
     def child_pages(self):
-        return [
-            child.specific for child in self.get_children().live().public().order_by(
-                '-first_published_at'
-            )
-        ]
+        return self.get_children().public().live()
 
 
 class TaggedPageMixin:

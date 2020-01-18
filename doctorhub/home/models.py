@@ -63,38 +63,6 @@ class HomePage(DigitalTebPageMixin, CheckPhoneVerifiedMixin, MultilingualPage):
         super().save(*args, **kwargs)
 
 
-class ArticlesCategoriesPage(
-    DigitalTebPageMixin,
-    MetadataPageMixin, CheckPhoneVerifiedMixin,
-    ParentPageMixin, MultilingualPage
-):
-    parent_page_types = ['home.HomePage']
-    subpage_types = ['home.ArticlesCategoryPage']
-
-    def serve(self, request, *args, **kwargs):
-        self.check_phone_verified(request)
-        categories = [page.category.name for page in self.child_pages]
-        self.search_description = text_processing.str_list_to_comma_separated(categories)
-        self.seo_title = translation.gettext('Blogs')
-        return super().serve(request, *args, **kwargs)
-
-    def save(self, *args, **kwargs):
-        self.title = 'Blogs'
-        super().save(*args, **kwargs)
-
-    @property
-    def template(self):
-        return super().get_template_path(ArticlesCategoriesPage)
-
-    @property
-    def translated_title(self):
-        return translation.gettext('Blogs')
-
-    content_panels = []
-    promote_panels = []
-    settings_panels = []
-
-
 class ArticlesCategoryPage(
     DigitalTebPageMixin, MetadataPageMixin,
     CheckPhoneVerifiedMixin, ParentPageMixin, MultilingualPage
@@ -114,8 +82,8 @@ class ArticlesCategoryPage(
     @property
     def specialists_page(self):
         for child in super().child_pages:
-            if isinstance(child, SpecialistsArticlesCategoryPage):
-                return child
+            if isinstance(child.specific, SpecialistsArticlesCategoryPage):
+                return child.specific
         new_page = SpecialistsArticlesCategoryPage()
         self.add_child(instance=new_page)
         new_page.save()
@@ -124,10 +92,10 @@ class ArticlesCategoryPage(
     @property
     def child_pages(self):
         child_pages = []
-        for child_page in super().child_pages:
-            if isinstance(child_page, MonolingualPage):
-                if child_page.supports_language():
-                    child_pages.append(child_page)
+        for child_page in super().child_pages.type(ArticlePage):
+            child_page = child_page.specific
+            if child_page.supports_language():
+                child_pages.append(child_page)
         return child_pages
 
     @property
@@ -237,6 +205,38 @@ class SpecialistsArticlesCategoryPage(
     ]
 
     subpage_types = []
+
+
+class ArticlesCategoriesPage(
+    DigitalTebPageMixin,
+    MetadataPageMixin, CheckPhoneVerifiedMixin,
+    ParentPageMixin, MultilingualPage
+):
+    parent_page_types = ['home.HomePage']
+    subpage_types = ['home.ArticlesCategoryPage']
+
+    def serve(self, request, *args, **kwargs):
+        self.check_phone_verified(request)
+        categories = [page.specific.category.name for page in self.child_pages]
+        self.search_description = text_processing.str_list_to_comma_separated(categories)
+        self.seo_title = translation.gettext('Blogs')
+        return super().serve(request, *args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        self.title = 'Blogs'
+        super().save(*args, **kwargs)
+
+    @property
+    def template(self):
+        return super().get_template_path(ArticlesCategoriesPage)
+
+    @property
+    def translated_title(self):
+        return translation.gettext('Blogs')
+
+    content_panels = []
+    promote_panels = []
+    settings_panels = []
 
 
 class Article(
@@ -350,7 +350,6 @@ class LTRArticlePageTag(TaggedItemBase):
 
 
 class ArticlePage(Article):
-    # categories = ParentalManyToManyField(ArticleCategory, blank=False)
     rtl_tags = ClusterTaggableManager(
         through=RTLArticlePageTag, blank=True, related_name='rtl_tags',
         help_text='Tags in "right to left" languages like: Persian, Arabic, Hebrew and ...'
@@ -411,24 +410,20 @@ class SpecialistsPage(
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         context['specialists'] = pagination.get_paginated_objects(
-            request, self.get_specialists_pages(request)
+            request, self.specialists
         )
         return context
 
-    def get_specialists_pages(self, request):
-        return [
-            child_page
-            for child_page in self.child_pages
-            if isinstance(child_page, SpecialistPage) and self.is_specialist_in_location(child_page.user, request)
-        ]
+    @property
+    def child_pages(self):
+        return super().child_pages.type(SpecialistPage)
 
-    @staticmethod
-    def is_specialist_in_location(user, request):
-        city_name = request.GET.get('city', '')
-        if city_name:
-            return work_places.is_in_city(user, city_name)
-        else:
-            return True
+    @property
+    def specialists(self):
+        return [
+            child_page.specific
+            for child_page in self.child_pages
+        ]
 
     def save(self, *args, **kwargs):
         self.title = 'Specialists'
@@ -440,6 +435,7 @@ class SpecialistsPage(
 
     parent_page_types = ['home.HomePage']
     subpage_types = [
+        # 'home.SpecialistsInCityPage',
         'home.SpecialistPage',
         'home.SpecialtyPage',
     ]
@@ -447,6 +443,24 @@ class SpecialistsPage(
     @property
     def template(self):
         return super().get_template_path(SpecialistsPage)
+
+
+# class SpecialistsInCityPage(
+#     DigitalTebPageMixin, MetadataPageMixin,
+#     ParentPageMixin, MultilingualPage
+# ):
+#     city = models.OneToOneField(
+#         City, blank=False,
+#         on_delete=models.PROTECT, null=True
+#     )
+#
+#     content_panels = [
+#         SnippetChooserPanel('city'),
+#     ]
+#     promote_panels = []
+#     settings_panels = []
+
+
 
 
 class MedicalCentersPage(
@@ -473,9 +487,13 @@ class MedicalCentersPage(
         return context
 
     @property
+    def child_pages(self):
+        return super().child_pages.type(WorkPlacePage)
+
+    @property
     def places(self):
         return [
-            child_page for child_page in self.child_pages if isinstance(child_page, WorkPlacePage)
+            child_page.specific for child_page in self.child_pages
         ]
 
     def save(self, *args, **kwargs):
@@ -511,10 +529,11 @@ class SpecialtyPage(
     promote_panels = []
     settings_panels = []
 
-    def get_specialists_pages(self, request):
+    @property
+    def specialists(self):
         return [
             specialist
-            for specialist in self.get_parent().specific.get_specialists_pages(request)
+            for specialist in self.get_parent().specific.specialists
             if self.specialty in specialties.get_user_specialties(
                 specialist.user
             )
@@ -523,7 +542,7 @@ class SpecialtyPage(
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         context['specialists'] = pagination.get_paginated_objects(
-            request, self.get_specialists_pages(request)
+            request, self.specialists
         )
         return context
 
