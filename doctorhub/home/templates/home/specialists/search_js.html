@@ -59,6 +59,16 @@
     {% endverbatim %}
 </script>
 
+<script id="city-result-template" type="text/x-handlebars-template">
+    {% verbatim %}
+        <div class="row">
+            <div class="col-md-12">
+                {{ city }}
+            </div>
+        </div>
+    {% endverbatim %}
+</script>
+
 <script>
     var placeHolder = "{% trans "Search symptoms, specialty, doctor's name" %}";
     var searchLimit = {% search_limit %};
@@ -149,7 +159,6 @@
         function () {
             $('.cities-input').select2(
                 {
-                    placeholder: citiesPlaceHolder,
                     ajax: {
                         url: "{% url 'cities-search' %}",
                         dataType: 'json',
@@ -173,8 +182,28 @@
                         },
                         cache: true
                     },
+                    placeholder: citiesPlaceHolder,
+                    templateResult: formatCityResult,
+                    templateSelection: formatCityResultSelection
                 }
             );
         }
     );
+
+    function formatCityResult(result) {
+        if (result.loading) {
+            return result.text;
+        }
+        var resultTemplate = $('#city-result-template').html();
+        var templateScript = Handlebars.compile(resultTemplate);
+        var context = {
+            "city": result.text,
+        };
+        return $(templateScript(context));
+    }
+
+    function formatCityResultSelection(repo) {
+        return repo.name || repo.text;
+    }
+
 </script>
