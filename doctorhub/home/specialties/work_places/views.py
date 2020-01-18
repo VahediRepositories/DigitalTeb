@@ -2,6 +2,8 @@ from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import CreateView, UpdateView, DetailView
+from drf_multiple_model.pagination import MultipleModelLimitOffsetPagination
+from drf_multiple_model.views import FlatMultipleModelAPIView
 from rest_framework import viewsets
 
 from .mixins import NonStaffForbiddenMixin
@@ -13,6 +15,7 @@ from ...accounts.views import LoginRequiredMixin
 from ...modules.specialties import work_places
 from ...multilingual.mixins import MultilingualViewMixin
 from ...permissions import *
+from ... import configurations
 
 
 class WorkPlaceViewSet(viewsets.ModelViewSet):
@@ -118,5 +121,23 @@ class WorkPlaceUpdateView(
     @property
     def template_name(self):
         return f'home/specialists/{self.language_direction}/work_place_edit.html'
+
+
+class CitiesSearchPagination(MultipleModelLimitOffsetPagination):
+    default_limit = configurations.SEARCH_LIMIT
+
+
+class CitiesSearchView(FlatMultipleModelAPIView):
+    pagination_class = CitiesSearchPagination
+
+    def get_querylist(self):
+        query = self.request.GET.get('search')
+        querylist = [
+            {
+                'queryset': City.objects.search(name=query),
+                'serializer_class': CitySerializer
+            }
+        ]
+        return querylist
 
 

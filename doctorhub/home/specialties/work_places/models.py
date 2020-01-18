@@ -10,6 +10,17 @@ from ...images.models import SquareIcon
 from ...multilingual.mixins import *
 
 
+class CityManager(models.Manager):
+
+    def search(self, **kwargs):
+        qs = self.get_queryset()
+        if kwargs.get('name', ''):
+            qs = qs.filter(
+                languages.multilingual_field_search('name', kwargs['name'])
+            )
+        return qs
+
+
 @register_snippet
 class City(MultilingualModelMixin, models.Model):
     name = models.CharField(max_length=50)
@@ -38,6 +49,8 @@ class City(MultilingualModelMixin, models.Model):
             ['name']
         )
         super().save(*args, **kwargs)
+
+    objects = CityManager()
 
 
 @register_snippet

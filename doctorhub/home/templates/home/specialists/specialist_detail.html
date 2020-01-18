@@ -17,9 +17,9 @@
 {% endfor %}
 {% active_cities specialist.user as cities %}
 {% for city in cities %}
-    <div class="badge badge-success">
+    <a href="{{ page.get_url }}?city={{ city.name }}" class="badge badge-success">
         {{ city.name }}
-    </div>
+    </a>
 {% endfor %}
 <br>
 <br>

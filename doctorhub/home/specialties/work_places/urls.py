@@ -29,6 +29,9 @@ urlpatterns = [
         views.WorkPlaceUpdateView.as_view(),
         name='edit_work_place'
     ),
+    path(
+        'cities/search/', views.CitiesSearchView.as_view(), name='cities-search'
+    ),
 
     path(
         'phones/', include(phone_urls)

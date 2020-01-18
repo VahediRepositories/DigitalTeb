@@ -140,3 +140,44 @@
         return repo.name || repo.text;
     }
 </script>
+
+<script>
+    var citiesPlaceHolder = "{% trans "Search cities" %}";
+    var citiesSearchLimit = {% search_limit %};
+    $(document).ready(
+        function () {
+            $('.cities-input').select2(
+                {
+                    placeholder: citiesPlaceHolder,
+                    ajax: {
+                        url: "{% url 'cities-search' %}",
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            var page = params.page || 1;
+                            return {
+                                search: params.term, // search term
+                                limit: citiesSearchLimit,
+                                city: $('.cities-input').val(),
+                                offset: (page - 1) * citiesSearchLimit,
+                            };
+                        },
+                        processResults: function (data, params) {
+                            var has_more = false;
+                            if (data['next']) {
+                                has_more = true;
+                            }
+                            return {
+                                results: data.results,
+                                pagination: {
+                                    more: has_more
+                                }
+                            };
+                        },
+                        cache: true
+                    },
+                }
+            );
+        }
+    );
+</script>

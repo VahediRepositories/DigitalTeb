@@ -5,6 +5,7 @@ from django.utils import translation
 from ..modules.specialties import specialties
 from ..specialties.symptoms.models import *
 from ..specialties.services.models import *
+from ..specialties.work_places.models import *
 from ..images.mixins import SquareIconMixin
 
 MALE = 'M'
@@ -49,17 +50,29 @@ class SpecialistsManager(models.Manager):
 
     def search(self, **kwargs):
         qs = self.get_queryset()
-        if kwargs.get('name', ''):
-            first_name_query = languages.multilingual_field_search('first_name', kwargs['name'])
-            last_name_query = languages.multilingual_field_search('last_name', kwargs['name'])
+        name = kwargs.get('name', '')
+        city = kwargs.get('city', '')
+        if city:
+            qs = qs.filter(
+                user__in=[
+                    place.owner for place in WorkPlace.objects.filter(
+                        city__in=[
+                            City.objects.search(name=city)
+                        ]
+                    )
+                ]
+            )
+        if name:
+            first_name_query = languages.multilingual_field_search('first_name', name)
+            last_name_query = languages.multilingual_field_search('last_name', name)
             symptom_query = Q(
                 user__in=[
-                    symptom.owner for symptom in Symptom.objects.search(name=kwargs['name'])
+                    symptom.owner for symptom in Symptom.objects.search(name=name)
                 ]
             )
             services_query = Q(
                 user__in=[
-                    service.owner for service in Label.objects.search(name=kwargs['name'])
+                    service.owner for service in Label.objects.search(name=name)
                 ]
             )
             qs = qs.filter(
