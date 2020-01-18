@@ -1,5 +1,6 @@
 from django.contrib.auth.models import Group, User
 from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from hitcount.models import HitCount
 from hitcount.views import HitCountMixin
@@ -400,6 +401,14 @@ class SpecialistsPage(
     settings_panels = []
 
     def serve(self, request, *args, **kwargs):
+        city = request.GET.get('city', '')
+        if city:
+            city = get_object_or_404(
+                City, name=city
+            )
+            return HttpResponseRedirect(
+                SpecialistsInCityPage.objects.get(city=city).get_url()
+            )
         self.seo_title = translation.gettext('Medicare Specialists')
         self.search_description = translation.gettext(
             # 'Talk to a specialist online, get your medication and health screening packages from wherever you are!'
@@ -530,6 +539,17 @@ class SpecialtyPage(
         return context
 
     def serve(self, request, *args, **kwargs):
+        city = request.GET.get('city', '')
+        if city:
+            city = get_object_or_404(
+                City, name=city
+            )
+            specialty_in_city_pages = self.get_children().type(SpecialtyInCityPage)
+            for page in specialty_in_city_pages:
+                if page.specific.city == city:
+                    return HttpResponseRedirect(
+                        page.get_url()
+                    )
         self.seo_title = translation.gettext(
             'Medicare Specialists - %(specialty)s'
         ) % {
