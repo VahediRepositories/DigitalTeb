@@ -75,6 +75,7 @@
                             return {
                                 search: params.term, // search term
                                 limit: searchLimit,
+                                city: $('.cities-input').val(),
                                 offset: (page - 1) * searchLimit,
                             };
                         },
@@ -158,7 +159,6 @@
                             return {
                                 search: params.term, // search term
                                 limit: citiesSearchLimit,
-                                city: $('.cities-input').val(),
                                 offset: (page - 1) * citiesSearchLimit,
                             };
                         },
