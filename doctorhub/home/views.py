@@ -15,9 +15,10 @@ class SearchView(FlatMultipleModelAPIView):
 
     def get_querylist(self):
         query = self.request.GET.get('search')
+        city = self.request.GET.get('city')
         querylist = [
             {
-                'queryset': Profile.specialists.search(name=query),
+                'queryset': Profile.specialists.search(name=query, city=city),
                 'serializer_class': SpecialistProfileSerializer
             }, {
                 'queryset': Specialty.objects.search(name=query),
