@@ -74,7 +74,7 @@
             $('.search-input').select2(
                 {
                     ajax: {
-                        url: "{% url 'global-search' %}",
+                        url: "{% url 'specialists-search' %}",
                         dataType: 'json',
                         delay: 250,
                         data: function (params) {
@@ -106,7 +106,14 @@
                 }
             );
             $('.search-input').on('select2:select', function (e) {
-                window.location = e.params.data.page_url;
+                var city_query = '';
+                if (e.params.data.type == 'Specialty') {
+                    var city = $('.cities-input').val();
+                    if (city) {
+                        city_query = '?city=' + city;
+                    }
+                }
+                window.location = e.params.data.page_url + city_query;
             });
         }
     );

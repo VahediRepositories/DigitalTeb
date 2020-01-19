@@ -1,11 +1,13 @@
 from django.views.generic import TemplateView
+from drf_multiple_model.pagination import MultipleModelLimitOffsetPagination
+from drf_multiple_model.views import FlatMultipleModelAPIView
 
 from .forms import *
 from .mixins import NonSpecialistForbiddenMixin
+from .serializers import *
+from ..accounts.serializers import *
 from ..accounts.views import RegistrationView, LoginRequiredMixin, ProfileUpdateView
 from ..models import *
-from ..modules import pages
-from ..multilingual.mixins import MultilingualViewMixin
 
 
 class SpecialistSignUpView(RegistrationView):
@@ -56,3 +58,25 @@ class SpecialistProfileUpdateView(
         if 'username' in self.user_form.changed_data:
             for page in SpecialistPage.objects.filter(user=self.request.user):
                 page.save()
+
+
+class SearchSpecialistsPagination(MultipleModelLimitOffsetPagination):
+    default_limit = configurations.SEARCH_LIMIT
+
+
+class SearchSpecialistsView(FlatMultipleModelAPIView):
+    pagination_class = SearchSpecialistsPagination
+
+    def get_querylist(self):
+        query = self.request.GET.get('search')
+        city = self.request.GET.get('city')
+        querylist = [
+            {
+                'queryset': Profile.specialists.search(name=query, city=city),
+                'serializer_class': SpecialistProfileSerializer
+            }, {
+                'queryset': Specialty.objects.search(name=query),
+                'serializer_class': SpecialtySerializer
+            }
+        ]
+        return querylist

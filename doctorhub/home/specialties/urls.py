@@ -28,6 +28,11 @@ urlpatterns = [
         include(work_place_urls)
     ),
     path(
+        'search/',
+        views.SearchSpecialistsView.as_view(),
+        name='specialists-search'
+    ),
+    path(
         'services/', include(service_urls)
     ),
     path(
