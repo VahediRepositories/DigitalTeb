@@ -33,6 +33,15 @@ def create_specialty_page(sender, instance, created, **kwargs):
         new_page.save()
 
 
+@receiver(post_save, sender=WorkPlace, dispatch_uid='create_work_place_page')
+def create_work_place_page(sender, instance, created, **kwargs):
+    if not WorkPlacePage.objects.filter(place=instance).exists():
+        new_page = WorkPlacePage(place=instance)
+        parent_page = new_page.get_medical_centers_page()
+        parent_page.add_child(instance=new_page)
+        new_page.save()
+
+
 @receiver(post_save, sender=City, dispatch_uid='create_specialists_in_city_page')
 def create_specialists_in_city_page(sender, instance, created, **kwargs):
     if not SpecialistsInCityPage.objects.filter(city=instance).exists():

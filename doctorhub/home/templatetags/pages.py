@@ -21,6 +21,11 @@ def specialists_url():
 
 
 @register.simple_tag
+def medical_centers_url():
+    return pages.get_medical_centers_page().get_url()
+
+
+@register.simple_tag
 def specialist_url(user):
     return pages.get_specialist_page(user).get_url()
 
@@ -38,6 +43,11 @@ def profile_edit_url(user):
 @register.simple_tag
 def specialty_page_url(specialty):
     return pages.get_specialty_page(specialty).get_url()
+
+
+@register.simple_tag
+def medical_center_page_url(medical_center):
+    return pages.get_medical_center_page(medical_center).get_url()
 
 
 @register.simple_tag

@@ -15,12 +15,20 @@ def get_specialists_page():
     return DigitalTebPageMixin.get_specialists_page()
 
 
+def get_medical_centers_page():
+    return DigitalTebPageMixin.get_medical_centers_page()
+
+
 def get_specialist_page(user):
     return get_object_or_404(SpecialistPage, user=user)
 
 
 def get_specialty_page(specialty):
     return get_object_or_404(SpecialtyPage, specialty=specialty)
+
+
+def get_medical_center_page(medical_center):
+    return get_object_or_404(MedicalCenterPage, medical_center=medical_center)
 
 
 def create_specialist_page(user):
