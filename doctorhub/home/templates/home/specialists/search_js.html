@@ -42,7 +42,7 @@
 
 <script id="city-result-template" type="text/x-handlebars-template">
     {% verbatim %}
-        <div class="row">
+        <div class="row" style="width: 100%;">
             <div class="col-md-12">
                 {{ city }}
             </div>
@@ -148,7 +148,6 @@
                             };
                         },
                         processResults: function (data, params) {
-                            alert(JSON.stringify(data));
                             var has_more = false;
                             if (data['next']) {
                                 has_more = true;
