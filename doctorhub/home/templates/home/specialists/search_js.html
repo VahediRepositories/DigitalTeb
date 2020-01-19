@@ -63,7 +63,6 @@
                         delay: 250,
                         data: function (params) {
                             var page = params.page || 1;
-                            {#console.log($('.cities-input').val());#}
                             return {
                                 search: params.term, // search term
                                 limit: searchLimit,
@@ -86,7 +85,6 @@
                         cache: true
                     },
                     placeholder: placeHolder,
-                    {#minimumInputLength: 1,#}
                     templateResult: formatResult,
                     templateSelection: formatResultSelection
                 }
@@ -150,6 +148,7 @@
                             };
                         },
                         processResults: function (data, params) {
+                            alert(JSON.stringify(data));
                             var has_more = false;
                             if (data['next']) {
                                 has_more = true;
