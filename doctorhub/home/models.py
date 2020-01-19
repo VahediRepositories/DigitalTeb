@@ -20,6 +20,7 @@ from .articles.serializers import *
 from .mixins import *
 from .modules import text_processing, pagination
 from .modules.specialties import specialties, work_places
+from .modules.locations import cities
 from .multilingual.pages.models import MultilingualPage, MonolingualPage
 from .specialties.models import *
 from .specialties.work_places.models import *
@@ -401,11 +402,8 @@ class SpecialistsPage(
     settings_panels = []
 
     def serve(self, request, *args, **kwargs):
-        city = request.GET.get('city', '')
+        city = cities.get_city_from_request(request)
         if city:
-            city = get_object_or_404(
-                City, name=city
-            )
             return HttpResponseRedirect(
                 SpecialistsInCityPage.objects.get(city=city).get_url()
             )
@@ -483,6 +481,9 @@ class SpecialistsInCityPage(
         return context
 
     def serve(self, request, *args, **kwargs):
+        city = cities.get_city_from_request(request)
+        if city == self.city:
+            return HttpResponseRedirect(self.get_url())
         self.seo_title = translation.gettext(
             'Medicare Specialists - %(city)s'
         ) % {
@@ -539,11 +540,8 @@ class SpecialtyPage(
         return context
 
     def serve(self, request, *args, **kwargs):
-        city = request.GET.get('city', '')
+        city = cities.get_city_from_request(request)
         if city:
-            city = get_object_or_404(
-                City, name=city
-            )
             specialty_in_city_pages = self.get_children().type(SpecialtyInCityPage)
             for page in specialty_in_city_pages:
                 if page.specific.city == city:
@@ -606,6 +604,9 @@ class SpecialtyInCityPage(
         return context
 
     def serve(self, request, *args, **kwargs):
+        city = cities.get_city_from_request(request)
+        if city == self.city:
+            return HttpResponseRedirect(self.get_url())
         self.seo_title = translation.gettext(
             'Medicare Specialists - %(specialty)s - %(city)s'
         ) % {'specialty': self.specialty.name, 'city': self.city.name}
