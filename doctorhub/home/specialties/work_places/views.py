@@ -1,18 +1,17 @@
 from django.contrib import messages
-from django.http import HttpResponseRedirect
-from django.urls import reverse
 from django.views.generic import CreateView, UpdateView, DetailView
+from drf_multiple_model.pagination import MultipleModelLimitOffsetPagination
+from drf_multiple_model.views import FlatMultipleModelAPIView
 from rest_framework import viewsets
 
 from .mixins import NonStaffForbiddenMixin
 from .permissions import *
 from .serializers import *
 from ..mixins import NonSpecialistForbiddenMixin
-from ...accounts.phone.mixins import CheckPhoneVerifiedMixin
 from ...accounts.views import LoginRequiredMixin
-from ...modules.specialties import work_places
-from ...multilingual.mixins import MultilingualViewMixin
+from ...models import *
 from ...permissions import *
+from ...modules import pages
 
 
 class WorkPlaceViewSet(viewsets.ModelViewSet):
@@ -52,8 +51,11 @@ class WorkPlaceCreateView(
         image_data = self.request.POST.get('image')
         if image_data:
             work_places.save_place_image(place, image_data)
+        new_page = WorkPlacePage(place=place)
+        parent_page = pages.get_medical_centers_page()
+        pages.create_page(parent_page, new_page)
         messages.success(
-            self.request, translation.gettext('Work Place was saved')
+            self.request, translation.gettext('Work Place Created!')
         )
         return HttpResponseRedirect(
             reverse('work_place_profile', kwargs={'pk': place.pk})
@@ -100,9 +102,7 @@ class WorkPlaceUpdateView(
         self.forbid_non_specialist()
         place = form.save()
         image_data = self.request.POST.get('image')
-        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%', image_data)
         if image_data:
-            print('@@@@@@@@@@@@@@@@@@@@@@@@@@@', 'image sent')
             work_places.save_place_image(place, image_data)
         messages.success(
             self.request,
@@ -118,5 +118,28 @@ class WorkPlaceUpdateView(
     @property
     def template_name(self):
         return f'home/specialists/{self.language_direction}/work_place_edit.html'
+
+
+class SearchMedicalCentersPagination(MultipleModelLimitOffsetPagination):
+    default_limit = configurations.SEARCH_LIMIT
+
+
+class SearchMedicalCentersView(FlatMultipleModelAPIView):
+    pagination_class = SearchMedicalCentersPagination
+
+    def get_querylist(self):
+        query = self.request.GET.get('search')
+        city = self.request.GET.get('city')
+        querylist = [
+            {
+                'queryset': WorkPlace.objects.search(name=query, city=city),
+                'serializer_class': WorkPlaceSerializer
+            },
+            # {
+            #     'queryset': Specialty.objects.search(name=query),
+            #     'serializer_class': SpecialtySerializer
+            # }
+        ]
+        return querylist
 
 

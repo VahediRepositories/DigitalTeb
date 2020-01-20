@@ -3,7 +3,7 @@ from rest_framework.fields import SerializerMethodField
 
 from .models import *
 from ..modules import pages, text_processing
-from ..modules.specialties import services as services_module
+from ..modules.specialties import services as services_module, specialties
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -20,6 +20,10 @@ class SpecialistProfileSerializer(ProfileSerializer):
     page_url = SerializerMethodField()
     id = SerializerMethodField()
     services = SerializerMethodField()
+    specialties = SerializerMethodField()
+
+    def get_specialties(self, profile):
+        return [specialty.specialist_name for specialty in specialties.get_user_specialties(profile.user)]
 
     def get_services(self, profile):
         services = services_module.get_user_services_str(profile.user)
@@ -33,5 +37,5 @@ class SpecialistProfileSerializer(ProfileSerializer):
 
     class Meta(ProfileSerializer.Meta):
         fields = ProfileSerializer.Meta.fields + [
-            'id', 'page_url', 'services'
+            'id', 'page_url', 'services', 'specialties'
         ]

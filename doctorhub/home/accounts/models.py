@@ -124,7 +124,6 @@ class Profile(MultilingualModelMixin, SquareIconMixin, models.Model):
         return self.user.username
 
 
-@register_snippet
 class BirthDate(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birthdate = DateField(blank=False, null=True)

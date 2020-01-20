@@ -65,7 +65,7 @@ class PlaceImageCreateView(
         place_image.place = place
         place_image.save()
         messages.success(
-            self.request, translation.gettext('Place Image Created.')
+            self.request, translation.gettext('Image Created!')
         )
         return HttpResponseRedirect(
             reverse(

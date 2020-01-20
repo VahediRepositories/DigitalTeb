@@ -23,6 +23,10 @@ def get_specialist_page(user):
     return get_object_or_404(SpecialistPage, user=user)
 
 
+def get_work_place_page(place):
+    return get_object_or_404(WorkPlacePage, place=place)
+
+
 def get_specialty_page(specialty):
     return get_object_or_404(SpecialtyPage, specialty=specialty)
 
@@ -34,5 +38,9 @@ def get_medical_center_page(medical_center):
 def create_specialist_page(user):
     parent = DigitalTebPageMixin.get_specialists_page()
     page = SpecialistPage(user=user)
-    parent.add_child(instance=page)
-    page.save()
+    create_page(parent, page)
+
+
+def create_page(parent_page, new_page):
+    parent_page.add_child(instance=new_page)
+    new_page.save()

@@ -48,32 +48,43 @@ class MedicalCenter(SquareIcon, MultilingualModelMixin, models.Model):
         super().save(*args, **kwargs)
 
 
+@register_snippet
+class WorkPlaceDefaultIcon(SquareIcon):
+    pass
+
+
 class WorkPlaceManager(models.Manager):
 
     def search(self, **kwargs):
         qs = self.get_queryset()
-        if kwargs.get('name', ''):
+        name = kwargs.get('name', '')
+        city = kwargs.get('city', '')
+        if city:
+            qs = qs.filter(
+                city__in=City.objects.search(name=city)
+            )
+        if name:
             medical_center_query = languages.multilingual_field_search(
-                'medical_center__name', kwargs['name']
+                'medical_center__name', name
             ) | languages.multilingual_field_search(
-                'medical_center__plural_name', kwargs['name']
+                'medical_center__plural_name', name
             )
             city_query = languages.multilingual_field_search(
-                'city__name', kwargs['name']
+                'city__name', name
             )
             owner_query = languages.multilingual_field_search(
-                'owner__profile__first_name', kwargs['name']
+                'owner__profile__first_name', name
             ) | languages.multilingual_field_search(
-                'owner__profile__last_name', kwargs['name']
+                'owner__profile__last_name', name
             )
-            name_query = languages.multilingual_field_search('name', kwargs['name'])
+            name_query = languages.multilingual_field_search('name', name)
             address_query = languages.multilingual_field_search(
-                'address', kwargs['name']
+                'address', name
             )
             equipment_query = languages.multilingual_field_search(
-                'equipment__name', kwargs['name']
+                'equipment__name', name
             ) | languages.multilingual_field_search(
-                'equipment__description', kwargs['name']
+                'equipment__description', name
             )
             qs = qs.filter(
                 medical_center_query | city_query | owner_query | name_query | address_query | equipment_query
@@ -81,16 +92,16 @@ class WorkPlaceManager(models.Manager):
         return qs
 
 
-EAST = 'E'
-WEST = 'W'
-NORTH = 'N'
-SOUTH = 'S'
+EAST = translation.gettext_lazy('East')
+WEST = translation.gettext_lazy('West')
+NORTH = translation.gettext_lazy('North')
+SOUTH = translation.gettext_lazy('South')
 
 REGION_CHOICES = [
-    (EAST, translation.gettext_lazy('East')),
-    (WEST, translation.gettext_lazy('West')),
-    (NORTH, translation.gettext_lazy('North')),
-    (SOUTH, translation.gettext_lazy('South'))
+    ('E', EAST),
+    ('W', WEST),
+    ('N', NORTH),
+    ('S', SOUTH)
 ]
 
 
@@ -103,7 +114,8 @@ class WorkPlace(MultilingualModelMixin, SquareIconMixin, models.Model):
     region = models.CharField(
         max_length=1,
         choices=REGION_CHOICES,
-        default=EAST,
+        # default=EAST,
+        blank=True, null=True
     )
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, blank=False)
@@ -113,12 +125,23 @@ class WorkPlace(MultilingualModelMixin, SquareIconMixin, models.Model):
         upload_to='workplace_images', null=True, blank=True
     )
 
+    def get_region(self):
+        for char, side in REGION_CHOICES:
+            if char == self.region:
+                return side
+        else:
+            return None
+
     @property
     def image_url(self):
         if self.image:
             return self.image.url
         else:
             return self.medical_center.image_url
+
+    @staticmethod
+    def get_default_icon():
+        return WorkPlaceDefaultIcon.objects.last()
 
     def has_staff(self, user):
         return self.owner == user

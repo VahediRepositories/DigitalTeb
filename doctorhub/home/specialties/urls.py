@@ -24,13 +24,13 @@ urlpatterns = [
         name='edit_specialist_account'
     ),
     path(
-        'work-places/',
-        include(work_place_urls)
-    ),
-    path(
         'search/',
         views.SearchSpecialistsView.as_view(),
         name='specialists-search'
+    ),
+    path(
+        'work-places/',
+        include(work_place_urls)
     ),
     path(
         'services/', include(service_urls)

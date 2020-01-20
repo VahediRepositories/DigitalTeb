@@ -30,6 +30,11 @@ urlpatterns = [
         name='edit_work_place'
     ),
     path(
+        'search/',
+        views.SearchMedicalCentersView.as_view(),
+        name='medical-centers-search'
+    ),
+    path(
         'phones/', include(phone_urls)
     ),
     path(

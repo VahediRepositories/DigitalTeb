@@ -1,5 +1,6 @@
 from ...specialties.services.models import *
 from .. import text_processing
+from .. import images
 
 
 def save_service_image(service, image_data):

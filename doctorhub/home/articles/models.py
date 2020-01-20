@@ -80,7 +80,6 @@ class Comment(models.Model):
         return self.comment
 
 
-@register_snippet
 class ArticlePageComment(Comment):
     article = ParentalKey(
         'home.ArticlePage', related_name='article_page_comments', on_delete=models.CASCADE

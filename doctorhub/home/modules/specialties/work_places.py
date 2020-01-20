@@ -22,10 +22,6 @@ def save_place_image(place, image_data):
         traceback.print_exc()
 
 
-def get_default_work_place():
-    return WorkPlace.objects.first()
-
-
 def get_place_phones(place):
     return WorkPlacePhone.objects.filter(place=place)
 

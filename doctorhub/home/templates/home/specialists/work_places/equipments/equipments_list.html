@@ -21,7 +21,7 @@
                         <br>
                         <p>
                             {% if complete_mode %}
-                                {{ equipment.name }}
+                                {{ equipment.description }}
                             {% else %}
                                 {{ equipment.description|truncatechars:100 }}
                             {% endif %}

@@ -1,13 +1,14 @@
 from django import template
 
 from ..modules.specialties import work_places
+from ..specialties.work_places.models import *
 
 register = template.Library()
 
 
 @register.simple_tag
 def work_place_default_image_url():
-    return work_places.get_default_work_place().image_url
+    return WorkPlace.get_default_icon().image_url
 
 
 @register.simple_tag

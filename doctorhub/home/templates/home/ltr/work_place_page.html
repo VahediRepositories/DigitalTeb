@@ -6,6 +6,9 @@
 
 {% block additional_css %}
 
+    <link href="{% static 'doctorhub/assets/node_modules/Magnific-Popup-master/dist/magnific-popup.css' %}" rel="stylesheet">
+    <link href="{% static 'doctorhub/rtl/dist/css/pages/user-card.css' %}" rel="stylesheet">
+
 {% endblock %}
 
 {% block page_title %}
@@ -35,5 +38,8 @@
 {% endblock %}
 
 {% block additional_js %}
+
+    <script src="{% static 'doctorhub/assets/node_modules/Magnific-Popup-master/dist/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'doctorhub/assets/node_modules/Magnific-Popup-master/dist/jquery.magnific-popup-init.js' %}"></script>
 
 {% endblock %}

@@ -1,4 +1,6 @@
 from .. import images
+from ...specialties.work_places.equipments.models import *
+from .. import text_processing
 
 
 def save_equipment_image(equipment, image_data):
@@ -14,3 +16,16 @@ def save_equipment_image(equipment, image_data):
     except Exception as e:
         import traceback
         traceback.print_exc()
+
+
+def get_place_equipments(place):
+    return Equipment.objects.filter(place=place)
+
+
+def get_place_equipments_str(place):
+    equipments = get_place_equipments(place)
+    return text_processing.str_list_to_comma_separated(
+        [
+            equipment.name for equipment in equipments
+        ]
+    )

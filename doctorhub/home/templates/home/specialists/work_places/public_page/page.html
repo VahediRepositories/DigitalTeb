@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load hitcount_tags %}
 {% load pages %}
+{% load work_places %}
 
 
 <div class="row-flex mb-4">
@@ -16,6 +17,10 @@
                     {{ page.place.medical_center.name }}
                 </a>
                 <br>
+                <br>
+                <h4>
+                    {{ page.place.address }}
+                </h4>
                 <br>
                 <div class="row text-center justify-content-md-center">
                     <div class="col-md-4"></div>
@@ -40,12 +45,7 @@
         <div class="card" style="height: 100%;">
             <ul class="nav nav-tabs profile-tab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#address" role="tab">
-                        {% trans 'Address' %}
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" data-toggle="tab" href="#phone" role="tab">
+                    <a class="nav-link active" data-toggle="tab" href="#phone" role="tab">
                         {% trans 'Phone' %}
                     </a>
                 </li>
@@ -62,22 +62,13 @@
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
-                <div class="tab-pane active" id="address" role="tabpanel">
-                    <div class="card-body" style="height: 400px; overflow-y: scroll;">
-                        <div class="row">
-                            <div class="col-md-12">
-                                {{ page.place.address }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="tab-pane" id="phone" role="tabpanel">
+                <div class="tab-pane active" id="phone" role="tabpanel">
                     <div class="card-body" style="height: 400px; overflow-y: scroll;">
                         {% place_phones page.place as phones %}
                         {% if phones %}
                             {% with edit_mode=False %}
                                 {% with bg_color='bg-dark' %}
-                                    {% with complete_mode=True %}
+                                    {% with complete_mode=False %}
                                         {% include 'home/specialists/work_places/phone/phones_list.html' %}
                                     {% endwith %}
                                 {% endwith %}

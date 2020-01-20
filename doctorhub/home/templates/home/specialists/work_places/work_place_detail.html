@@ -1,0 +1,30 @@
+{% load specialties %}
+{% load services %}
+{% load work_places %}
+{% load pages %}
+{% load equipments %}
+
+<a href="{{ place.get_url }}">
+    <h3 class="box-title m-b-0">
+        {{ place.place.name }}
+    </h3>
+</a>
+
+<a href="{% medical_center_page_url place.place.medical_center %}" class="badge badge-primary">
+    {{ place.place.medical_center.name }}
+</a>
+<a href="{{ page.get_url }}?city={{ place.place.city.name }}" class="badge badge-success">
+    {{ place.place.city.name }}
+</a>
+{% if place.place.region %}
+    <div class="badge badge-warning">
+        {{ place.place.get_region }}
+    </div>
+{% endif %}
+<br>
+<br>
+<p>
+    {{ place.place.address }}
+</p>
+<br>
+<br>

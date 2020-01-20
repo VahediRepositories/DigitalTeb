@@ -1,0 +1,66 @@
+{% load i18n %}
+
+<script id="city-result-template" type="text/x-handlebars-template">
+    {% verbatim %}
+        <div class="row" style="width: 100%;">
+            <div class="col-md-12">
+                {{ city }}
+            </div>
+        </div>
+    {% endverbatim %}
+</script>
+
+<script>
+    var citiesPlaceHolder = "{% trans "Filter by city" %}";
+    $(document).ready(
+        function () {
+            $('.cities-input').select2(
+                {
+                    ajax: {
+                        url: "{% url 'cities-search' %}",
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return {
+                                search: params.term, // search term
+                            };
+                        },
+                        processResults: function (data, params) {
+                            var has_more = false;
+                            if (data['next']) {
+                                has_more = true;
+                            }
+                            return {
+                                results: data.results,
+                                pagination: {
+                                    more: has_more
+                                }
+                            };
+                        },
+                        cache: true
+                    },
+                    placeholder: citiesPlaceHolder,
+                    templateResult: formatCityResult,
+                    templateSelection: formatCityResultSelection
+                }
+            );
+        }
+    );
+
+    function formatCityResult(result) {
+        if (result.loading) {
+            return result.text;
+        }
+        var resultTemplate = $('#city-result-template').html();
+        var templateScript = Handlebars.compile(resultTemplate);
+        var context = {
+            "city": result.text,
+        };
+        return $(templateScript(context));
+    }
+
+    function formatCityResultSelection(repo) {
+        return repo.name || repo.text;
+    }
+
+</script>

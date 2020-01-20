@@ -8,7 +8,6 @@ from taggit.models import TaggedItemBase
 from wagtail.admin.edit_handlers import StreamFieldPanel, RichTextFieldPanel
 from wagtail.core.fields import StreamField, RichTextField
 from wagtail.core.models import Page
-from wagtail.snippets.edit_handlers import SnippetChooserPanel
 from wagtailmetadata.models import MetadataPageMixin
 
 from .accounts.phone.mixins import CheckPhoneVerifiedMixin
@@ -69,6 +68,53 @@ class HomePage(DigitalTebPageMixin, CheckPhoneVerifiedMixin, MultilingualPage):
         super().save(*args, **kwargs)
 
 
+class ArticlesCategoriesPage(
+    DigitalTebPageMixin,
+    MetadataPageMixin, CheckPhoneVerifiedMixin,
+    ParentPageMixin, MultilingualPage
+):
+    parent_page_types = ['home.HomePage']
+    subpage_types = ['home.ArticlesCategoryPage']
+
+    def serve(self, request, *args, **kwargs):
+        self.check_phone_verified(request)
+        categories = [page.specific.category.name for page in self.child_pages]
+        self.search_description = text_processing.str_list_to_comma_separated(categories)
+        self.seo_title = translation.gettext('Blogs')
+        return super().serve(request, *args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        self.title = 'Blogs'
+        super().save(*args, **kwargs)
+
+    @property
+    def template(self):
+        return super().get_template_path(ArticlesCategoriesPage)
+
+    @property
+    def translated_title(self):
+        return translation.gettext('Blogs')
+
+    def update_tree(self):
+        pages = [child.specific for child in self.child_pages.type(ArticlesCategoryPage)]
+        for category in ArticleCategory.objects.all():
+            found = False
+            for page in pages:
+                page.save()
+                if page.category == category:
+                    found = True
+            if not found:
+                new_page = ArticlesCategoryPage(category=category)
+                self.add_child(instance=new_page)
+                new_page.save()
+        for page in self.child_pages.type(ArticlesCategoryPage):
+            page.specific.update_tree()
+
+    content_panels = []
+    promote_panels = []
+    settings_panels = []
+
+
 class ArticlesCategoryPage(
     DigitalTebPageMixin, MetadataPageMixin,
     CheckPhoneVerifiedMixin, ParentPageMixin, MultilingualPage
@@ -78,22 +124,19 @@ class ArticlesCategoryPage(
         on_delete=models.PROTECT, null=True
     )
 
-    content_panels = [
-        SnippetChooserPanel('category'),
-    ]
-
+    content_panels = []
     promote_panels = []
     settings_panels = []
 
+    def update_tree(self):
+        if not super().child_pages.type(SpecialistsArticlesCategoryPage).exists():
+            new_page = SpecialistsArticlesCategoryPage()
+            self.add_child(instance=new_page)
+            new_page.save()
+
     @property
     def specialists_page(self):
-        for child in super().child_pages:
-            if isinstance(child.specific, SpecialistsArticlesCategoryPage):
-                return child.specific
-        new_page = SpecialistsArticlesCategoryPage()
-        self.add_child(instance=new_page)
-        new_page.save()
-        return new_page
+        return super().child_pages.type(SpecialistsArticlesCategoryPage).get().specific
 
     @property
     def child_pages(self):
@@ -106,10 +149,7 @@ class ArticlesCategoryPage(
 
     @property
     def articles(self):
-        return [
-            child_page
-            for child_page in self.child_pages
-        ]
+        return self.child_pages
 
     @property
     def specialists_articles(self):
@@ -211,38 +251,6 @@ class SpecialistsArticlesCategoryPage(
     ]
 
     subpage_types = []
-
-
-class ArticlesCategoriesPage(
-    DigitalTebPageMixin,
-    MetadataPageMixin, CheckPhoneVerifiedMixin,
-    ParentPageMixin, MultilingualPage
-):
-    parent_page_types = ['home.HomePage']
-    subpage_types = ['home.ArticlesCategoryPage']
-
-    def serve(self, request, *args, **kwargs):
-        self.check_phone_verified(request)
-        categories = [page.specific.category.name for page in self.child_pages]
-        self.search_description = text_processing.str_list_to_comma_separated(categories)
-        self.seo_title = translation.gettext('Blogs')
-        return super().serve(request, *args, **kwargs)
-
-    def save(self, *args, **kwargs):
-        self.title = 'Blogs'
-        super().save(*args, **kwargs)
-
-    @property
-    def template(self):
-        return super().get_template_path(ArticlesCategoriesPage)
-
-    @property
-    def translated_title(self):
-        return translation.gettext('Blogs')
-
-    content_panels = []
-    promote_panels = []
-    settings_panels = []
 
 
 class Article(
@@ -442,6 +450,34 @@ class MedicalCentersPage(
     def translated_title(self):
         return translation.gettext('Medical Centers')
 
+    def update_tree(self):
+        medical_center_pages = [page.specific for page in super().child_pages.type(MedicalCenterPage)]
+        for medical_center in MedicalCenter.objects.all():
+            found = False
+            for page in medical_center_pages:
+                page.save()
+                if page.medical_center == medical_center:
+                    found = True
+            if not found:
+                new_page = MedicalCenterPage(medical_center=medical_center)
+                self.add_child(instance=new_page)
+                new_page.save()
+
+        medical_centers_in_city_pages = [page.specific for page in super().child_pages.type(MedicalCentersInCityPage)]
+        for city in City.objects.all():
+            found = False
+            for page in medical_centers_in_city_pages:
+                page.save()
+                if page.city == city:
+                    found = True
+            if not found:
+                new_page = MedicalCentersInCityPage(city=city)
+                self.add_child(instance=new_page)
+                new_page.save()
+
+        for page in super().child_pages.type(MedicalCenterPage):
+            page.specific.update_tree()
+
     parent_page_types = ['home.HomePage']
     subpage_types = [
         'home.MedicalCentersInCityPage',
@@ -461,6 +497,34 @@ class SpecialistsPage(
     content_panels = []
     promote_panels = []
     settings_panels = []
+
+    def update_tree(self):
+        specialty_pages = [page.specific for page in super().child_pages.type(SpecialtyPage)]
+        for specialty in Specialty.objects.all():
+            found = False
+            for page in specialty_pages:
+                page.save()
+                if page.specialty == specialty:
+                    found = True
+            if not found:
+                new_page = SpecialtyPage(specialty=specialty)
+                self.add_child(instance=new_page)
+                new_page.save()
+
+        specialists_in_city_page = [page.specific for page in super().child_pages.type(SpecialistsInCityPage)]
+        for city in City.objects.all():
+            found = False
+            for page in specialists_in_city_page:
+                page.save()
+                if page.city == city:
+                    found = True
+            if not found:
+                new_page = SpecialistsInCityPage(city=city)
+                self.add_child(instance=new_page)
+                new_page.save()
+
+        for page in super().child_pages.type(SpecialtyPage):
+            page.specific.update_tree()
 
     def serve(self, request, *args, **kwargs):
         city = cities.get_city_from_request(request)
@@ -632,6 +696,19 @@ class MedicalCenterPage(
     promote_panels = []
     settings_panels = []
 
+    def update_tree(self):
+        medical_center_in_city_pages = [page.specific for page in self.child_pages.type(MedicalCenterInCityPage)]
+        for city in City.objects.all():
+            found = False
+            for page in medical_center_in_city_pages:
+                page.save()
+                if page.city == city:
+                    found = True
+            if not found:
+                new_page = MedicalCenterInCityPage(city=city)
+                self.add_child(instance=new_page)
+                new_page.save()
+
     @property
     def places(self):
         return [
@@ -681,7 +758,7 @@ class MedicalCenterPage(
 
 
 class SpecialtyPage(
-    DigitalTebPageMixin, MetadataPageMixin, MultilingualPage
+    DigitalTebPageMixin, MetadataPageMixin, ParentPageMixin, MultilingualPage
 ):
     specialty = models.OneToOneField(
         Specialty, blank=False,
@@ -691,6 +768,19 @@ class SpecialtyPage(
     content_panels = []
     promote_panels = []
     settings_panels = []
+
+    def update_tree(self):
+        specialty_in_city_pages = [page.specific for page in self.child_pages.type(SpecialtyInCityPage)]
+        for city in City.objects.all():
+            found = False
+            for page in specialty_in_city_pages:
+                page.save()
+                if page.city == city:
+                    found = True
+            if not found:
+                new_page = SpecialtyInCityPage(city=city)
+                self.add_child(instance=new_page)
+                new_page.save()
 
     @property
     def specialists(self):
@@ -886,6 +976,14 @@ class WorkPlacePage(
         self.title = self.place.name
         self.slug = self.place.pk
         super().save(*args, **kwargs)
+
+    @property
+    def medical_center(self):
+        return self.place.medical_center
+
+    @property
+    def city(self):
+        return self.place.city
 
     @property
     def template(self):

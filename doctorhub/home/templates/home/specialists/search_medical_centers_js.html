@@ -8,28 +8,41 @@
 <script src="{% static 'doctorhub/more/js/handlebars.min-v4.5.3.js' %}"></script>
 
 
-<script id="profile-result-template" type="text/x-handlebars-template">
+<script id="place-result-template" type="text/x-handlebars-template">
     {% verbatim %}
     <div class="row" style="width: 100%;">
         <div class="col-md-12">
             <div class="row align-items-center">
                 <div class="col-md-2 text-center">
                     <div style="padding-left: 20%; padding-right: 20%;">
-                        <img src="{{ image_url }}" alt="{{ name }}" class="img-circle img-fluid"
+                        <img src="{{ image_url }}" alt="{{ name }}" class="img-thumbnail img-fluid"
                              style="width: 100%; height: 100%;">
                     </div>
                     <h3 class="box-title h5 m-b-0">
                         {{ name }}
                     </h3>
-                    <div class="badge badge-primary">
-                        {{ specialty }}
-                    </div>
                 </div>
                 <div class="col-md-10 text-left not-visible-small">
-                    {{ services }}
+                    <div class="badge badge-primary">
+                        {{ medical_center }}
+                    </div>
+                    <div class="badge badge-success">
+                        {{ city }}
+                    </div>
+                    <h3>
+                        {{ address }}
+                    </h3>
                 </div>
                 <div class="col-md-10 text-center not-visible-big">
-                    {{ services }}
+                    <div class="badge badge-primary">
+                        {{ medical_center }}
+                    </div>
+                    <div class="badge badge-success">
+                        {{ city }}
+                    </div>
+                    <h3>
+                        {{ address }}
+                    </h3>
                 </div>
             </div>
         </div>
@@ -37,14 +50,14 @@
     {% endverbatim %}
 </script>
 
-<script id="specialty-result-template" type="text/x-handlebars-template">
+<script id="medical-center-result-template" type="text/x-handlebars-template">
     {% verbatim %}
     <div class="row" style="width: 100%;">
         <div class="col-md-12">
             <div class="row align-items-center">
                 <div class="col-md-2 text-center">
                     <div style="padding-left: 20%; padding-right: 20%;">
-                        <img src="{{ image_url }}" alt="{{ name }}" class="img-circle img-fluid"
+                        <img src="{{ image_url }}" alt="{{ name }}" class="img-thumbnail img-fluid"
                              style="width: 100%; height: 100%;">
                     </div>
                     <h3 class="box-title h5 m-b-0">
@@ -60,14 +73,14 @@
 </script>
 
 <script>
-    var placeHolder = "{% trans "Search symptoms, specialty, doctor's name" %}";
+    var placeHolder = "{% trans "Search medical centers, equipments, address" %}";
     var searchLimit = {% search_limit %};
     $(document).ready(
         function () {
             $('.search-input').select2(
                 {
                     ajax: {
-                        url: "{% url 'specialists-search' %}",
+                        url: "{% url 'medical-centers-search' %}",
                         dataType: 'json',
                         delay: 250,
                         data: function (params) {
@@ -100,7 +113,7 @@
             );
             $('.search-input').on('select2:select', function (e) {
                 var city_query = '';
-                if (e.params.data.type == 'Specialty') {
+                if (e.params.data.type == 'MedicalCenter') {
                     var city = $('.cities-input').val();
                     if (city) {
                         city_query = '?city=' + city;
@@ -111,21 +124,21 @@
         }
     );
 
-    function formatProfileResult(result) {
-        var resultTemplate = $('#profile-result-template').html();
+    function formatPlaceResult(result) {
+        var resultTemplate = $('#place-result-template').html();
         var templateScript = Handlebars.compile(resultTemplate);
-        var specialty = result.specialties[0];
         var context = {
             "name": result.name,
             "image_url": result.image_url,
-            "services": result.services,
-            "specialty": specialty,
+            "medical_center": result.medical_center_name,
+            "city": result.city_name,
+            "address": result.address
         };
         return templateScript(context);
     }
 
-    function formatSpecialtyResult(result) {
-        var resultTemplate = $('#specialty-result-template').html();
+    function formatMedicalCenterResult(result) {
+        var resultTemplate = $('"medical-center-result-template').html();
         var templateScript = Handlebars.compile(resultTemplate);
         var context = {
             "name": result.name,
@@ -138,10 +151,10 @@
         if (result.loading) {
             return result.text;
         }
-        if (result.type == 'Profile') {
-            return $(formatProfileResult(result));
-        } else if (result.type == 'Specialty') {
-            return $(formatSpecialtyResult(result));
+        if (result.type == 'WorkPlace') {
+            return $(formatPlaceResult(result));
+        } else if (result.type == 'MedicalCenter') {
+            return $(formatMedicalCenterResult(result));
         }
     }
 
