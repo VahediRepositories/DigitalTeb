@@ -73,6 +73,11 @@ class WorkPlaceView(
 ):
     model = WorkPlace
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['days'] = work_places.get_user_working_days(self.get_object(), self.request.user)
+        return context
+
     @property
     def template_name(self):
         return f'home/specialists/{self.language_direction}/work_place.html'

@@ -10,12 +10,12 @@ router.register(
 
 urlpatterns = [
     path(
-        'create/<place_pk>',
+        'create/<place_pk>/',
         views.PlacePhoneCreateView.as_view(),
         name='create_place_phone'
     ),
     path(
-        'update/<pk>',
+        'update/<pk>/',
         views.PlacePhoneUpdateView.as_view(),
         name='edit_place_phone',
     ),

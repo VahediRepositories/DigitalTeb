@@ -1,0 +1,7 @@
+{% load i18n %}
+
+{% trans 'Time Interval Deleted!' as success_message %}
+{% url 'week-day' object.pk as success_redirect_url %}
+{% with remove_button_class="delete-interval" %}
+    {% include 'home/sweet_alert_remove_js.html' %}
+{% endwith %}

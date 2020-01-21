@@ -5,6 +5,7 @@ from . import views
 from .phones import urls as phone_urls
 from .images import urls as image_urls
 from .equipments import urls as equipment_urls
+from .times import urls as time_urls
 
 router = DefaultRouter()
 router.register(
@@ -33,6 +34,9 @@ urlpatterns = [
         'search/',
         views.SearchMedicalCentersView.as_view(),
         name='medical-centers-search'
+    ),
+    path(
+        'times/', include(time_urls)
     ),
     path(
         'phones/', include(phone_urls)

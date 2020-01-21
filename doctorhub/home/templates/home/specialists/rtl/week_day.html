@@ -1,0 +1,40 @@
+{% extends 'doctorhub/layouts/rtl/light/green/master.html' %}
+
+{% load staticfiles %}
+{% load pages %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block additional_css %}
+
+{% endblock %}
+
+{% block page_title %}
+
+{% endblock %}
+
+{% block breadcrumb %}
+
+    <li class="breadcrumb-item active">
+        {{ object.name }}
+    </li>
+
+    <li class="breadcrumb-item">
+        <a href="{% url 'work_place_profile' object.place.pk %}">
+            {{ object.place.name }}
+        </a>
+    </li>
+
+{% endblock %}
+
+{% block main_content %}
+
+    {% include 'home/specialists/work_places/times/days/page.html' %}
+
+{% endblock %}
+
+{% block additional_js %}
+
+    {% include 'home/specialists/work_places/times/days/intervals/remove_interval_js.html' %}
+
+{% endblock %}

@@ -114,7 +114,6 @@ class WorkPlace(MultilingualModelMixin, SquareIconMixin, models.Model):
     region = models.CharField(
         max_length=1,
         choices=REGION_CHOICES,
-        # default=EAST,
         blank=True, null=True
     )
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -129,8 +128,7 @@ class WorkPlace(MultilingualModelMixin, SquareIconMixin, models.Model):
         for char, side in REGION_CHOICES:
             if char == self.region:
                 return side
-        else:
-            return None
+        return None
 
     @property
     def image_url(self):

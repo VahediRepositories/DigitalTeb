@@ -42,6 +42,10 @@
                         <div class="alert alert-warning">
                             {% include 'doctorhub/notifications/message.html' %}
                         </div>
+                    {% elif 'error' in message.tags %}
+                        <div class="alert alert-danger">
+                            {% include 'doctorhub/notifications/message.html' %}
+                        </div>
                     {% endif %}
                 {% endif %}
             {% endfor %}

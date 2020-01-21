@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404
 
 from ...specialties.work_places.phones.models import *
 from ...specialties.work_places.images.models import *
+from ...specialties.work_places.times.models import *
 from ...specialties.work_places.equipments.models import *
 from .. import images
 from .. import text_processing
@@ -58,3 +59,7 @@ def get_user_active_cities_str(user):
 def is_in_city(user, city):
     city = get_object_or_404(City, name=city)
     return city in get_user_active_cities(user)
+
+
+def get_user_working_days(place, user):
+    return WeekDay.objects.filter(place=place, owner=user)
