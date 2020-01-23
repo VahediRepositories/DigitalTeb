@@ -6,8 +6,7 @@
 {% load work_places %}
 
 <div class="row">
-    <div class="col-md-1"></div>
-    <div class="col-md-10">
+    <div class="col-md-12">
         <div class="row-flex mb-4">
             <div class="col-lg-4 col-xlg-3 col-md-5 mt-2">
                 <div class="card" style="height: 100%;">
@@ -41,8 +40,15 @@
                 <!-- Nav tabs -->
                 <div class="card" style="height: 100%;">
                     <ul class="nav nav-tabs profile-tab" role="tablist">
+                        {% if waiting_memberships %}
+                            <li class="nav-item">
+                                <a class="nav-link active" data-toggle="tab" href="#waiting-memberships" role="tab">
+                                    {% trans 'Membership Requests' %}
+                                </a>
+                            </li>
+                        {% endif %}
                         <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#working-hours" role="tab">
+                            <a class="nav-link {% if not waiting_memberships %}active{% endif %}" data-toggle="tab" href="#working-hours" role="tab">
                                 {% trans 'My Working Hours' %}
                             </a>
                         </li>
@@ -64,7 +70,52 @@
                     </ul>
                     <!-- Tab panes -->
                     <div class="tab-content">
-                        <div class="tab-pane active" id="working-hours" role="tabpanel">
+
+                        {% if waiting_memberships %}
+                            <div class="tab-pane active" id="waiting-memberships" role="tabpanel">
+                                <div class="card-body" style="height: 400px; overflow-y: scroll;">
+
+                                    <div class="row">
+                                        {% for membership in waiting_memberships %}
+                                            <div class="col-md-12">
+                                                <div class="card card-body bg-dark" style="height: 100%;">
+                                                    <div class="row align-items-center">
+                                                        <div class="col-md-4 col-lg-3 text-center">
+                                                            <a href="{% specialist_url membership.employee %}">
+                                                                <img src="{{ membership.employee.profile.image_url }}"
+                                                                     alt="{{ membership.employee.profile.name }}"
+                                                                     class="img-fluid img-circle">
+                                                            </a>
+                                                            <br>
+                                                            <br>
+                                                            {% get_specialties membership.employee as specialties %}
+                                                            {% for specialty in specialties %}
+                                                                <a href="{% specialty_page_url specialty %}"
+                                                                   class="badge badge-primary">
+                                                                    {{ specialty.specialist_name }}
+                                                                </a>
+                                                            {% endfor %}
+                                                        </div>
+                                                        <div class="col-md-8 col-lg-9 not-visible-big text-center">
+                                                            <br>
+                                                            <h4>
+                                                                {% include 'home/specialists/work_places/memberships/request_message.html' %}
+                                                            </h4>
+                                                        </div>
+                                                        <div class="col-md-8 col-lg-9 not-visible-small">
+                                                            <h4>
+                                                                {% include 'home/specialists/work_places/memberships/request_message.html' %}
+                                                            </h4>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="tab-pane {% if not waiting_memberships %}active{% endif %}" id="working-hours" role="tabpanel">
                             <div class="card-body" style="height: 400px; overflow-y: scroll;">
                                 {% if days %}
                                     {% with edit_mode=True %}
@@ -171,6 +222,5 @@
             </div>
         </div>
     </div>
-    <div class="col-md-1"></div>
 </div>
 

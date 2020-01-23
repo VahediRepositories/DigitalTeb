@@ -2,8 +2,7 @@
 
 {% if messages %}
     <div class="row">
-        <div class="col-md-1"></div>
-        <div class="col-md-10">
+        <div class="col-md-12">
             {% for message in messages %}
                 {% if 'successful-registration' in message.tags %}
                     <div class="alert alert-success">
@@ -33,6 +32,13 @@
                             {% trans 'Login' %}
                         </a>
                     </div>
+                {% elif 'info-send-membership-request' in message.tags %}
+                    <div class="alert alert-info">
+                        {% include 'doctorhub/notifications/message.html' %}
+                        <button class="btn btn-outline-info btn-lg membership-request-btn">
+                            {% trans 'Membership Request' %}
+                        </button>
+                    </div>
                 {% else %}
                     {% if 'success' in message.tags %}
                         <div class="alert alert-success">
@@ -46,10 +52,13 @@
                         <div class="alert alert-danger">
                             {% include 'doctorhub/notifications/message.html' %}
                         </div>
+                    {% elif 'info' in message.tags %}
+                        <div class="alert alert-info">
+                            {% include 'doctorhub/notifications/message.html' %}
+                        </div>
                     {% endif %}
                 {% endif %}
             {% endfor %}
         </div>
     </div>
-    <div class="col-md-1"></div>
 {% endif %}

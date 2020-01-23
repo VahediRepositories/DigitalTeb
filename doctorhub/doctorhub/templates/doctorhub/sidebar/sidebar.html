@@ -1,0 +1,15 @@
+{% load specialties %}
+
+{% include 'doctorhub/sidebar/specialists.html' %}
+{% include 'doctorhub/sidebar/medical_centers.html' %}
+{% if not request.user.is_authenticated %}
+    {% include 'doctorhub/sidebar/registration.html' %}
+    {% include 'doctorhub/sidebar/login.html' %}
+{% else %}
+    {% is_specialist request.user as user_is_specialist %}
+    {% if user_is_specialist %}
+        {% include 'doctorhub/sidebar/work_places.html' %}
+        {% include 'doctorhub/sidebar/personal_page.html' %}
+    {% endif %}
+{% endif %}
+{% include 'doctorhub/sidebar/blogs.html' %}

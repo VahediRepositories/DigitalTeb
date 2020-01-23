@@ -25,3 +25,6 @@ class SpecialtySerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'image_url', 'page_url'
         ]
+
+
+

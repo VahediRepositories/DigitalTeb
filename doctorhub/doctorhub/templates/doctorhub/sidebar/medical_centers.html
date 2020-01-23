@@ -1,0 +1,38 @@
+{% load i18n %}
+{% load pages %}
+{% load work_places %}
+
+<li>
+    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)"
+       aria-expanded="false">
+        <i class="icon-location-pin"></i>
+        <span class="hide-menu">
+            {% trans 'Medical Centers' %}
+        </span>
+    </a>
+    <ul aria-expanded="false" class="collapse">
+        <li>
+            <a href="{% medical_centers_url %}">
+                <span>
+                    {% trans 'All' %}
+                    <span class="badge badge-pill badge-cyan">{% medical_centers_size %}</span>
+                </span>
+            </a>
+        </li>
+        {% all_medical_centers as medical_centers %}
+        {% for medical_center in medical_centers %}
+        <li>
+            <a href="{% medical_center_page_url medical_center %}">
+                <span>
+                    {{ medical_center.plural_name }}
+                    {% medical_center_size medical_center as size %}
+                    {% if size %}
+                        <span class="badge badge-pill badge-cyan">{{ size }}</span>
+                    {% endif %}
+                </span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</li>
+<hr>

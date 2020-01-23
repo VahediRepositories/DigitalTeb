@@ -1,0 +1,47 @@
+{% load i18n %}
+{% load pages %}
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+    $('.accept-btn').click(
+        function (event) {
+            var button = $(event.target);
+            swal(
+                {
+                    title: "{% trans 'Are you sure?' %}",
+                    text: "{% trans "Do you want to accept this specialist's membership?" %}",
+                    icon: 'warning',
+                    buttons: [
+                        "{% trans 'Cancel' %}",
+                        "{% trans 'Ok' %}"
+                    ],
+                    dangerMode: true,
+                }
+            ).then((willDelete) => {
+                var token = '{{ csrf_token }}';
+                if (willDelete) {
+                    $.ajax({
+                        url: button.attr('data-url'),
+                        type: 'POST',
+                        data: {
+                            membership: button.attr('data-membership')
+                        },
+                        dataType: "json",
+                        headers: {"X-CSRFToken": token},
+                        success: function () {
+                            swal(
+                                "{% trans 'Membership Accepted!' %}",
+                                {
+                                    icon: "success",
+                                }
+                            ).then(() => {
+                                window.location.href = "{% url 'work_place_profile' object.pk %}";
+                            })
+                        },
+                    });
+                }
+            });
+        }
+    );
+</script>

@@ -1,7 +1,7 @@
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils import translation
 from modelcluster.fields import ParentalKey
+from notifications.models import *
 from wagtail.admin.edit_handlers import MultiFieldPanel, FieldRowPanel, FieldPanel
 from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtail.snippets.models import register_snippet
@@ -101,9 +101,36 @@ class ArticlePageComment(Comment):
             comments_list, key=lambda comment: comment.date
         )
 
-    panels = [
-        FieldPanel('owner'),
-        FieldPanel('article'),
-        FieldPanel('parent'),
-        FieldPanel('comment'),
-    ]
+    def save(self, *args, **kwargs):
+        if self.pk:
+            created = False
+        else:
+            created = True
+        super().save(*args, **kwargs)
+        if created:
+            self.comment_created()
+
+    NEW_COMMENT = 'new comment'
+    COMMENT_REPLY = 'comment reply'
+
+    def comment_created(self):
+        if not self.parent:
+            if self.owner != self.article.owner:
+                notify.send(
+                    sender=self.owner, recipient=self.article.owner,
+                    verb=self.NEW_COMMENT,
+                    action_object=self, target=self.article, level='info',
+                )
+        else:
+            if self.parent.owner != self.owner:
+                notify.send(
+                    sender=self.owner, recipient=self.parent.owner,
+                    verb=self.COMMENT_REPLY,
+                    action_object=self, target=self.article, level='info',
+                )
+            if self.owner != self.article.owner:
+                notify.send(
+                    sender=self.owner, recipient=self.article.owner,
+                    verb=self.NEW_COMMENT,
+                    action_object=self, target=self.article, level='info',
+                )

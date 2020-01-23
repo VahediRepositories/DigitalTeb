@@ -3,8 +3,8 @@
 <div class="row-flex">
     {% for day in days %}
         <div class="col-lg-6 mb-3">
-            <div class="card card-body" style="height: 100%;">
-                <div class="row align-items-center {{ bg_color }}">
+            <div class="card card-body {{ bg_color }}" style="height: 100%;">
+                <div class="row align-items-center">
                     <div class="col-md-4 col-lg-3 text-center" style="margin-bottom: 5%; margin-top: 5%;">
                         <a href="{% url 'week-day' day.pk %}">
                             <img src="{{ day.get_default_icon.image_url }}" alt="{{ day.day }}"
@@ -21,8 +21,7 @@
                 </div>
                 {% if edit_mode %}
                 <div class="row mt-3">
-                    <div class="col-md-3"></div>
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <button data-detail-url="{% url 'week-days-detail' day.pk %}"
                                 class="btn btn-danger btn-lg delete-day"
                                 style="width: 100%;">
@@ -30,7 +29,6 @@
                             <i class="ti-eraser"></i>
                         </button>
                     </div>
-                    <div class="col-md-3"></div>
                 </div>
             {% endif %}
             </div>

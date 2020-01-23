@@ -1,5 +1,6 @@
 from django.urls import path, include
 from django.views.generic import RedirectView
+import notifications.urls
 
 from . import views
 from .phone import urls as phone_urls
@@ -57,6 +58,10 @@ urlpatterns = [
         'edit/',
         views.UserProfileUpdateView.as_view(),
         name='edit_account'
+    ),
+    path(
+        'notifications/',
+        include(notifications.urls, namespace='notifications')
     ),
     path(
         'change-password/',

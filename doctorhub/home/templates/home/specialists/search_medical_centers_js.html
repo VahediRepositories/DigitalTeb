@@ -138,10 +138,10 @@
     }
 
     function formatMedicalCenterResult(result) {
-        var resultTemplate = $('"medical-center-result-template').html();
+        var resultTemplate = $('#medical-center-result-template').html();
         var templateScript = Handlebars.compile(resultTemplate);
         var context = {
-            "name": result.name,
+            "name": result.plural_name,
             "image_url": result.image_url,
         };
         return templateScript(context);

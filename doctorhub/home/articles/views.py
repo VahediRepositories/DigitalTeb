@@ -36,17 +36,20 @@ class ArticlePageCommentCreateView(
         return self.article_page.get_url()
 
     def form_valid(self, form):
-        new_comment = ArticlePageComment.objects.create(
-            owner=self.request.user, comment=form.cleaned_data['comment'],
-            article=self.article_page
-        )
-        parent = self.request.GET.get('parent-id')
-        if parent:
+        parent_pk = self.request.GET.get('parent-id', '')
+        if parent_pk:
             parent = get_object_or_404(
-                ArticlePageComment, pk=parent
+                ArticlePageComment, pk=parent_pk
             )
-            new_comment.parent = parent
-            new_comment.save()
+            ArticlePageComment.objects.create(
+                owner=self.request.user, comment=form.cleaned_data['comment'],
+                article=self.article_page, parent=parent
+            )
+        else:
+            ArticlePageComment.objects.create(
+                owner=self.request.user, comment=form.cleaned_data['comment'],
+                article=self.article_page
+            )
 
         return super().form_valid(form)
 

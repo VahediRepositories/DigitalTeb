@@ -11,6 +11,9 @@ router = DefaultRouter()
 router.register(
     'work-places', views.WorkPlaceViewSet, base_name='specialists-work-places'
 )
+router.register(
+    'memberships', views.MembershipViewSet, base_name='memberships'
+)
 
 
 urlpatterns = [
@@ -34,6 +37,21 @@ urlpatterns = [
         'search/',
         views.SearchMedicalCentersView.as_view(),
         name='medical-centers-search'
+    ),
+    path(
+        'accept-membership/',
+        views.AcceptMembershipView.as_view(),
+        name='memberships-accept'
+    ),
+    path(
+        'reject-membership/',
+        views.RejectMembershipView.as_view(),
+        name='memberships-reject'
+    ),
+    path(
+        'cancel-membership/',
+        views.CancelMembershipView.as_view(),
+        name='membership-cancel'
     ),
     path(
         'times/', include(time_urls)

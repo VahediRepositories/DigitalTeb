@@ -51,7 +51,29 @@ class WeekDay(models.Model):
         ]
 
 
+@register_snippet
+class WorkTimeIcon(SquareIcon):
+    pass
+
+
 class WorkTime(models.Model):
     day = models.ForeignKey(WeekDay, on_delete=models.CASCADE)
     begin = models.TimeField()
     end = models.TimeField()
+
+    @property
+    def place(self):
+        return self.day.place
+
+    @property
+    def owner(self):
+        return self.day.owner
+
+    @property
+    def image_url(self):
+        return WorkTimeIcon.objects.first().image_url
+
+    class Meta:
+        ordering = [
+            'begin'
+        ]

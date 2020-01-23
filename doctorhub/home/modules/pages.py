@@ -44,3 +44,7 @@ def create_specialist_page(user):
 def create_page(parent_page, new_page):
     parent_page.add_child(instance=new_page)
     new_page.save()
+
+
+def get_articles_category_page(category):
+    return ArticlesCategoryPage.objects.get(category=category)

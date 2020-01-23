@@ -1,0 +1,38 @@
+{% load i18n %}
+{% load specialties %}
+{% load pages %}
+
+<li>
+    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)"
+       aria-expanded="false">
+        <i class="icon-people"></i>
+        <span class="hide-menu">
+            {% trans 'Specialists' %}
+        </span>
+    </a>
+    <ul aria-expanded="false" class="collapse">
+        <li>
+            <a href="{% specialists_url %}">
+                <span>
+                    {% trans 'All' %}
+                    <span class="badge badge-pill badge-cyan">{% specialists_size %}</span>
+                </span>
+            </a>
+        </li>
+        {% all_specialties as specialties %}
+        {% for specialty in specialties %}
+        <li>
+            <a href="{% specialty_page_url specialty %}">
+                <span>
+                    {{ specialty.name }}
+                    {% specialty_size specialty as size %}
+                    {% if size %}
+                        <span class="badge badge-pill badge-cyan">{{ size }}</span>
+                    {% endif %}
+                </span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</li>
+<hr>

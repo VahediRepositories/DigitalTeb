@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -12,6 +13,7 @@ from ....accounts.mixins import LoginRequiredMixin
 from ..mixins import NonStaffForbiddenMixin
 from ....accounts.phone.mixins import CheckPhoneVerifiedMixin
 from ....permissions import *
+from ....modules.specialties import work_places
 
 
 class WeekDayViewSet(viewsets.ModelViewSet):
@@ -34,6 +36,50 @@ class WeekDayViewSet(viewsets.ModelViewSet):
             return super().perform_update(serializer)
         else:
             raise RestValidationError(translation.gettext('Non-staff users cannot add week days'))
+
+
+class WorkTimeViewSet(viewsets.ModelViewSet):
+    queryset = WorkTime.objects.all()
+    serializer_class = WorkTimeSerializer
+    permission_classes = [
+        IsPlaceStaffOrReadOnly & IsOwnerOrReadOnly
+    ]
+
+    def perform_create(self, serializer):
+        day = serializer.validated_data['day']
+        place = day.place
+        if place.has_staff(self.request.user) and day.owner == self.request.user:
+            work_time = WorkTime(
+                day=day, begin=serializer.validated_data['begin'], end=serializer.validated_data['end']
+            )
+            if work_places.is_working_time_valid(work_time):
+                return super().perform_create(serializer)
+            else:
+                raise RestValidationError(
+                    translation.gettext("Work time is invalid")
+                )
+        else:
+            raise RestValidationError(
+                translation.gettext("You don't have permission to add this work time")
+            )
+
+    def perform_update(self, serializer):
+        day = serializer.validated_data['day']
+        place = day.place
+        if place.has_staff(self.request.user) and day.owner == self.request.user:
+            work_time = WorkTime(
+                day=day, begin=serializer.validated_data['begin'], end=serializer.validated_data['end']
+            )
+            if work_places.is_working_time_valid(work_time):
+                return super().perform_update(serializer)
+            else:
+                raise RestValidationError(
+                    translation.gettext('Work time is invalid')
+                )
+        else:
+            return RestValidationError(
+                translation.gettext("You don't have permission to update this work time")
+            )
 
 
 class WeekDayCreateView(
@@ -65,7 +111,7 @@ class WeekDayCreateView(
         week_day.place = place
         week_day.owner = self.request.user
         if not WeekDay.objects.filter(
-            place=week_day.place, owner=week_day.owner, day=week_day.day
+                place=week_day.place, owner=week_day.owner, day=week_day.day
         ).exists():
             week_day.save()
             messages.success(
@@ -89,6 +135,61 @@ class WeekDayCreateView(
         return f'home/specialists/{self.language_direction}/week_day_create.html'
 
 
+class WorkTimeCreateView(
+    LoginRequiredMixin, MultilingualViewMixin,
+    NonStaffForbiddenMixin, CheckPhoneVerifiedMixin, CreateView
+):
+    model = WorkTime
+    fields = [
+        'begin', 'end'
+    ]
+
+    def form_valid(self, form):
+        day = self.get_day()
+        place = day.place
+        self.forbid_non_staff(place)
+        if day.owner != self.request.user:
+            raise PermissionDenied
+        work_time = form.save(commit=False)
+        work_time.day = day
+        if work_places.is_working_time_valid(work_time):
+            work_time.save()
+            messages.success(
+                self.request, translation.gettext('Time Interval Created!')
+            )
+            return HttpResponseRedirect(
+                reverse(
+                    'week-day', kwargs={
+                        'pk': day.pk
+                    }
+                )
+            )
+        else:
+            messages.error(
+                self.request, translation.gettext('Invalid Time Interval!')
+            )
+            return self.form_invalid(form)
+
+    def get_day(self):
+        return get_object_or_404(
+            WeekDay, pk=self.kwargs['day_pk']
+        )
+
+    def get_context_data(self, **kwargs):
+        self.check_phone_verified(self.request)
+        day = self.get_day()
+        place = day.place
+        self.forbid_non_staff(place)
+        context = super().get_context_data(**kwargs)
+        context['day'] = day
+        context['intervals'] = WorkTime.objects.filter(day=day)
+        return context
+
+    @property
+    def template_name(self):
+        return f'home/specialists/{self.language_direction}/work_time_create.html'
+
+
 class WeekDayView(
     LoginRequiredMixin,
     NonStaffForbiddenMixin,
@@ -96,11 +197,24 @@ class WeekDayView(
 ):
     model = WeekDay
 
+    def get(self, request, *args, **kwargs):
+        return HttpResponseRedirect(
+            reverse(
+                'create_work_time', kwargs={
+                    'day_pk': self.get_object().pk
+                }
+            )
+        )
+
     @property
     def template_name(self):
         return f'home/specialists/{self.language_direction}/week_day.html'
 
-    def get(self, request, *args, **kwargs):
-        self.check_phone_verified(request)
+    def get_context_data(self, **kwargs):
+        self.check_phone_verified(self.request)
         self.forbid_non_staff(self.get_object().place)
-        return super().get(request, *args, **kwargs)
+        if self.object.owner != self.request.user:
+            raise PermissionDenied
+        context = super().get_context_data(**kwargs)
+        context['intervals'] = WorkTime.objects.filter(day=self.object)
+        return context

@@ -1,0 +1,92 @@
+{% load i18n %}
+{% load pages %}
+{% load work_places %}
+{% load specialties %}
+{% load services %}
+
+<div class="row-flex">
+    {% for specialist in specialists %}
+        <div class="col-lg-8 mb-3">
+            <div class="card card-body {{ bg_color }}" style="height: 100%;">
+                <div class="row align-items-center">
+                    <div class="col-md-4 col-lg-3 text-center">
+                        <a href="{% specialist_url specialist.user %}">
+                            <img src="{{ specialist.image_url }}"
+                                 alt="{{ specialist.first_name }} {{ specialist.last_name }}"
+                                 class="img-fluid img-circle">
+                        </a>
+                        <br>
+                        <br>
+                        {% get_specialties specialist.user as specialties %}
+                        {% for specialty in specialties %}
+                            <a href="{% specialty_page_url specialty %}" class="badge badge-primary">
+                                {{ specialty.specialist_name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                    {% user_working_days place specialist.user as working_days %}
+                    <div class="col-md-8 col-lg-9 not-visible-big text-center">
+
+                        <br>
+                        <a href="{% specialist_url specialist.user %}">
+                            <h3 class="box-title m-b-0">
+                                {{ specialist.first_name }} {{ specialist.last_name }}
+                            </h3>
+                        </a>
+                        <br>
+                        {% user_services_str specialist.user as services %}
+                        <p>
+                            {{ services|truncatechars:200 }}
+                        </p>
+                        <br>
+                        {% for day in working_days %}
+                            <button class="badge badge-warning"
+                                    data-target="#day-{{ day.pk }}"
+                                    data-toggle="modal">
+                                {{ day.name }}
+                            </button>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-8 col-lg-9 not-visible-small">
+                        <a href="{% specialist_url specialist.user %}">
+                            <h3 class="box-title m-b-0">
+                                {{ specialist.first_name }} {{ specialist.last_name }}
+                            </h3>
+                        </a>
+                        <br>
+                        {% user_services_str specialist.user as services %}
+                        <p>
+                            {{ services|truncatechars:200 }}
+                        </p>
+                        <br>
+                        {% for day in working_days %}
+                            <button class="badge badge-warning"
+                                    data-target="#day-{{ day.pk }}"
+                                    data-toggle="modal">
+                                {{ day.name }}
+                            </button>
+                        {% endfor %}
+                    </div>
+                    {% for day in working_days %}
+                        <div class="modal" id="day-{{ day.pk }}">
+                            <div class="modal-dialog modal-xl">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                            {% working_intervals day as intervals %}
+                                            {% with edit_mode=False %}
+                                                {% include 'home/specialists/work_places/times/days/intervals/intervals_list.html' %}
+                                            {% endwith %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

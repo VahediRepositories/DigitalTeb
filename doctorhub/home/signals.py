@@ -39,3 +39,4 @@ def city_saved(sender, instance, created, **kwargs):
     medical_centers_page = DigitalTebPageMixin.get_medical_centers_page()
     specialists_page.update_tree()
     medical_centers_page.update_tree()
+

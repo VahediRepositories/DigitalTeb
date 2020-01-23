@@ -45,7 +45,12 @@
         <div class="card" style="height: 100%;">
             <ul class="nav nav-tabs profile-tab" role="tablist">
                 <li class="nav-item">
-                    <a class="nav-link active" data-toggle="tab" href="#phone" role="tab">
+                    <a class="nav-link active" data-toggle="tab" href="#specialists" role="tab">
+                        {% trans 'Specialists' %}
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#phone" role="tab">
                         {% trans 'Phone' %}
                     </a>
                 </li>
@@ -62,7 +67,18 @@
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
-                <div class="tab-pane active" id="phone" role="tabpanel">
+                <div class="tab-pane active" id="specialists" role="tabpanel">
+                    <div class="card-body" style="height: 400px; overflow-y: scroll;">
+                        {% with specialists=page.specialists %}
+                            {% with bg_color='bg-dark' %}
+                                {% with place=page.place %}
+                                    {% include 'home/specialists/specialists_list.html' %}
+                                {% endwith %}
+                            {% endwith %}
+                        {% endwith %}
+                    </div>
+                </div>
+                <div class="tab-pane" id="phone" role="tabpanel">
                     <div class="card-body" style="height: 400px; overflow-y: scroll;">
                         {% place_phones page.place as phones %}
                         {% if phones %}

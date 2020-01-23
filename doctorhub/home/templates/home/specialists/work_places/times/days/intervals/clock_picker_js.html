@@ -1,0 +1,15 @@
+{% load staticfiles %}
+
+<script type="text/javascript"
+        src="{% static 'doctorhub/more/plugins/clockpicker-gh-pages/dist/jquery-clockpicker.min.js' %}"></script>
+<script type="text/javascript">
+    $(document).ready(
+        function () {
+            $('.clockpicker').clockpicker(
+                {
+                    autoclose: true,
+                }
+            );
+        }
+    );
+</script>

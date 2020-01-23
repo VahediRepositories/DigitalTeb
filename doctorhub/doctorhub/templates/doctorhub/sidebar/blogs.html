@@ -1,0 +1,33 @@
+{% load i18n %}
+{% load pages %}
+{% load articles %}
+
+<li>
+    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)"
+       aria-expanded="false">
+        <i class="icon-grid"></i>
+        <span class="hide-menu">
+            {% trans 'Blogs' %}
+        </span>
+    </a>
+    <ul aria-expanded="false" class="collapse">
+        <li>
+            <a href="{% blogs_url %}">
+                <span>
+                    {% trans 'All' %}
+                </span>
+            </a>
+        </li>
+        {% all_categories as categories %}
+        {% for category in categories %}
+        <li>
+            <a href="{% articles_category_url category %}">
+                <span>
+                    {{ category.name }}
+                </span>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</li>
+<hr>

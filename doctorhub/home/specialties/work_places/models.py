@@ -1,9 +1,25 @@
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericRelation
 from django.utils import translation
+from notifications.signals import notify
+from notifications.models import *
 
 from ...images.mixins import SquareIconMixin
 from ...images.models import SquareIcon
 from ...locations.cities.models import *
+
+
+class MedicalCenterManager(models.Manager):
+    def search(self, **kwargs):
+        qs = self.get_queryset()
+        name = kwargs.get('name', '')
+        if name:
+            name_query = languages.multilingual_field_search('name', name)
+            plural_name_query = languages.multilingual_field_search('plural_name', name)
+            qs = qs.filter(
+                name_query | plural_name_query
+            )
+        return qs
 
 
 @register_snippet
@@ -46,6 +62,8 @@ class MedicalCenter(SquareIcon, MultilingualModelMixin, models.Model):
             ['name', 'plural_name']
         )
         super().save(*args, **kwargs)
+
+    objects = MedicalCenterManager()
 
 
 @register_snippet
@@ -123,6 +141,9 @@ class WorkPlace(MultilingualModelMixin, SquareIconMixin, models.Model):
     image = models.ImageField(
         upload_to='workplace_images', null=True, blank=True
     )
+    notifications = GenericRelation(
+        Notification, content_type_field='target_content_type', object_id_field='target_object_id'
+    )
 
     def get_region(self):
         for char, side in REGION_CHOICES:
@@ -141,8 +162,20 @@ class WorkPlace(MultilingualModelMixin, SquareIconMixin, models.Model):
     def get_default_icon():
         return WorkPlaceDefaultIcon.objects.last()
 
+    @property
+    def specialists(self):
+        employees = [self.owner.profile]
+        employments = Membership.objects.filter(
+            place=self, status=Membership.ACCEPTED
+        )
+        for employment in employments:
+            employees.append(employment.employee.profile)
+        return employees
+
     def has_staff(self, user):
-        return self.owner == user
+        return self.owner == user or Membership.objects.filter(
+            place=self, employee=user, status=Membership.ACCEPTED
+        ).exists()
 
     def __str__(self):
         return self.name
@@ -156,3 +189,73 @@ class WorkPlace(MultilingualModelMixin, SquareIconMixin, models.Model):
         self.compress_image()
 
     objects = WorkPlaceManager()
+
+
+class Membership(models.Model):
+    WAITING = 'waiting'
+    ACCEPTED = 'accepted'
+    REJECTED = 'rejected'
+    CANCELED = 'canceled'
+
+    STATUS_CHOICES = [
+        (WAITING, WAITING),
+        (ACCEPTED, ACCEPTED),
+        (REJECTED, REJECTED),
+        (CANCELED, CANCELED)
+    ]
+
+    place = models.ForeignKey(WorkPlace, on_delete=models.CASCADE)
+    employee = models.ForeignKey(User, on_delete=models.CASCADE)
+    status = models.CharField(
+        max_length=8,
+        choices=STATUS_CHOICES,
+        default=WAITING
+    )
+
+    MEMBERSHIP_REQUEST = 'membership request'
+    MEMBERSHIP_ACCEPTED = 'membership accepted'
+    MEMBERSHIP_REJECTED = 'membership rejected'
+    MEMBERSHIP_CANCELED = 'membership canceled'
+
+    def cancel(self):
+        if self.status == self.ACCEPTED:
+            self.status = self.CANCELED
+            self.save()
+            notify.send(
+                sender=self.employee, recipient=self.place.owner,
+                verb=self.MEMBERSHIP_CANCELED,
+                action_object=self, target=self.place, level='info',
+            )
+
+    def accept(self):
+        if self.status == self.WAITING:
+            self.status = self.ACCEPTED
+            self.save()
+            notify.send(
+                sender=self.place.owner, recipient=self.employee,
+                verb=self.MEMBERSHIP_ACCEPTED,
+                action_object=self, target=self.place, level='success',
+            )
+
+    def reject(self):
+        if self.status == self.WAITING:
+            self.status = self.REJECTED
+            self.save()
+            notify.send(
+                sender=self.place.owner, recipient=self.employee,
+                verb=self.MEMBERSHIP_REJECTED, action_object=self,
+                target=self.place, level='info'
+            )
+
+    def save(self, *args, **kwargs):
+        if self.pk:
+            created = False
+        else:
+            created = True
+        super().save(*args, **kwargs)
+        if created:
+            notify.send(
+                sender=self.employee, recipient=self.place.owner,
+                verb=self.MEMBERSHIP_REQUEST,
+                action_object=self, target=self.place, level='info',
+            )

@@ -1,0 +1,8 @@
+{% load i18n %}
+
+
+{% blocktrans count number=notification_count %}
+    1 New Notification
+{% plural %}
+    {{ number }} New Notifications
+{% endblocktrans %}

@@ -1,0 +1,47 @@
+{% load i18n %}
+{% load pages %}
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+    $('.cancel-membership').click(
+        function (event) {
+            var button = $(event.target);
+            swal(
+                {
+                    title: "{% trans 'Are you sure?' %}",
+                    text: "{% trans "Do you want to cancel your membership at this place?" %}",
+                    icon: 'warning',
+                    buttons: [
+                        "{% trans 'Cancel' %}",
+                        "{% trans 'Ok' %}"
+                    ],
+                    dangerMode: true,
+                }
+            ).then((willDelete) => {
+                var token = '{{ csrf_token }}';
+                if (willDelete) {
+                    $.ajax({
+                        url: button.attr('data-url'),
+                        type: 'POST',
+                        data: {
+                            membership: button.attr('data-membership')
+                        },
+                        dataType: "json",
+                        headers: {"X-CSRFToken": token},
+                        success: function () {
+                            swal(
+                                "{% trans 'Membership Canceled!' %}",
+                                {
+                                    icon: "success",
+                                }
+                            ).then(() => {
+                                window.location.href = "{% profile_url request.user %}";
+                            })
+                        },
+                    });
+                }
+            });
+        }
+    );
+</script>

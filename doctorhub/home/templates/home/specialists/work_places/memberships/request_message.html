@@ -1,0 +1,28 @@
+{% load i18n %}
+{% load pages %}
+
+{% specialist_url membership.employee as specialist_url %}
+{% blocktrans with page_url=specialist_url name=membership.employee.profile.name %}
+    <a href="{{ page_url }}">
+        {{ name }}
+    </a>
+    sent a membership request for this place. Do you
+    know this specialist? Does this specialist work
+    here?
+{% endblocktrans %}
+<div class="row">
+    <div class="col-md-4">
+        <button class="btn btn-danger btn-lg mt-3 reject-btn"
+                data-membership="{{ membership.pk }}"
+                data-url="{% url 'memberships-reject' %}" style="width: 100%;">
+            {% trans 'Reject' %}
+        </button>
+    </div>
+    <div class="col-md-4">
+        <button class="btn btn-success btn-lg mt-3 accept-btn"
+                data-membership="{{ membership.pk }}"
+                data-url="{% url 'memberships-accept' %}" style="width: 100%;">
+            {% trans 'Accept' %}
+        </button>
+    </div>
+</div>

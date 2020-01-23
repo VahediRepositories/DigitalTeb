@@ -21,14 +21,17 @@
             </div>
         </div>
         {% is_specialist request.user as user_is_specialist %}
-        <a class="dropdown-item" href="{% profile_url request.user %}" dir="ltr"><i
-                class="ti-user m-r-5 m-l-5"></i>
-            {% trans 'Profile' %}
-        </a>
-        <a class="dropdown-item" href="{% profile_edit_url request.user %}" dir="ltr"><i
-                class="ti-comment-alt m-r-5 m-l-5"></i>
-            {% trans 'Account Information' %}
-        </a>
+        {% if user_is_specialist %}
+            <a class="dropdown-item" href="{% profile_url request.user %}" dir="ltr"><i
+                    class="ti-user m-r-5 m-l-5"></i>
+                {% trans 'Profile' %}
+            </a>
+        {% else %}
+            <a class="dropdown-item" href="{% profile_edit_url request.user %}" dir="ltr"><i
+                    class="ti-comment-alt m-r-5 m-l-5"></i>
+                {% trans 'Account Information' %}
+            </a>
+        {% endif %}
         <a class="dropdown-item" href="{% url 'logout' %}" dir="ltr"><i
                 class="fa fa-power-off m-r-5 m-l-5"></i>{% trans 'Logout' %}</a>
         {% if user_is_specialist %}

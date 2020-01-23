@@ -8,3 +8,11 @@ class WeekDaySerializer(serializers.ModelSerializer):
         fields = [
             'id', 'place', 'user', 'days'
         ]
+
+
+class WorkTimeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkTime
+        fields = [
+            'id', 'day', 'begin', 'end'
+        ]

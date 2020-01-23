@@ -1,0 +1,46 @@
+{% load i18n %}
+{% load pages %}
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<script>
+    $('.membership-request-btn').click(
+        function (event) {
+            swal(
+                {
+                    title: "{% trans 'Are you sure?' %}",
+                    text: "{% trans 'Do you want to send a membership request?' %}",
+                    icon: 'warning',
+                    buttons: [
+                        "{% trans 'Cancel' %}",
+                        "{% trans 'Ok' %}"
+                    ],
+                    dangerMode: true,
+                }
+            ).then((willDelete) => {
+                var token = '{{ csrf_token }}';
+                if (willDelete) {
+                    $.ajax({
+                        url: "{% url 'memberships-list' %}",
+                        type: 'POST',
+                        data: {
+                            place: {{ page.place.pk }}
+                        },
+                        dataType: "json",
+                        headers: {"X-CSRFToken": token},
+                        success: function () {
+                            swal(
+                                "{% trans 'Membership Request Sent!' %}",
+                                {
+                                    icon: "success",
+                                }
+                            ).then(() => {
+                                window.location.href = "{{ page.get_url }}";
+                            })
+                        },
+                    });
+                }
+            });
+        }
+    );
+</script>

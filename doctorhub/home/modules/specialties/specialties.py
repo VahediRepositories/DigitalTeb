@@ -1,5 +1,6 @@
 from django.http import Http404
 
+from ...accounts.models import *
 from ...specialties.models import *
 
 
@@ -40,3 +41,7 @@ def get_user_specialties(user):
         ).exists():
             specialties.append(specialty)
     return specialties
+
+
+def get_specialist_users(specialty):
+    return Profile.specialists.filter(user__groups=specialty.group)

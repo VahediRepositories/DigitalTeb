@@ -1,4 +1,6 @@
+from django.contrib import messages
 from django.contrib.auth.models import Group, User
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from hitcount.models import HitCount
@@ -384,7 +386,21 @@ class ArticlePage(Article):
 
     def serve(self, request, *args, **kwargs):
         self.hit_count(request)
+
+        notification_types_query = Q(
+            verb=ArticlePageComment.NEW_COMMENT
+        ) | Q(
+            verb=ArticlePageComment.COMMENT_REPLY
+        )
+        self.notifications.all().filter(
+            recipient=request.user
+        ).filter(notification_types_query).mark_all_as_read()
+
         return super().serve(request, *args, **kwargs)
+
+    notifications = GenericRelation(
+        Notification, content_type_field='target_content_type', object_id_field='target_object_id'
+    )
 
     promote_panels = []
     settings_panels = []
@@ -963,6 +979,11 @@ class WorkPlacePage(
         HitCountMixin.hit_count(request, hit_count)
 
     def serve(self, request, *args, **kwargs):
+        self.place.notifications.all().filter(
+            recipient=request.user
+        ).filter(
+            verb=Membership.MEMBERSHIP_REJECTED
+        ).mark_all_as_read()
         self.seo_title = translation.gettext(
             'Medical Centers - %(medical_center_type)s - %(place_name)s'
         ) % {'medical_center_type': self.place.medical_center.name, 'place_name': self.place.name}
@@ -970,12 +991,31 @@ class WorkPlacePage(
             'Everything about %(place_name)s: specialists, address, services, equipments, ...'
         ) % {'place_name': self.place.name}
         self.hit_count(request)
+
+        if specialties.is_specialist(request.user):
+            memberships = Membership.objects.filter(
+                place=self.place, employee=request.user, status=Membership.WAITING
+            )
+            if memberships.exists():
+                messages.info(
+                    request, translation.gettext('Your membership request was sent. Wait for response ...')
+                )
+            elif not self.place.has_staff(request.user):
+                messages.info(
+                    request, translation.gettext('Do you work here? Send a membership request.'),
+                    'info-send-membership-request'
+                )
+
         return super().serve(request, *args, **kwargs)
 
     def save(self, *args, **kwargs):
         self.title = self.place.name
         self.slug = self.place.pk
         super().save(*args, **kwargs)
+
+    @property
+    def specialists(self):
+        return self.place.specialists
 
     @property
     def medical_center(self):

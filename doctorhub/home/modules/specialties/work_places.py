@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import get_object_or_404
 
 from ...specialties.work_places.phones.models import *
@@ -36,7 +37,15 @@ def get_place_images(place):
 
 
 def get_user_work_places(user):
-    return WorkPlace.objects.filter(owner=user)
+    places = [
+        place for place in WorkPlace.objects.filter(owner=user)
+    ]
+    employments = Membership.objects.filter(employee=user, status=Membership.ACCEPTED)
+    for employment in employments:
+        place = employment.place
+        if place not in places:
+            places.append(place)
+    return places
 
 
 def get_user_active_cities(user):
@@ -63,3 +72,30 @@ def is_in_city(user, city):
 
 def get_user_working_days(place, user):
     return WeekDay.objects.filter(place=place, owner=user)
+
+
+def get_working_intervals(day):
+    return WorkTime.objects.filter(day=day)
+
+
+def is_working_time_valid(work_time):
+    if work_time.begin >= work_time.end:
+        return False
+    for interval in WorkTime.objects.filter(day=work_time.day):
+        if work_time.begin == interval.begin and work_time.end == interval.end:
+            return False
+        if work_time.begin >= interval.begin:
+            if work_time.begin < interval.end:
+                return False
+        if interval.begin >= work_time.begin:
+            if interval.begin < work_time.end:
+                return False
+    return True
+
+
+def get_all_medical_centers():
+    return MedicalCenter.objects.all()
+
+
+def get_all_work_places(medical_center):
+    return WorkPlace.objects.filter(medical_center=medical_center)

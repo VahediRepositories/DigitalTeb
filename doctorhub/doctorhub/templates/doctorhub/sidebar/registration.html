@@ -1,0 +1,28 @@
+{% load i18n %}
+
+<li>
+    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)"
+       aria-expanded="false">
+        <i class="icon-note"></i>
+        <span class="hide-menu">
+            {% trans 'Registration' %}
+        </span>
+    </a>
+    <ul aria-expanded="false" class="collapse">
+        <li>
+            <a href="{% url 'signup' %}">
+                <span>
+                    {% trans 'Register Now' %}
+                </span>
+            </a>
+        </li>
+        <li>
+            <a href="{% url 'specialist_signup' %}">
+                <span>
+                    {% trans 'Specialists Registration' %}
+                </span>
+            </a>
+        </li>
+    </ul>
+</li>
+<hr>

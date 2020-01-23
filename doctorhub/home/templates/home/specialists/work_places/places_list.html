@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load work_places %}
 
 <div class="row-flex">
     {% for place in places %}
@@ -44,12 +45,23 @@
                                         </a>
                                     </div>
                                     <div class="col-md-6">
-                                        <button data-detail-url="{% url 'specialists-work-places-detail' place.pk %}"
-                                           class="btn btn-danger btn-lg delete-place"
-                                           style="width: 100%;">
-                                            {% trans 'Delete' %}
-                                            <i class="ti-eraser"></i>
-                                        </button>
+                                        {% if place.owner == request.user %}
+                                            <button data-detail-url="{% url 'specialists-work-places-detail' place.pk %}"
+                                                    class="btn btn-danger btn-lg delete-place"
+                                                    style="width: 100%;">
+                                                {% trans 'Delete' %}
+                                                <i class="ti-eraser"></i>
+                                            </button>
+                                        {% else %}
+                                            {% employment request.user place as membership %}
+                                            <button class="btn btn-danger btn-lg cancel-membership"
+                                                    data-url="{% url 'membership-cancel' %}"
+                                                    data-membership="{{ membership.pk }}"
+                                                    style="width: 100%;">
+                                                {% trans 'Cancel Membership' %}
+                                                <i class="ti-eraser"></i>
+                                            </button>
+                                        {% endif %}
                                     </div>
                                 </div>
 

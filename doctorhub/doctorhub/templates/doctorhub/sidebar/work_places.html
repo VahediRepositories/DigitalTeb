@@ -1,0 +1,33 @@
+{% load i18n %}
+{% load work_places %}
+
+<li>
+    <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)"
+       aria-expanded="false">
+        <i class="icon-home"></i>
+        <span class="hide-menu">
+            {% trans 'Work Places' %}
+        </span>
+    </a>
+    <ul aria-expanded="false" class="collapse">
+
+        {% user_work_places request.user as places %}
+        {% for place in places %}
+            <li>
+                <a href="{% url 'work_place_profile' place.pk %}">
+                    <span>
+                        {{ place.name }}
+                    </span>
+                </a>
+            </li>
+        {% endfor %}
+        <li>
+            <a href="{% url 'create_work_place' %}">
+                    <span class="text-danger">
+                        {% trans 'Add Your Work Place' %}
+                    </span>
+            </a>
+        </li>
+    </ul>
+</li>
+<hr>

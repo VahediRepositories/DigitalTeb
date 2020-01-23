@@ -1,0 +1,13 @@
+{% load i18n %}
+{% load pages %}
+
+<li>
+    <a class="waves-effect waves-dark" target="_blank" href="{% specialist_url request.user %}"
+       aria-expanded="false">
+        <i class="ti-layout-accordion-merged"></i>
+        <span class="hide-menu">
+            {% trans 'Personal Page' %}
+        </span>
+    </a>
+</li>
+<hr>

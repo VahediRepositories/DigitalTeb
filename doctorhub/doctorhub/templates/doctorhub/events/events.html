@@ -1,0 +1,56 @@
+{% load staticfiles %}
+{% load notifications_tags %}
+{% load notifications %}
+{% notifications_unread as notification_count %}
+
+
+{% if notification_count %}
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" id="2"
+           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i
+                class="icon-bell"></i>
+            <div class="notify">
+                <span class="heartbit"></span>
+                <span class="point"></span>
+            </div>
+        </a>
+        <div class="dropdown-menu mailbox animated bounceInDown" aria-labelledby="2">
+            <span class="with-arrow"><span class="bg-danger"></span></span>
+            <ul>
+                <li>
+                    <div class="drop-title text-white bg-danger">
+                        <h4 class="m-b-0 m-t-5">
+                            {% include 'doctorhub/events/notifications_size.html' %}
+                        </h4>
+                    </div>
+                </li>
+                <li>
+                    <div class="message-center">
+                        {% user_notifications request.user as notifications %}
+                        {% for notification in notifications %}
+                            <!-- Message -->
+                            <a href="{{ notification.url }}"
+                               class="notification-item">
+                                <div class="user-img">
+                                    <img src="{{ notification.sender.image_url }}"
+                                         alt="{{ notification.sender.name }}"
+                                         class="img-circle">
+                                    {#                                <span class="profile-status online float-right"></span>#}
+                                </div>
+                                <div class="mail-contnet">
+                                    <h5>{{ notification.title }}</h5>
+                                    <small class="text-dark">{{ notification.description }}</small>
+                                </div>
+                            </a>
+                            <!-- Message -->
+                        {% endfor %}
+                    </div>
+                </li>
+                {% comment %}<li>
+                <a class="nav-link text-center link m-b-5" href="javascript:void(0);"> <b>See
+                    all e-Mails</b> <i class="fa fa-angle-right"></i> </a>
+            </li>{% endcomment %}
+            </ul>
+        </div>
+    </li>
+{% endif %}
