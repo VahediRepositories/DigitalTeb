@@ -1,5 +1,6 @@
 {% load i18n %}
 {% load work_places %}
+{% load pages %}
 
 <div class="row-flex">
     {% for place in places %}
@@ -7,14 +8,14 @@
             <div class="card card-body {{ bg_color }}" style="height: 100%;">
                 <div class="row align-items-center">
                     <div class="col-md-4 col-lg-3 text-center">
-                        <a href="{% if edit_mode %}{% url 'work_place_profile' place.pk %}{% endif %}">
+                        <a href="{% if edit_mode %}{% url 'work_place_profile' place.pk %}{% else %}{% work_place_url place %}{% endif %}">
                             <img src="{{ place.image_url }}"
                                  alt="{{ place.name }}"
                                  class="img-fluid img-thumbnail">
                         </a>
                     </div>
                     <div class="col-md-8 col-lg-9">
-                        <a href="{% if edit_mode %}{% url 'work_place_profile' place.pk %}{% endif %}">
+                        <a href="{% if edit_mode %}{% url 'work_place_profile' place.pk %}{% else %}{% work_place_url place %}{% endif %}">
                             <h3 class="box-title m-b-0">
                                 {% if complete_mode %}
                                     {{ place.name }}
@@ -24,7 +25,8 @@
                             </h3>
                         </a>
                         <br>
-                        <small class="badge badge-primary">{{ place.medical_center.name }}</small>
+                        <a href="{% medical_center_page_url place.medical_center %}"
+                           class="badge badge-primary">{{ place.medical_center.name }}</a>
                         <br>
                         <br>
                         <address>

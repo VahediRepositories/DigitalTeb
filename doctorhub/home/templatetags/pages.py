@@ -51,10 +51,15 @@ def medical_center_page_url(medical_center):
 
 
 @register.simple_tag
-def in_rows(objects, row_size):
-    return list_processing.list_to_sublists_of_size_n(objects, row_size)
+def articles_category_url(category):
+    return pages.get_articles_category_page(category).get_url()
 
 
 @register.simple_tag
-def articles_category_url(category):
-    return pages.get_articles_category_page(category).get_url()
+def work_place_url(place):
+    return pages.get_work_place_page(place).get_url()
+
+
+@register.simple_tag
+def in_rows(objects, row_size):
+    return list_processing.list_to_sublists_of_size_n(objects, row_size)
