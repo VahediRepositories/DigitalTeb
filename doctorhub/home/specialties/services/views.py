@@ -50,7 +50,7 @@ class ServiceCreateView(
             services.save_service_image(service, image_data)
         messages.success(
             self.request,
-            translation.gettext('Your service was saved.'),
+            translation.gettext('Medical Service Created!'),
         )
         return HttpResponseRedirect(
             authentication.get_profile_url(self.request.user)
