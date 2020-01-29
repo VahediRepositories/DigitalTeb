@@ -82,8 +82,14 @@ class SpecialistsManager(models.Manager):
 @register_snippet
 class Profile(MultilingualModelMixin, SquareIconMixin, models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=50, blank=False, null=False, default='')
-    last_name = models.CharField(max_length=50, blank=False, null=False, default='')
+    first_name = models.CharField(
+        verbose_name=translation.gettext_lazy('First Name'),
+        max_length=50, blank=False, null=False, default=''
+    )
+    last_name = models.CharField(
+        verbose_name=translation.gettext_lazy('Last Name'),
+        max_length=50, blank=False, null=False, default=''
+    )
     image = models.ImageField(
         upload_to='profile_pics', null=True, blank=True
     )
