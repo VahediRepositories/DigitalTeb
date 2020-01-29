@@ -82,11 +82,13 @@
                                             {% endwith %}
                                         {% endwith %}
                                     {% endwith %}
-                                {% else %}
-                                    <p class="text-danger text-center">
-                                        {% trans "Please enter every services you can provide to patients."  %}
-                                    </p>
                                 {% endif %}
+                                <br>
+                                <div class="text-center">
+                                    <p class="text-danger text-center">
+                                        {% trans 'Please enter every medical services you provide. Users can search for specialists by medical services they provide using our "Advanced Search Engine".' %}
+                                    </p>
+                                </div>
                                 <br>
                                 <div class="text-center">
                                     <a href="{% url 'create_service' %}"
