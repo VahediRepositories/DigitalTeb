@@ -1,7 +1,6 @@
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericRelation
 from django.utils import translation
-from notifications.signals import notify
 from notifications.models import *
 
 from ...images.mixins import SquareIconMixin
@@ -128,16 +127,26 @@ class WorkPlace(MultilingualModelMixin, SquareIconMixin, models.Model):
         MedicalCenter, on_delete=models.PROTECT, blank=False, null=True,
         verbose_name=translation.gettext_lazy('Medical Center'),
     )
-    city = models.ForeignKey(City, on_delete=models.PROTECT, null=True, blank=False)
+    city = models.ForeignKey(
+        City, on_delete=models.PROTECT, null=True, blank=False,
+        verbose_name=translation.gettext_lazy('City')
+    )
     region = models.CharField(
         max_length=1,
         choices=REGION_CHOICES,
-        blank=True, null=True
+        blank=True, null=True,
+        verbose_name=translation.gettext_lazy('Region')
     )
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, blank=False)
-    website = models.URLField(blank=True)
-    address = models.CharField(max_length=400, blank=False)
+    name = models.CharField(
+        max_length=100, blank=False,
+        verbose_name=translation.gettext_lazy('Name')
+    )
+    website = models.URLField(blank=True, verbose_name=translation.gettext_lazy('Website'))
+    address = models.CharField(
+        max_length=400, blank=False,
+        verbose_name=translation.gettext_lazy('Address')
+    )
     image = models.ImageField(
         upload_to='workplace_images', null=True, blank=True
     )

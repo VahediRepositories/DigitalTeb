@@ -10,7 +10,7 @@
             swal(
                 {
                     title: "{% trans 'Are you sure?' %}",
-                    text: "{% trans "Do you want to accept this specialist's membership?" %}",
+                    text: "{% trans "Do you want to accept this request?" %}",
                     icon: 'warning',
                     buttons: [
                         "{% trans 'Cancel' %}",
@@ -31,7 +31,7 @@
                         headers: {"X-CSRFToken": token},
                         success: function () {
                             swal(
-                                "{% trans 'Membership Accepted!' %}",
+                                "{% trans 'Membership Request Accepted!' %}",
                                 {
                                     icon: "success",
                                 }

@@ -46,7 +46,7 @@ def get_notifications(user):
             notifications.append(
                 {
                     'sender': notification.actor.profile,
-                    'title': translation.gettext('Membership Accepted!'),
+                    'title': translation.gettext('Membership Request Accepted!'),
                     'description': translation.gettext(
                         '%(somebody)s accepted your membership request for %(somewhere)s.'
                     ) % {'somebody': notification.actor.profile.name, 'somewhere': notification.target.name},
@@ -61,7 +61,7 @@ def get_notifications(user):
             notifications.append(
                 {
                     'sender': notification.actor.profile,
-                    'title': translation.gettext('Membership Rejected!'),
+                    'title': translation.gettext('Membership Request Rejected!'),
                     'description': translation.gettext(
                         '%(somebody)s rejected your membership request for %(somewhere)s.'
                     ) % {'somebody': notification.actor.profile.name, 'somewhere': notification.target.name},

@@ -62,11 +62,12 @@
                         {% trans 'Symptoms and Problems' %}
                     </a>
                 </li>
+               {% comment %} TODO: create education section
                 <li class="nav-item">
                     <a class="nav-link" data-toggle="tab" href="#education" role="tab">
                         {% trans 'Education' %}
                     </a>
-                </li>
+                </li>{% endcomment %}
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
@@ -127,6 +128,8 @@
                         {% endif %}
                     </div>
                 </div>
+
+               {% comment %} TODO: Create Education section
                 <div class="tab-pane" id="education" role="tabpanel">
                     <div class="card-body" style="height: 400px; overflow-y: scroll;">
                         {% if education_records %}
@@ -145,7 +148,8 @@
                             </p>
                         {% endif %}
                     </div>
-                </div>
+                </div>{% endcomment %}
+
             </div>
         </div>
 

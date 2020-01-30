@@ -50,7 +50,7 @@ class SymptomCreateView(
             services.save_service_image(service, image_data)
         messages.success(
             self.request,
-            translation.gettext('Symptom was saved.'),
+            translation.gettext('Symptom or Problem Created!'),
         )
         return HttpResponseRedirect(
             authentication.get_profile_url(self.request.user)
@@ -84,7 +84,7 @@ class SymptomUpdateView(
         messages.success(
             self.request,
             translation.gettext(
-                'Symptom was updated.'
+                'Symptom or Problem Updated!'
             ),
             'successful-updated-service'
         )

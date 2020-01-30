@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load pages %}
 
 {% if messages %}
     <div class="row">
@@ -38,6 +39,14 @@
                         <button class="btn btn-outline-info btn-lg membership-request-btn">
                             {% trans 'Membership Request' %}
                         </button>
+                    </div>
+                {% elif 'work-place-might-added-before-warning' in message.tags %}
+                    <div class="alert alert-warning">
+                        {% include 'doctorhub/notifications/message.html' %}
+                        <a href="{% medical_centers_url %}" target="_blank" class="btn btn-outline-warning btn-lg">
+                            {% trans 'Search Medical Centers' %}
+                            <i class="ti-search"></i>
+                        </a>
                     </div>
                 {% else %}
                     {% if 'success' in message.tags %}

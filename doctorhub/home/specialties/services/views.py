@@ -84,7 +84,7 @@ class ServiceUpdateView(
         messages.success(
             self.request,
             translation.gettext(
-                'Service was updated.'
+                'Medical Service Updated!'
             ),
             'successful-updated-service'
         )

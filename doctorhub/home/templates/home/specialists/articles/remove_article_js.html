@@ -1,8 +1,8 @@
 {% load i18n %}
 {% load pages %}
 
-{% trans 'Article Deleted!' as success_message %}
-{% profile_url request.user as success_redirect_url %}
+{% trans 'Post Deleted!' as success_message %}
+{% url 'edit_articles' as success_redirect_url %}
 {% with remove_button_class="delete-article" %}
     {% include 'home/sweet_alert_remove_js.html' %}
 {% endwith %}

@@ -1,11 +1,11 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import translation
 from wagtail.snippets.models import register_snippet
 
-from ...images.models import SquareIcon
-from ...modules import images
-from ...multilingual.mixins import *
 from ...images.mixins import SquareIconMixin
+from ...images.models import SquareIcon
+from ...multilingual.mixins import *
 
 
 @register_snippet
@@ -28,8 +28,14 @@ class SymptomManager(models.Manager):
 
 class Symptom(MultilingualModelMixin, SquareIconMixin, models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=100, blank=False)
-    description = models.CharField(max_length=500, blank=True)
+    name = models.CharField(
+        verbose_name=translation.gettext_lazy('Name'),
+        max_length=100, blank=False
+    )
+    description = models.TextField(
+        verbose_name=translation.gettext_lazy('Description'),
+        blank=True
+    )
     image = models.ImageField(
         upload_to='symptoms_images', null=True, blank=True
     )

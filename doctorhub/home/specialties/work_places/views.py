@@ -47,7 +47,7 @@ class MembershipViewSet(viewsets.ModelViewSet):
                 translation.gettext('Membership already exists')
             )
         elif Membership.objects.filter(
-            employee=self.request.user, place=place, status=Membership.WAITING
+                employee=self.request.user, place=place, status=Membership.WAITING
         ).exists():
             raise ValidationError(
                 translation.gettext('Membership request already sent')
@@ -79,11 +79,6 @@ class WorkPlaceCreateView(
         'medical_center', 'name', 'city', 'region', 'address'
     ]
 
-    def get_context_data(self, **kwargs):
-        self.check_phone_verified(self.request)
-        self.forbid_non_specialist()
-        return super().get_context_data(**kwargs)
-
     def form_valid(self, form):
         self.check_phone_verified(self.request)
         self.forbid_non_specialist()
@@ -102,6 +97,23 @@ class WorkPlaceCreateView(
         return HttpResponseRedirect(
             reverse('work_place_profile', kwargs={'pk': place.pk})
         )
+
+    def get(self, request, *args, **kwargs):
+        self.check_phone_verified(self.request)
+        self.forbid_non_specialist()
+        messages.warning(
+            request=self.request,
+            message=translation.gettext(
+                'Your work place might have been already created by one of your colleagues.'
+                ' If so, we highly recommend you to send a membership request,'
+                ' instead of creating a duplicate place.'
+                ' Please search medical centers'
+                ' using our "Advanced Search Engine",'
+                ' and make sure your work place does not exist before creating a new one.'
+            ),
+            extra_tags='work-place-might-added-before-warning'
+        )
+        return super().get(request, *args, **kwargs)
 
     @property
     def template_name(self):

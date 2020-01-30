@@ -51,3 +51,6 @@ class City(MultilingualModelMixin, models.Model):
         super().save(*args, **kwargs)
 
     objects = CityManager()
+
+    class Meta:
+        ordering = ['id']

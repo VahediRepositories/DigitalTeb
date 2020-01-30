@@ -57,14 +57,17 @@
                                 {% trans 'Symptoms and Problems' %}
                             </a>
                         </li>
+
+                      {% comment %}  TODO: create education section
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#education" role="tab">
                                 {% trans 'Education' %}
                             </a>
                         </li>
+                        {% endcomment %}
                         <li class="nav-item">
                             <a class="nav-link" data-toggle="tab" href="#articles" role="tab">
-                                {% trans 'Articles' %}
+                                {% trans 'Blogs' %}
                             </a>
                         </li>
                     </ul>
@@ -90,12 +93,21 @@
                                     </p>
                                 </div>
                                 <br>
-                                <div class="text-center">
-                                    <a href="{% url 'create_service' %}"
-                                       class="btn btn-success btn-lg">
-                                        {% trans 'Add New Service' %}
-                                        <i class="ti-plus"></i>
-                                    </a>
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <a href="{% url 'create_service' %}"
+                                           class="btn btn-success btn-lg">
+                                            {% trans 'Create New Service' %}
+                                            <i class="ti-plus"></i>
+                                        </a>
+
+                                        <a href="{% specialists_url %}"
+                                           target="_blank"
+                                           class="btn btn-primary btn-lg">
+                                            {% trans 'Search Specialists' %}
+                                            <i class="ti-search"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -110,18 +122,31 @@
                                             {% endwith %}
                                         {% endwith %}
                                     {% endwith %}
-                                {% else %}
                                     <p class="text-danger text-center">
-                                        {% trans "Where can your patients find you? Add information about your working schedule during the week." %}
                                     </p>
                                 {% endif %}
                                 <br>
                                 <div class="text-center">
-                                    <a href="{% url 'create_work_place' %}"
-                                       class="btn btn-success btn-lg">
-                                        {% trans 'Add New Work Place' %}
-                                        <i class="ti-plus"></i>
-                                    </a>
+                                    <p class="text-danger text-center">
+                                        {% trans "Where can our users find you? Enter your working schedule during the week so that our users can book an appointment." %}
+                                    </p>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <a href="{% url 'create_work_place' %}"
+                                           class="btn btn-success btn-lg">
+                                            {% trans 'Create New Work Place' %}
+                                            <i class="ti-plus"></i>
+                                        </a>
+
+                                        <a href="{% medical_centers_url %}"
+                                           target="_blank"
+                                           class="btn btn-primary btn-lg">
+                                            {% trans 'Search Medical Centers' %}
+                                            <i class="ti-search"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -137,21 +162,34 @@
                                             {% endwith %}
                                         {% endwith %}
                                     {% endwith %}
-                                {% else %}
-                                    <p class="text-danger text-center">
-                                        {% trans "Add Symptoms you can help to improve." %}
-                                    </p>
                                 {% endif %}
                                 <br>
                                 <div class="text-center">
-                                    <a href="{% url 'create_symptom' %}"
-                                       class="btn btn-success btn-lg">
-                                        {% trans 'Add New Symptom' %}
-                                        <i class="ti-plus"></i>
-                                    </a>
+                                    <p class="text-danger text-center">
+                                        {% trans "Please enter every symptoms or problems that you can help in it's treatment. Users can search for specialists by symptoms and problems they can treat using our 'Advanced Search Engine'." %}
+                                    </p>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <div class="col-md-12 text-center">
+                                        <a href="{% url 'create_symptom' %}"
+                                           class="btn btn-success btn-lg">
+                                            {% trans 'Create New Symptom or Problem' %}
+                                            <i class="ti-plus"></i>
+                                        </a>
+
+                                        <a href="{% specialists_url %}"
+                                           target="_blank"
+                                           class="btn btn-primary btn-lg">
+                                            {% trans 'Search Specialists' %}
+                                            <i class="ti-search"></i>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                    {% comment %}    TODO: create education section
                         <div class="tab-pane" id="education" role="tabpanel">
                             <div class="card-body" style="height: 400px; overflow-y: scroll;">
                                 {% if education_records %}
@@ -171,23 +209,31 @@
                                 <div class="text-center">
                                     <a href="{% url 'create_education' %}"
                                        class="btn btn-success btn-lg">
-                                        {% trans 'Add New Education Record' %}
+                                        {% trans 'Create New Education Record' %}
                                         <i class="ti-plus"></i>
                                     </a>
                                 </div>
                             </div>
                         </div>
+                    {% endcomment %}
                         <div class="tab-pane" id="articles" role="tabpanel">
                             <div class="card-body" style="height: 400px; overflow-y: scroll;">
                                 <p class="text-danger text-center">
                                     {% trans 'Share your knowledge with others by creating posts.' %}
+                                    {% specialist_url request.user as specialist_page_url %}
+                                    {% blocktrans trimmed with page_url=specialist_page_url %}
+                                        Creating posts, helps search engines like Google to find your
+                                        <a href="{{ page_url }}" target="_blank">
+                                            Personal Page
+                                        </a>
+                                    {% endblocktrans %}
                                 </p>
                                 <br>
                                 <div class="text-center">
                                     <a href="{% url 'edit_articles' %}"
                                        class="btn btn-success btn-lg">
-                                        {% trans 'My Articles' %}
-                                        <i class="ti-settings"></i>
+                                        {% trans 'My Posts' %}
+                                        <i class="ti-notepad"></i>
                                     </a>
                                 </div>
                             </div>
